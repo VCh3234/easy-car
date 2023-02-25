@@ -1,6 +1,5 @@
 package by.easycar.repository.model.user;
 
-import by.easycar.repository.model.user.Role;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -31,19 +30,31 @@ public class User {
     @Column(name = "email")
     private String email;
 
-    @Column(name = "status_id")
-    @Enumerated
+    @ManyToOne
+    @JoinColumn(name = "status_id")
     private UserStatus status; //TODO
 
     @Column(name = "role_id")
     @Enumerated
     private Role role; //TODO
 
-    public enum UserStatus {
-        UNVERIFIED,
-        VERIFIED,
-        BANNED,
-        DISABLED,
-        DELETED
+    @Data
+    @Entity(name = "statuses")
+    public static class UserStatus {
+        @Id
+        @GeneratedValue(strategy = GenerationType.IDENTITY)
+        @Column(name = "id")
+        private Long id;
+
+        @Column(name = "status_name")
+        private String status;
+
+        public UserStatus() {
+
+        }
+
+        public UserStatus(long i) {
+            this.id = i;
+        }
     }
 }

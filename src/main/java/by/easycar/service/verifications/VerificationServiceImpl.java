@@ -20,8 +20,8 @@ public class VerificationServiceImpl implements VerificationService {
             e.printStackTrace();
             return false;
         }
-        user.setStatus(User.UserStatus.VERIFIED);
-        userRepository.flush();
+        user.setStatus(new User.UserStatus(2));
+        userRepository.save(user);
     return true;
     }
 }
