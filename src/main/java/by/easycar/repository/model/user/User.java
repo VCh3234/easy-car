@@ -32,7 +32,7 @@ public class User {
 
     @ManyToOne
     @JoinColumn(name = "status_id")
-    private UserStatus status; //TODO
+    private UserStatus status;
 
     @Column(name = "role_id")
     @Enumerated
@@ -40,7 +40,7 @@ public class User {
 
     @Data
     @Entity(name = "statuses")
-    public static class UserStatus {
+    public static class UserStatus { //todo
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
         @Column(name = "id")
