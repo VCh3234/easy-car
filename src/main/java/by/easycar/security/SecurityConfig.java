@@ -1,7 +1,7 @@
 package by.easycar.security;
 
-import by.easycar.repository.model.user.Permission;
-import by.easycar.repository.model.user.Role;
+import by.easycar.model.security.Permission;
+import by.easycar.model.security.Role;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -15,8 +15,8 @@ import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
-@EnableWebSecurity
-@Configuration
+//@EnableWebSecurity
+//@Configuration
 public class SecurityConfig {
 
     @Bean

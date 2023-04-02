@@ -2,8 +2,8 @@ package by.easycar.service;
 
 import by.easycar.repository.NewUserDTORepository;
 import by.easycar.repository.UserRepository;
-import by.easycar.repository.model.user.NewUserDTO;
-import by.easycar.repository.model.user.User;
+import by.easycar.model.NewUserDTO;
+import by.easycar.model.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

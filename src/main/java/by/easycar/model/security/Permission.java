@@ -1,4 +1,4 @@
-package by.easycar.repository.model.user;
+package by.easycar.model.security;
 
 public enum Permission {
     USERS_READ("users:read"),

@@ -1,4 +1,4 @@
-package by.easycar.repository.model.user;
+package by.easycar.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
@@ -6,7 +6,7 @@ import lombok.Data;
 @Entity
 @Table(name = "users")
 @Data
-public class NewUserDTO { //TODO
+public class NewUserDTO {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")

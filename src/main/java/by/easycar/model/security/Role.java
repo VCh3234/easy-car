@@ -1,4 +1,4 @@
-package by.easycar.repository.model.user;
+package by.easycar.model.security;
 
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 

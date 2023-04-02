@@ -1,7 +1,7 @@
 package by.easycar.controllers;
 
-import by.easycar.repository.model.user.NewUserDTO;
-import by.easycar.repository.model.user.User;
+import by.easycar.model.NewUserDTO;
+import by.easycar.model.User;
 import by.easycar.service.UserService;
 import by.easycar.service.verifications.VerificationResolver;
 import lombok.RequiredArgsConstructor;
