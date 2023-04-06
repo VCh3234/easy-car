@@ -20,11 +20,11 @@ import java.util.Set;
 @Entity
 @DynamicUpdate
 @DynamicInsert
-@Table(name = "advertises")
+@Table(name = "advertisements")
 public class Ad {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "ad_sequence")
-    @SequenceGenerator(catalog = "sequences", name = "ad_sequence", sequenceName = "ad_sequence_id", initialValue = 1, allocationSize = 1)
+    @SequenceGenerator(catalog = "sequences", name = "ad_sequence", sequenceName = "advertisements_sequence_id", initialValue = 1, allocationSize = 1)
     private Long id;
     @Column(name = "ad_creating_date", nullable = false, updatable = false)
     private LocalDate creatingDate;
