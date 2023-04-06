@@ -51,8 +51,8 @@ public class UserController {
     }
 
     @PutMapping("/verify")
-    private ResponseEntity<String> verifyUser(@RequestParam long id, @RequestParam String verification_type) {
-        if (verificationResolver.verify(id, verification_type)) {
+    private ResponseEntity<String> verifyUser(@RequestParam long id, @RequestParam("verificationType") String verificationType) {
+        if (verificationResolver.verify(id, verificationType)) {
             return new ResponseEntity<>("User was verified.", HttpStatusCode.valueOf(202));
         }
         return new ResponseEntity<>("Can`t verify user.", HttpStatusCode.valueOf(400));
