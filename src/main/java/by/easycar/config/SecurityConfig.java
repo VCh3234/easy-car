@@ -1,4 +1,5 @@
-package by.easycar.security;
+package by.easycar.config;
+
 
 import by.easycar.model.security.Permission;
 import by.easycar.model.security.Role;
@@ -15,18 +16,18 @@ import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
-//@EnableWebSecurity
-//@Configuration
+@EnableWebSecurity
+@Configuration
 public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf().disable();
-        http.authorizeHttpRequests()
-                .requestMatchers("/api/users/**").hasAuthority(Permission.USERS_READ.getPermission())
-                .requestMatchers(HttpMethod.POST, "/api/users/**").hasAuthority(Permission.USERS_WRITE.getPermission())
-                .requestMatchers(HttpMethod.PUT, "/api/users/**").hasAuthority(Permission.USERS_WRITE.getPermission())
-                .requestMatchers(HttpMethod.DELETE, "/api/users/**").hasAuthority(Permission.USERS_WRITE.getPermission());
+//        http.authorizeHttpRequests()
+//                .requestMatchers("/api/users/**").hasAuthority(Permission.USERS_READ.getPermission())
+//                .requestMatchers(HttpMethod.POST, "/api/users/**").hasAuthority(Permission.USERS_WRITE.getPermission())
+//                .requestMatchers(HttpMethod.PUT, "/api/users/**").hasAuthority(Permission.USERS_WRITE.getPermission())
+//                .requestMatchers(HttpMethod.DELETE, "/api/users/**").hasAuthority(Permission.USERS_WRITE.getPermission());
         http.authorizeHttpRequests(auth -> auth.requestMatchers("/**").permitAll());
         http.formLogin()
                 .loginPage("/auth/login").permitAll()

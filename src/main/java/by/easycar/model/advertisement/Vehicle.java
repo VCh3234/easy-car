@@ -1,7 +1,8 @@
-package by.easycar.model;
+package by.easycar.model.advertisement;
 
 import java.time.LocalDate;
 
+@Deprecated
 public class Vehicle {
 
     private Integer id;

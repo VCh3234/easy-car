@@ -1,10 +1,8 @@
-package by.easycar.model;
+package by.easycar.model.administration;
 
+import by.easycar.model.user.UserPrivate;
 import jakarta.persistence.*;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.Immutable;
 
@@ -13,6 +11,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @EqualsAndHashCode
 @Getter
+@Setter
 @ToString
 
 @Entity
@@ -31,11 +30,11 @@ public class Moderation {
     private LocalDateTime creationDate;
     @Column(name = "mo_message", nullable = false)
     private String message;
-    @Transient
+    @ManyToOne(optional = false, fetch = FetchType.EAGER)
+    @JoinColumn(name = "adm_id", nullable = false)
     private Admin admin;
 
-    public Moderation(String message, Admin admin) {
-        this.message = message;
-        this.admin = admin;
-    }
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "u_id", nullable = false)
+    private UserPrivate user;
 }

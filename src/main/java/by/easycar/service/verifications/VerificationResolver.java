@@ -1,5 +1,6 @@
 package by.easycar.service.verifications;
 
+import by.easycar.exceptions.VerifyMethodNotSupportedException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

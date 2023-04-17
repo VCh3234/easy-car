@@ -1,4 +1,4 @@
-package by.easycar.service.verifications;
+package by.easycar.exceptions;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
