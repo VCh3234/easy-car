@@ -1,4 +1,4 @@
-package by.easycar.model;
+package by.easycar.model.administration;
 
 import by.easycar.model.security.Role;
 import jakarta.persistence.*;
@@ -23,7 +23,4 @@ public class Admin {
     private Long id;
     @Column(name = "adm_name")
     private String name;
-
-    @Column(name = "adm_status")
-    private String status;
 }
