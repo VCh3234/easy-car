@@ -14,7 +14,7 @@ import lombok.*;
 @Table(name = "admins")
 public class Admin {
 
-    private final static Role ROLE = Role.ROLE_ADMIN;
+    public final static Role ROLE = Role.ADMIN;
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "adm_sequence")

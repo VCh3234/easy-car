@@ -3,15 +3,11 @@ package by.easycar.controllers;
 import by.easycar.model.user.UserPrivate;
 import by.easycar.model.user.UserPublic;
 import by.easycar.service.UserService;
-import by.easycar.service.verifications.VerificationResolver;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/user")
@@ -19,7 +15,7 @@ import java.util.List;
 public class UserController {
     private final UserService userService;
 
-    @GetMapping("/{id}")
+    @GetMapping("/{id}") //TODO: without userprivate
     private ResponseEntity<UserPrivate> getById(@PathVariable Long id) {
         return new ResponseEntity<>(userService.getById(id), HttpStatus.OK);
     }

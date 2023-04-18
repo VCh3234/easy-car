@@ -2,7 +2,6 @@ package by.easycar.model.user;
 
 import by.easycar.model.advertisement.Advertisement;
 import by.easycar.model.security.Role;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -23,7 +22,7 @@ import java.util.Set;
 @Table(name = "users")
 public class UserPrivate {
 
-    private final static Role ROLE = Role.ROLE_USER;
+    public final static Role ROLE = Role.USER;
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "u_sequence")
@@ -48,17 +47,16 @@ public class UserPrivate {
     private String email;
 
     @Column(name = "u_password", nullable = false)
-    @JsonIgnore
     private String password;
 
     @Column(name = "u_status", nullable = false)
     @Enumerated(EnumType.STRING)
-    private UserStatus status;
+    private UserStatus status = UserStatus.UNVERIFIED;
 
     @Column(name = "u_is_moderated", nullable = false)
-    private Boolean isChecked;
+    private Boolean isChecked = false;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Advertisement> advertisements = new HashSet<>();
 
     public enum UserStatus {

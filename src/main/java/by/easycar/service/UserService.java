@@ -3,17 +3,14 @@ package by.easycar.service;
 import by.easycar.exceptions.CreationUserException;
 import by.easycar.exceptions.UpdatingUserException;
 import by.easycar.model.user.UserInner;
+import by.easycar.model.user.UserPrivate;
 import by.easycar.model.user.UserPublic;
 import by.easycar.model.user.UsersMapper;
 import by.easycar.repository.UserRepository;
-import by.easycar.model.user.UserPrivate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -28,10 +25,11 @@ public class UserService {
 
 
     public void saveNewUser(UserPrivate user) {
-        if (user.getId() != null || user.getId() != 0) {
+        if (user.getId() == null) {
+            userRepository.save(user);
+        } else if (user.getId() != 0) {
             throw new CreationUserException("Request must be without 'id' field.");
         }
-        userRepository.save(user);
     }
 
     public void deleteUserById(long id) {
