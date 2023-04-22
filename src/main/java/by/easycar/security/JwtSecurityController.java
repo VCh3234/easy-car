@@ -13,12 +13,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/auth")
-public class JWTSecurityController {
+public class JwtSecurityController {
     private final JwtAuthenticationService jwtAuthenticationService;
     private final SecurityService securityService;
 
     @Autowired
-    public JWTSecurityController(JwtAuthenticationService jwtAuthenticationService, SecurityService securityService) {
+    public JwtSecurityController(JwtAuthenticationService jwtAuthenticationService, SecurityService securityService) {
         this.jwtAuthenticationService = jwtAuthenticationService;
         this.securityService = securityService;
     }
