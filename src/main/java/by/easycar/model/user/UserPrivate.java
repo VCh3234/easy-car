@@ -40,10 +40,10 @@ public class UserPrivate {
     @Column(name = "u_name")
     private String name;
 
-    @Column(name = "u_phone")
+    @Column(name = "u_phone", unique = true, nullable = false)
     private String phoneNumber;
 
-    @Column(name = "u_email")
+    @Column(name = "u_email", unique = true, nullable = false)
     private String email;
 
     @Column(name = "u_password", nullable = false)

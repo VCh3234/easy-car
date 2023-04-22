@@ -1,12 +1,16 @@
 package by.easycar.controllers;
 
+import by.easycar.model.user.UserInner;
 import by.easycar.model.user.UserPrivate;
 import by.easycar.model.user.UserPublic;
 import by.easycar.service.UserService;
+import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -15,9 +19,29 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
     private final UserService userService;
 
-    @GetMapping("/{id}") //TODO: without userprivate
-    private ResponseEntity<UserPrivate> getById(@PathVariable Long id) {
-        return new ResponseEntity<>(userService.getById(id), HttpStatus.OK);
+    @PostMapping("/register")
+    private ResponseEntity<String> registerNewUser(@RequestBody UserPrivate user) {
+        userService.saveNewUser(user);
+        return new ResponseEntity<>("User was created.", HttpStatus.CREATED);
+    }
+
+    @PutMapping("/update")
+    private ResponseEntity<String> updateUser(
+            @RequestBody UserPrivate userPrivate,
+            @AuthenticationPrincipal @Parameter(hidden = true) User user
+            ) {
+        System.out.println(user);
+        System.out.println(userPrivate);
+        userService.updateUser(userPrivate);
+        return new ResponseEntity<>("User was updated.", HttpStatus.OK);
+    }
+
+    @GetMapping("/{id}")
+    private ResponseEntity<UserInner> getById(
+            @PathVariable Long id,
+            @AuthenticationPrincipal @Parameter(hidden = true) User user
+    ) {
+        return new ResponseEntity<>(userService.getUserInner(id), HttpStatus.OK);
     }
 
     @GetMapping("/get-contacts/{id}")
@@ -25,17 +49,9 @@ public class UserController {
         return new ResponseEntity<>(userService.getUserPublic(id), HttpStatus.OK);
     }
 
-    @PostMapping("")
-    private ResponseEntity<String> postUserHandler(@RequestBody UserPrivate user) {
-        userService.saveNewUser(user);
-        return new ResponseEntity<>("User was created.", HttpStatus.CREATED);
-    }
 
-    @PutMapping("")
-    private ResponseEntity<String> putUserHandler(@RequestBody UserPrivate user) {
-        userService.updateUser(user);
-        return new ResponseEntity<>("User was changed.", HttpStatus.OK);
-    }
+
+
 
     @DeleteMapping("/{id}")
     private ResponseEntity<String> deleteUserHandler(@PathVariable long id) {

@@ -32,6 +32,9 @@ public class SecurityConfig {
         http.csrf().disable();
         http.authorizeHttpRequests()
                 .requestMatchers("/auth/login").permitAll()
+                .requestMatchers("/error/**").permitAll()
+                .requestMatchers(HttpMethod.POST,"/user/register").permitAll()
+
                 .requestMatchers("/user/**").hasRole(UserPrivate.ROLE.name())
                 .requestMatchers(HttpMethod.POST, "/user/**").hasRole(Admin.ROLE.name())
                 .requestMatchers(HttpMethod.PUT, "/user/**").hasRole(Admin.ROLE.name())
