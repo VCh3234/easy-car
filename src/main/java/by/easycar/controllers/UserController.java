@@ -2,7 +2,6 @@ package by.easycar.controllers;
 
 import by.easycar.model.user.UserInner;
 import by.easycar.model.user.UserPrivate;
-import by.easycar.model.user.UserPublic;
 import by.easycar.security.UserSecurity;
 import by.easycar.service.UserService;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -11,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -29,9 +27,8 @@ public class UserController {
     @PutMapping("/update")
     private ResponseEntity<String> updateUser(
             @RequestBody UserPrivate userPrivate,
-            @AuthenticationPrincipal @Parameter(hidden = true) UserSecurity user
-            ) {
-        if(user.getId().equals(userPrivate.getId())) {
+            @AuthenticationPrincipal @Parameter(hidden = true) UserSecurity user) {
+        if (user.getId().equals(userPrivate.getId())) {
             return new ResponseEntity<>("Access denied.", HttpStatus.FORBIDDEN);
         }
         userService.updateUser(userPrivate);
@@ -41,23 +38,21 @@ public class UserController {
     @GetMapping("/{id}")
     private ResponseEntity<UserInner> getById(
             @PathVariable Long id,
-            @AuthenticationPrincipal @Parameter(hidden = true) User user
-    ) {
+            @AuthenticationPrincipal @Parameter(hidden = true) UserSecurity user) {
+        if (user.getId().equals(id)) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
         return new ResponseEntity<>(userService.getUserInner(id), HttpStatus.OK);
     }
 
-    @GetMapping("/get-contacts/{id}")
-    private ResponseEntity<UserPublic> getContacts(@PathVariable Long id) {
-        return new ResponseEntity<>(userService.getUserPublic(id), HttpStatus.OK);
-    }
-
-
-
-
-
     @DeleteMapping("/{id}")
-    private ResponseEntity<String> deleteUserHandler(@PathVariable long id) {
+    private ResponseEntity<String> deleteUserHandler(
+            @PathVariable Long id,
+            @AuthenticationPrincipal @Parameter(hidden = true) UserSecurity user) {
+        if (user.getId().equals(id)) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
         userService.deleteUserById(id);
-        return new ResponseEntity<>("User was deleted.", HttpStatus.OK);
+        return new ResponseEntity<>("User was deleted.", HttpStatus.NO_CONTENT);
     }
 }

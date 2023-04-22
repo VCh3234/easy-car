@@ -1,4 +1,4 @@
-package by.easycar.controllers;
+package by.easycar.controllers.handlers;
 
 import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.http.HttpHeaders;
