@@ -21,6 +21,7 @@ import java.util.stream.Collectors;
 public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+
     public UserPrivate getById(long id) {
         return userRepository.findById(id).orElseThrow(); //TODO: security
     }
@@ -28,7 +29,7 @@ public class UserService {
 
     public void saveNewUser(UserPrivate user) {
         if (isNew(user)) {
-            persistUser(user);
+            persistNewUser(user);
         } else {
             throw new CreationUserException("Request must be without 'id' field.");
         }
@@ -36,7 +37,7 @@ public class UserService {
 
     public void updateUser(UserPrivate user) {
         if (!isNew(user)) {
-            persistUser(user);
+            persistOldUser(user);
         } else {
             throw new UpdatingUserException("Request must be with 'id' field.");
         }
@@ -58,8 +59,12 @@ public class UserService {
         return userPrivate.getId() == null || userPrivate.getId() == 0;
     }
 
-    private void persistUser(UserPrivate userPrivate) {
-        if(userRepository.existsByEmail(userPrivate.getEmail())) {
+    private void persistNewUser(UserPrivate userPrivate) {
+        if (userPrivate.getPassword() != null) {
+            userPrivate.setPassword(passwordEncoder.encode(userPrivate.getPassword()));
+        }
+
+        if (userRepository.existsByEmail(userPrivate.getEmail())) {
             throw new CreationUserException("User already exist with email: " + userPrivate.getEmail());
         } else if (userRepository.existsByPhoneNumber(userPrivate.getPhoneNumber())) {
             throw new CreationUserException("User already exist with phone: " + userPrivate.getPhoneNumber());
@@ -67,6 +72,25 @@ public class UserService {
         userRepository.save(userPrivate);
     }
 
+    private void persistOldUser(UserPrivate updateUser) {
+        UserPrivate oldUser = userRepository.findById(updateUser.getId()).orElseThrow(
+                () -> new UserFindException("Can`t find user with id: " + updateUser.getId()));
+
+        if (updateUser.getPassword() != null) {
+            updateUser.setPassword(passwordEncoder.encode(updateUser.getPassword()));
+        }
+
+        if (!updateUser.getPhoneNumber().equals(oldUser.getPhoneNumber())) {
+            if (userRepository.existsByPhoneNumber(updateUser.getPhoneNumber())) {
+                throw new UpdatingUserException("User already exist with phone: " + updateUser.getPhoneNumber());
+            }
+        } else if (!updateUser.getEmail().equals(oldUser.getEmail())) {
+            if (userRepository.existsByEmail(updateUser.getEmail())) {
+                throw new UpdatingUserException("User already exist with email: " + updateUser.getEmail());
+            }
+        }
+        userRepository.save(updateUser);
+    }
 
 
     public void deleteUserById(long id) {

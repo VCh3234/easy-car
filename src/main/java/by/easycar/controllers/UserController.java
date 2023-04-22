@@ -3,6 +3,7 @@ package by.easycar.controllers;
 import by.easycar.model.user.UserInner;
 import by.easycar.model.user.UserPrivate;
 import by.easycar.model.user.UserPublic;
+import by.easycar.security.UserSecurity;
 import by.easycar.service.UserService;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
@@ -28,10 +29,11 @@ public class UserController {
     @PutMapping("/update")
     private ResponseEntity<String> updateUser(
             @RequestBody UserPrivate userPrivate,
-            @AuthenticationPrincipal @Parameter(hidden = true) User user
+            @AuthenticationPrincipal @Parameter(hidden = true) UserSecurity user
             ) {
-        System.out.println(user);
-        System.out.println(userPrivate);
+        if(user.getId().equals(userPrivate.getId())) {
+            return new ResponseEntity<>("Access denied.", HttpStatus.FORBIDDEN);
+        }
         userService.updateUser(userPrivate);
         return new ResponseEntity<>("User was updated.", HttpStatus.OK);
     }

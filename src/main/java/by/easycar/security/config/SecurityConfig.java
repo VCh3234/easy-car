@@ -1,8 +1,10 @@
-package by.easycar.security;
+package by.easycar.security.config;
 
 
 import by.easycar.model.administration.Admin;
 import by.easycar.model.user.UserPrivate;
+import by.easycar.security.JwtSecurityFilter;
+import by.easycar.security.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -32,8 +34,9 @@ public class SecurityConfig {
         http.csrf().disable();
         http.authorizeHttpRequests()
                 .requestMatchers("/auth/login").permitAll()
-                .requestMatchers("/error/**").permitAll()
+//                .requestMatchers("/error/**").permitAll()
                 .requestMatchers(HttpMethod.POST,"/user/register").permitAll()
+                .requestMatchers(HttpMethod.PUT, "/user/update").hasAuthority("USER")
 
                 .requestMatchers("/user/**").hasRole(UserPrivate.ROLE.name())
                 .requestMatchers(HttpMethod.POST, "/user/**").hasRole(Admin.ROLE.name())
