@@ -1,6 +1,6 @@
 package by.easycar.service;
 
-import by.easycar.exceptions.UpdateAdvertisementException;
+import by.easycar.exceptions.advertisement.UpdateAdvertisementException;
 import by.easycar.model.advertisement.Advertisement;
 import by.easycar.repository.AdvertisementRepository;
 import lombok.RequiredArgsConstructor;

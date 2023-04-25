@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -20,44 +21,29 @@ public class UserController {
 
     @PostMapping("/register")
     private ResponseEntity<String> registerNewUser(@RequestBody UserRequest newUser) {
-        userService.saveNewUser(newUser);
-        return new ResponseEntity<>("User was created.", HttpStatus.CREATED);
+        if (userService.saveNewUser(newUser)) {
+            return new ResponseEntity<>("User was created.", HttpStatus.CREATED);
+        }
+        return new ResponseEntity<>(HttpStatus.CONFLICT);
     }
 
     @PutMapping("/update")
-    private ResponseEntity<String> updateUser(
-            @RequestBody UserRequest userRequest,
-            @AuthenticationPrincipal @Parameter(hidden = true) UserSecurity user) {
-        userService.updateUser(userRequest, user.getId());
-        return new ResponseEntity<>("User was updated.", HttpStatus.OK);
-    }
-
-    @PutMapping("/update-email")
-    private ResponseEntity<String> updateEmail(
-            @RequestParam String email,
-            @AuthenticationPrincipal @Parameter(hidden = true) UserSecurity user) {
-//        userService.updateUser(email, user);
-        return new ResponseEntity<>("User was updated.", HttpStatus.OK);
-    }
-
-    @GetMapping("/{id}")
-    private ResponseEntity<UserInner> getById(
-            @PathVariable Long id,
-            @AuthenticationPrincipal @Parameter(hidden = true) UserSecurity user) {
-        if (!user.getId().equals(id)) {
-            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+    private ResponseEntity<String> updateUser(@RequestBody UserRequest userRequest, @AuthenticationPrincipal @Parameter(hidden = true) UserSecurity user) {
+        if (userService.updateUser(userRequest, user.getId())) {
+            return new ResponseEntity<>("User was updated.", HttpStatus.OK);
         }
-        return new ResponseEntity<>(userService.getUserInner(id), HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.CONFLICT);
     }
 
-    @DeleteMapping("/{id}")
-    private ResponseEntity<String> deleteUserHandler(
-            @PathVariable Long id,
-            @AuthenticationPrincipal @Parameter(hidden = true) UserSecurity user) {
-        if (!user.getId().equals(id)) {
-            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-        }
-        userService.deleteUserById(id);
+    @GetMapping("")
+    private ResponseEntity<UserInner> getById(@AuthenticationPrincipal @Parameter(hidden = true) UserSecurity user) {
+        return new ResponseEntity<>(userService.getUserInner(user.getId()), HttpStatus.OK);
+    }
+
+    @DeleteMapping("")
+    private ResponseEntity<String> deleteUserHandler(@AuthenticationPrincipal @Parameter(hidden = true) UserSecurity user) {
+        userService.deleteUserById(user.getId());
+        SecurityContextHolder.clearContext();
         return new ResponseEntity<>("User was deleted.", HttpStatus.NO_CONTENT);
     }
 }

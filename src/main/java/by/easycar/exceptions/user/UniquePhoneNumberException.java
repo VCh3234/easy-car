@@ -1,4 +1,4 @@
-package by.easycar.exceptions;
+package by.easycar.exceptions.user;
 
 public class UniquePhoneNumberException extends RuntimeException {
     public UniquePhoneNumberException(String message) {

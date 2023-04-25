@@ -1,9 +1,9 @@
 package by.easycar.service;
 
-import by.easycar.exceptions.CreationUserException;
-import by.easycar.exceptions.UniqueEmailException;
-import by.easycar.exceptions.UniquePhoneNumberException;
-import by.easycar.exceptions.UserFindException;
+import by.easycar.exceptions.user.SaveUserDataException;
+import by.easycar.exceptions.user.UniqueEmailException;
+import by.easycar.exceptions.user.UniquePhoneNumberException;
+import by.easycar.exceptions.user.UserFindException;
 import by.easycar.model.user.UserInner;
 import by.easycar.model.user.UserPrivate;
 import by.easycar.model.user.UserPublic;
@@ -12,6 +12,7 @@ import by.easycar.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Service;
 public class UserService {
     private final UserRepository userRepository;
     private final UsersMapperService usersMapperService;
+    private final PasswordEncoder passwordEncoder;
 
     public UserPrivate getById(long id) {
         return userRepository.findById(id).orElseThrow(); //TODO: security
@@ -40,24 +42,42 @@ public class UserService {
         userRepository.deleteById(id);
     }
 
-    public void saveNewUser(UserRequest newUser) {
+    public boolean saveNewUser(UserRequest newUser) {
         UserPrivate userPrivate = usersMapperService.getUserPrivateFromNewUserRequest(newUser);
+        return saveData(userPrivate);
+    }
+
+    public boolean updateUser(UserRequest userRequest, Long id) {
+        UserPrivate userPrivate = userRepository.findById(id).orElseThrow(() -> new UserFindException("Can`t find user with id: " + id));
+        if (!userPrivate.getPhoneNumber().equals(userRequest.getPhoneNumber())) {
+            userPrivate.setPhoneNumber(userRequest.getPhoneNumber());
+            userPrivate.setVerifiedByPhone(false);
+        }
+        if (!userPrivate.getEmail().equals(userRequest.getEmail())) {
+            userPrivate.setEmail(userRequest.getEmail());
+            userPrivate.setVerifiedByEmail(false);
+        }
+        userPrivate.setName(userRequest.getName());
+        if (userRequest.getPassword() != null) {
+            userPrivate.setPassword(passwordEncoder.encode(userRequest.getPassword()));
+        }
+        return saveData(userPrivate);
+    }
+
+    private boolean saveData(UserPrivate userPrivate) {
         try {
             userRepository.save(userPrivate);
         } catch (DataIntegrityViolationException e) {
             String message = e.getMessage();
-            if(message.contains("uk_email")) {
+            if (message.contains("uk_email")) {
                 throw new UniqueEmailException("User already exists with email: " + userPrivate.getEmail());
             } else if (message.contains("uk_phone")) {
                 throw new UniquePhoneNumberException("User already exists with phone: " + userPrivate.getPhoneNumber());
             } else {
-                throw new CreationUserException(message);
+                throw new SaveUserDataException(message);
             }
         }
-    }
-
-    public void updateUser(UserRequest userRequest, Long id) {
-
+        return true;
     }
 
     private boolean isEmailUnique(String email) {

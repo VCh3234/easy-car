@@ -41,16 +41,17 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf().disable();
         http.authorizeHttpRequests()
-                .requestMatchers("/auth/login").permitAll()
-                .requestMatchers("/error/**").permitAll()
-                .requestMatchers(HttpMethod.POST,"/user/register").permitAll()
-                .requestMatchers(HttpMethod.PUT, "/user/update").hasAuthority("USER")
-                .requestMatchers(HttpMethod.POST, "/pay/**").permitAll()
-                .requestMatchers("/pay/**").permitAll()
                 .requestMatchers(AUTH_WHITELIST).permitAll()
-
-
+                .requestMatchers("/pay/**").permitAll()
+                .requestMatchers("/error/**").permitAll()
+                .requestMatchers("/auth/login").permitAll()
                 .requestMatchers("/swagger-ui.html").permitAll()
+                .requestMatchers(HttpMethod.POST, "/pay/**").permitAll()
+                .requestMatchers(HttpMethod.POST,"/user/register").permitAll()
+
+                .requestMatchers(HttpMethod.GET, "/user").hasAuthority("USER")
+                .requestMatchers(HttpMethod.PUT, "/user/update").hasAuthority("USER")
+
                 .requestMatchers("/user/**").hasRole(UserPrivate.ROLE.name())
                 .requestMatchers(HttpMethod.POST, "/user/**").hasRole(Admin.ROLE.name())
                 .requestMatchers(HttpMethod.PUT, "/user/**").hasRole(Admin.ROLE.name())

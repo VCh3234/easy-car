@@ -25,6 +25,8 @@ public class UsersMapperService {
         userInner.setStatus(userPrivate.getStatus());
         userInner.setName(userPrivate.getName());
         userInner.setPhoneNumber(userPrivate.getPhoneNumber());
+        userInner.setCreationDate(userPrivate.getCreationDate());
+        userInner.setUpdateTime(userPrivate.getUpdateTime());
         return userInner;
     }
 
