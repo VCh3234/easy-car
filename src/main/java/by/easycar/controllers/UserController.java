@@ -36,14 +36,16 @@ public class UserController {
     }
 
     @GetMapping("")
-    private ResponseEntity<UserInner> getById(@AuthenticationPrincipal @Parameter(hidden = true) UserSecurity user) {
+    private ResponseEntity<UserInner> getUserInnerById(@AuthenticationPrincipal @Parameter(hidden = true) UserSecurity user) {
         return new ResponseEntity<>(userService.getUserInner(user.getId()), HttpStatus.OK);
     }
 
     @DeleteMapping("")
     private ResponseEntity<String> deleteUserHandler(@AuthenticationPrincipal @Parameter(hidden = true) UserSecurity user) {
-        userService.deleteUserById(user.getId());
-        SecurityContextHolder.clearContext();
-        return new ResponseEntity<>("User was deleted.", HttpStatus.NO_CONTENT);
+        if (userService.deleteUserById(user.getId())) {
+            SecurityContextHolder.clearContext();
+            return new ResponseEntity<>("User was deleted.", HttpStatus.NO_CONTENT);
+        }
+        return new ResponseEntity<>(HttpStatus.CONFLICT);
     }
 }

@@ -27,6 +27,9 @@ public class UsersMapperService {
         userInner.setPhoneNumber(userPrivate.getPhoneNumber());
         userInner.setCreationDate(userPrivate.getCreationDate());
         userInner.setUpdateTime(userPrivate.getUpdateTime());
+        userInner.setUps(userPrivate.getUps());
+        userInner.setVerifiedByPhone(userPrivate.isVerifiedByPhone());
+        userInner.setVerifiedByEmail(userPrivate.isVerifiedByPhone());
         return userInner;
     }
 

@@ -38,8 +38,9 @@ public class UserService {
         return userInner;
     }
 
-    public void deleteUserById(long id) {
+    public boolean deleteUserById(long id) {
         userRepository.deleteById(id);
+        return true;
     }
 
     public boolean saveNewUser(UserRequest newUser) {
@@ -73,13 +74,17 @@ public class UserService {
                 throw new UniqueEmailException("User already exists with email: " + userPrivate.getEmail());
             } else if (message.contains("uk_phone")) {
                 throw new UniquePhoneNumberException("User already exists with phone: " + userPrivate.getPhoneNumber());
-            } else {
-                throw new SaveUserDataException(message);
+            } else if(message.contains("u_email")){
+                throw new SaveUserDataException("Email must be not null");
+            } else if(message.contains("qwe")){
+                throw new SaveUserDataException("Email must be not null");
             }
+
         }
         return true;
     }
 
+    @Deprecated
     private boolean isEmailUnique(String email) {
         if (userRepository.existsByEmail(email)) {
             throw new UniqueEmailException("User already exist with email:" + email);
@@ -87,12 +92,11 @@ public class UserService {
         return true;
     }
 
+    @Deprecated
     private boolean isPhoneNumberUnique(String phoneNumber) {
         if (userRepository.existsByPhoneNumber(phoneNumber)) {
             throw new UniquePhoneNumberException("User already exist with phone number:" + phoneNumber);
         }
         return true;
     }
-
-
 }

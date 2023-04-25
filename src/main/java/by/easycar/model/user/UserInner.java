@@ -18,4 +18,7 @@ public class UserInner {
     private String phoneNumber;
     private String email;
     private UserPrivate.UserStatus status;
+    private Integer ups;
+    private boolean isVerifiedByEmail;
+    private boolean isVerifiedByPhone;
 }

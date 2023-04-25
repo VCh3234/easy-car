@@ -24,7 +24,7 @@ public class Payment {
     @SequenceGenerator(catalog = "sequences", name = "p_sequence", sequenceName = "p_sequence_id", initialValue = 1, allocationSize = 1)
     @Column(name = "p_id")
     private Long id;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.ALL})
     @JoinColumn(name = "p_user_id")
     private UserPrivate user;
     @Column(name = "p_date_time")

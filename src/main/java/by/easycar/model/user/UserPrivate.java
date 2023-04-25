@@ -1,6 +1,7 @@
 package by.easycar.model.user;
 
 import by.easycar.model.advertisement.Advertisement;
+import by.easycar.model.payments.Payment;
 import by.easycar.model.security.Role;
 import jakarta.persistence.*;
 import lombok.*;
@@ -13,10 +14,10 @@ import java.util.HashSet;
 import java.util.Set;
 
 @NoArgsConstructor
-@EqualsAndHashCode
+@EqualsAndHashCode(exclude = {"payments", "advertisements"})
 @Setter
 @Getter
-@ToString
+@ToString(exclude = {"payments", "advertisements"})
 
 @Entity
 @Table(name = "users")
@@ -54,17 +55,18 @@ public class UserPrivate {
     private UserStatus status = UserStatus.ACTIVE;
 
     @Column(name = "u_email_verify")
-    private boolean isVerifiedByEmail = false;
+    private boolean verifiedByEmail = false;
     @Column(name = "u_phone_verify")
-    private boolean isVerifiedByPhone = false;
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private boolean verifiedByPhone = false;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private Set<Advertisement> advertisements = new HashSet<>();
 
+    @OneToMany(mappedBy = "user", orphanRemoval = true, fetch = FetchType.LAZY)
+    private Set<Payment> payments = new HashSet<>();
     @Column(name = "u_ups")
     private Integer ups = 0;
 
     public enum UserStatus {
-        ACTIVE,
-        BANNED,
+        ACTIVE, BANNED,
     }
 }
