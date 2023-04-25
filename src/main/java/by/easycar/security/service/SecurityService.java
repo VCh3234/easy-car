@@ -1,6 +1,7 @@
-package by.easycar.security;
+package by.easycar.security.service;
 
 
+import by.easycar.security.AuthenticationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

@@ -1,23 +1,15 @@
 package by.easycar.controllers;
 
-import by.easycar.model.administration.Admin;
-import by.easycar.model.administration.Moderation;
-import by.easycar.model.user.UserInner;
-import by.easycar.model.user.UserPrivate;
-import by.easycar.model.user.UsersMapper;
-import by.easycar.repository.ModerationRepository;
-import by.easycar.repository.UserRepository;
 import by.easycar.service.ModerationService;
 import by.easycar.service.UserService;
 import lombok.RequiredArgsConstructor;
-import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.Set;
-import java.util.stream.Collectors;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/mod")
@@ -26,15 +18,9 @@ public class ModerationController {
     private final UserService userService;
     private final ModerationService moderationService;
 
-    @GetMapping("/get-unchecked-users")
-    private Set<UserInner> getUncheckedUsers() {
-        Set<UserInner> userInnerSet = userService.getAllByIsChecked();
-        return userInnerSet;
-    }
 
     @PutMapping("/accept")
     private ResponseEntity<String> acceptUserWithId(@RequestParam Long id) {
-        userService.acceptUserWithId(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

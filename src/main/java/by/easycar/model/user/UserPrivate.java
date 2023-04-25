@@ -51,17 +51,20 @@ public class UserPrivate {
 
     @Column(name = "u_status", nullable = false)
     @Enumerated(EnumType.STRING)
-    private UserStatus status = UserStatus.UNVERIFIED;
+    private UserStatus status = UserStatus.ACTIVE;
 
-    @Column(name = "u_is_moderated", nullable = false)
-    private Boolean isChecked = false;
-
+    @Column(name = "u_email_verify")
+    private boolean isVerifiedByEmail = false;
+    @Column(name = "u_phone_verify")
+    private boolean isVerifiedByPhone = false;
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Advertisement> advertisements = new HashSet<>();
 
+    @Column(name = "u_ups")
+    private Integer ups = 0;
+
     public enum UserStatus {
-        UNVERIFIED,
-        VERIFIED,
+        ACTIVE,
         BANNED,
     }
 }

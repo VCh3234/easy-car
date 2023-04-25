@@ -1,8 +1,8 @@
 package by.easycar.controllers;
 
 import by.easycar.model.user.UserInner;
-import by.easycar.model.user.UserPrivate;
-import by.easycar.security.UserSecurity;
+import by.easycar.model.user.UserRequest;
+import by.easycar.security.model.UserSecurity;
 import by.easycar.service.UserService;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
@@ -19,19 +19,24 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/register")
-    private ResponseEntity<String> registerNewUser(@RequestBody UserPrivate user) {
-        userService.saveNewUser(user);
+    private ResponseEntity<String> registerNewUser(@RequestBody UserRequest newUser) {
+        userService.saveNewUser(newUser);
         return new ResponseEntity<>("User was created.", HttpStatus.CREATED);
     }
 
     @PutMapping("/update")
     private ResponseEntity<String> updateUser(
-            @RequestBody UserPrivate userPrivate,
+            @RequestBody UserRequest userRequest,
             @AuthenticationPrincipal @Parameter(hidden = true) UserSecurity user) {
-        if (user.getId().equals(userPrivate.getId())) {
-            return new ResponseEntity<>("Access denied.", HttpStatus.FORBIDDEN);
-        }
-        userService.updateUser(userPrivate);
+        userService.updateUser(userRequest, user.getId());
+        return new ResponseEntity<>("User was updated.", HttpStatus.OK);
+    }
+
+    @PutMapping("/update-email")
+    private ResponseEntity<String> updateEmail(
+            @RequestParam String email,
+            @AuthenticationPrincipal @Parameter(hidden = true) UserSecurity user) {
+//        userService.updateUser(email, user);
         return new ResponseEntity<>("User was updated.", HttpStatus.OK);
     }
 
@@ -39,7 +44,7 @@ public class UserController {
     private ResponseEntity<UserInner> getById(
             @PathVariable Long id,
             @AuthenticationPrincipal @Parameter(hidden = true) UserSecurity user) {
-        if (user.getId().equals(id)) {
+        if (!user.getId().equals(id)) {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
         return new ResponseEntity<>(userService.getUserInner(id), HttpStatus.OK);
@@ -49,7 +54,7 @@ public class UserController {
     private ResponseEntity<String> deleteUserHandler(
             @PathVariable Long id,
             @AuthenticationPrincipal @Parameter(hidden = true) UserSecurity user) {
-        if (user.getId().equals(id)) {
+        if (!user.getId().equals(id)) {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
         userService.deleteUserById(id);

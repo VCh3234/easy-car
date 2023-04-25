@@ -1,5 +1,8 @@
 package by.easycar.security;
 
+import by.easycar.security.model.AuthRequest;
+import by.easycar.security.service.JwtAuthenticationService;
+import by.easycar.security.service.SecurityService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
