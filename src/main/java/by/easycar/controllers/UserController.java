@@ -41,7 +41,7 @@ public class UserController {
     }
 
     @DeleteMapping("")
-    private ResponseEntity<String> deleteUserHandler(@AuthenticationPrincipal @Parameter(hidden = true) UserSecurity user) {
+    private ResponseEntity<String> deleteUser(@AuthenticationPrincipal @Parameter(hidden = true) UserSecurity user) {
         if (userService.deleteUserById(user.getId())) {
             SecurityContextHolder.clearContext();
             return new ResponseEntity<>("User was deleted.", HttpStatus.NO_CONTENT);

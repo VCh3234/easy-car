@@ -2,7 +2,6 @@ package by.easycar.service;
 
 import by.easycar.model.user.UserInner;
 import by.easycar.model.user.UserPrivate;
-import by.easycar.model.user.UserPublic;
 import by.easycar.model.user.UserRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -31,14 +30,6 @@ public class UsersMapperService {
         userInner.setVerifiedByPhone(userPrivate.isVerifiedByPhone());
         userInner.setVerifiedByEmail(userPrivate.isVerifiedByPhone());
         return userInner;
-    }
-
-    public UserPublic getUserPublicFromUserPrivate(UserPrivate userPrivate) {
-        UserPublic userPublic = new UserPublic();
-        userPublic.setEmail(userPrivate.getEmail());
-        userPublic.setId(userPrivate.getId());
-        userPublic.setName(userPrivate.getName());
-        return userPublic;
     }
 
     public UserPrivate getUserPrivateFromNewUserRequest(UserRequest userRequest) {

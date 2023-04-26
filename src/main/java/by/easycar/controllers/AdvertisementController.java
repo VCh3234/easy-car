@@ -40,5 +40,4 @@ public class AdvertisementController {
         advertisementService.delete(id);
         return new ResponseEntity<>("Was deleted.", HttpStatus.OK);
     }
-
 }

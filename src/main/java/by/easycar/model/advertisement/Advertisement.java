@@ -1,6 +1,6 @@
 package by.easycar.model.advertisement;
 
-import by.easycar.model.user.UserPublic;
+import by.easycar.model.user.UserPrivate;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -54,7 +54,7 @@ public class Advertisement {
     private Vehicle vehicle = null; //TODO:
     @ManyToOne
     @JoinColumn(name = "u_id", nullable = false)
-    private UserPublic user;
+    private UserPrivate user;
     @ElementCollection
     @CollectionTable(
             name = "ad_images",

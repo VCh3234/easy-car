@@ -21,7 +21,6 @@ public class PaymentController {
         this.paymentService = paymentService;
     }
 
-
     @PostMapping("")
     private ResponseEntity<String> deposit(@RequestBody String jwt) {
         paymentService.doPay(jwt);

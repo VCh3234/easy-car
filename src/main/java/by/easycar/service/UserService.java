@@ -6,7 +6,6 @@ import by.easycar.exceptions.user.UniquePhoneNumberException;
 import by.easycar.exceptions.user.UserFindException;
 import by.easycar.model.user.UserInner;
 import by.easycar.model.user.UserPrivate;
-import by.easycar.model.user.UserPublic;
 import by.easycar.model.user.UserRequest;
 import by.easycar.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -23,17 +22,11 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
 
     public UserPrivate getById(long id) {
-        return userRepository.findById(id).orElseThrow(); //TODO: security
-    }
-
-    public UserPublic getUserPublic(Long id) {
-        UserPrivate userPrivate = userRepository.findById(id).orElseThrow(() -> new UserFindException("Can`t find user with id: " + id));
-        UserPublic userPublic = usersMapperService.getUserPublicFromUserPrivate(userPrivate);
-        return userPublic;
+        return userRepository.findById(id).orElseThrow(() -> new UserFindException("Can`t find user with id: " + id));
     }
 
     public UserInner getUserInner(Long id) {
-        UserPrivate userPrivate = userRepository.findById(id).orElseThrow(() -> new UserFindException("Can`t find user with id: " + id));
+        UserPrivate userPrivate = this.getById(id);
         UserInner userInner = usersMapperService.getUserInnerFromUserPrivate(userPrivate);
         return userInner;
     }
@@ -49,16 +42,18 @@ public class UserService {
     }
 
     public boolean updateUser(UserRequest userRequest, Long id) {
-        UserPrivate userPrivate = userRepository.findById(id).orElseThrow(() -> new UserFindException("Can`t find user with id: " + id));
-        if (!userPrivate.getPhoneNumber().equals(userRequest.getPhoneNumber())) {
+        UserPrivate userPrivate = this.getById(id);
+        if (userRequest.getPhoneNumber() != null && !userPrivate.getPhoneNumber().equals(userRequest.getPhoneNumber())) {
             userPrivate.setPhoneNumber(userRequest.getPhoneNumber());
             userPrivate.setVerifiedByPhone(false);
         }
-        if (!userPrivate.getEmail().equals(userRequest.getEmail())) {
+        if (userRequest.getEmail() != null && !userPrivate.getEmail().equals(userRequest.getEmail())) {
             userPrivate.setEmail(userRequest.getEmail());
             userPrivate.setVerifiedByEmail(false);
         }
-        userPrivate.setName(userRequest.getName());
+        if (userRequest.getName() != null) {
+            userPrivate.setName(userRequest.getName());
+        }
         if (userRequest.getPassword() != null) {
             userPrivate.setPassword(passwordEncoder.encode(userRequest.getPassword()));
         }
@@ -74,12 +69,12 @@ public class UserService {
                 throw new UniqueEmailException("User already exists with email: " + userPrivate.getEmail());
             } else if (message.contains("uk_phone")) {
                 throw new UniquePhoneNumberException("User already exists with phone: " + userPrivate.getPhoneNumber());
-            } else if(message.contains("u_email")){
+            } else if (message.contains("u_email")) {
                 throw new SaveUserDataException("Email must be not null");
-            } else if(message.contains("qwe")){
-                throw new SaveUserDataException("Email must be not null");
+            } else if (message.contains("u_phone")) {
+                throw new SaveUserDataException("Phone must be not null");
             }
-
+            return false;
         }
         return true;
     }
