@@ -3,7 +3,6 @@ package by.easycar.config;
 
 import by.easycar.controllers.handlers.SecurityExceptionsHandler;
 import by.easycar.filters.JwtSecurityFilter;
-import by.easycar.model.administration.Admin;
 import by.easycar.service.security.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -55,15 +54,11 @@ public class SecurityConfig {
                 .requestMatchers("/swagger-ui.html").permitAll()
                 .requestMatchers(HttpMethod.POST, "/pay/**").permitAll()
                 .requestMatchers(HttpMethod.POST, "/user/register").permitAll()
+                .requestMatchers("/error/**").permitAll()
 
                 .requestMatchers(HttpMethod.GET, "/user").hasAnyAuthority("USER", "ADMIN")
                 .requestMatchers(HttpMethod.PUT, "/user/update").hasAuthority("USER")
-                .requestMatchers(HttpMethod.DELETE, "/user").hasAuthority("USER")
-
-                .requestMatchers(HttpMethod.POST, "/user/**").hasRole(Admin.ROLE.name())
-                .requestMatchers(HttpMethod.PUT, "/user/**").hasRole(Admin.ROLE.name())
-                .requestMatchers(HttpMethod.DELETE, "/user/**").hasRole(Admin.ROLE.name());
-
+                .requestMatchers(HttpMethod.DELETE, "/user").hasAuthority("USER");
         http.httpBasic();
 
         http.exceptionHandling().authenticationEntryPoint(securityExceptionsHandler);

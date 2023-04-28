@@ -1,6 +1,7 @@
 package by.easycar.controllers;
 
 import by.easycar.model.security.UserSecurity;
+import by.easycar.model.user.NewUserRequest;
 import by.easycar.model.user.UserInnerRequest;
 import by.easycar.model.user.UserRequest;
 import by.easycar.service.UserService;
@@ -20,8 +21,8 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/register")
-    private ResponseEntity<String> registerNewUser(@RequestBody UserRequest newUser, @RequestParam("password") String rawPassword) {
-        if (userService.saveNewUser(newUser, rawPassword)) {
+    private ResponseEntity<String> registerNewUser(@RequestBody NewUserRequest newUserRequest) {
+        if (userService.saveNewUser(newUserRequest.getUserRequest(), newUserRequest.getPassword())) {
             return new ResponseEntity<>("User was created.", HttpStatus.CREATED);
         }
         return new ResponseEntity<>(HttpStatus.CONFLICT);
