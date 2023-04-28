@@ -40,7 +40,7 @@ public class Advertisement {
     private Integer price;
     @Column(name = "ad_vin", nullable = false)
     private String VINNumber;
-    @Column(name = "ad_description", length = 1200)
+    @Column(name = "ad_description", length = 1200, nullable = false)
     private String description;
     @Column(name = "ad_region", nullable = false)
     private String region;

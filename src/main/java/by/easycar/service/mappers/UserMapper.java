@@ -1,4 +1,4 @@
-package by.easycar.service;
+package by.easycar.service.mappers;
 
 import by.easycar.model.user.UserForAd;
 import by.easycar.model.user.UserInnerRequest;
@@ -9,12 +9,12 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
-public class UsersMapperService {
+public class UserMapper {
 
     private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public UsersMapperService(PasswordEncoder passwordEncoder) {
+    public UserMapper(PasswordEncoder passwordEncoder) {
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -46,7 +46,7 @@ public class UsersMapperService {
 
     public UserForAd getUserForAdFromUserPrivate(UserPrivate userPrivate) {
         UserForAd userForAd = new UserForAd();
-        userForAd.setEmail(userForAd.getEmail());
+        userForAd.setEmail(userPrivate.getEmail());
         userForAd.setId(userPrivate.getId());
         userForAd.setName(userPrivate.getName());
         userForAd.setPhoneNumber(userPrivate.getPhoneNumber());

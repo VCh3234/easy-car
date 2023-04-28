@@ -15,8 +15,6 @@ public class ModerationService {
 
     private final ModerationRepository moderationRepository;
     private final AdminRepository adminRepository;
-    private final UserService userService;
-
     public Moderation getById(long id) {
         return moderationRepository.findById(id).orElseThrow();
     }

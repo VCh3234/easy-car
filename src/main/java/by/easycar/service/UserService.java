@@ -10,6 +10,7 @@ import by.easycar.model.user.UserPrivate;
 import by.easycar.model.user.UserRequest;
 import by.easycar.repository.UserForAdRepository;
 import by.easycar.repository.UserRepository;
+import by.easycar.service.mappers.UserMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -20,7 +21,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class UserService {
     private final UserRepository userRepository;
-    private final UsersMapperService usersMapperService;
+    private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
     private final UserForAdRepository userForAdRepository;
 
@@ -30,7 +31,7 @@ public class UserService {
 
     public UserInnerRequest getUserInner(Long id) {
         UserPrivate userPrivate = this.getById(id);
-        UserInnerRequest userInnerRequest = usersMapperService.getUserInnerFromUserPrivate(userPrivate);
+        UserInnerRequest userInnerRequest = userMapper.getUserInnerFromUserPrivate(userPrivate);
         return userInnerRequest;
     }
 
@@ -40,7 +41,7 @@ public class UserService {
     }
 
     public boolean saveNewUser(UserRequest newUser, String rawPassword) {
-        UserPrivate userPrivate = usersMapperService.getUserPrivateFromUserRequest(newUser, passwordEncoder.encode(rawPassword));
+        UserPrivate userPrivate = userMapper.getUserPrivateFromUserRequest(newUser, passwordEncoder.encode(rawPassword));
         return saveData(userPrivate);
     }
 
@@ -100,7 +101,7 @@ public class UserService {
     }
 
     public UserForAd getUserForAdFromUserPrivate(UserPrivate userPrivate) {
-        return usersMapperService.getUserForAdFromUserPrivate(userPrivate);
+        return userMapper.getUserForAdFromUserPrivate(userPrivate);
     }
 
     public boolean updatePassword(String password, Long id) {
