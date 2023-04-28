@@ -1,8 +1,8 @@
 package by.easycar.controllers;
 
-import by.easycar.model.user.UserInner;
+import by.easycar.model.security.UserSecurity;
+import by.easycar.model.user.UserInnerRequest;
 import by.easycar.model.user.UserRequest;
-import by.easycar.security.model.UserSecurity;
 import by.easycar.service.UserService;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
@@ -20,8 +20,8 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/register")
-    private ResponseEntity<String> registerNewUser(@RequestBody UserRequest newUser) {
-        if (userService.saveNewUser(newUser)) {
+    private ResponseEntity<String> registerNewUser(@RequestBody UserRequest newUser, @RequestParam("password") String rawPassword) {
+        if (userService.saveNewUser(newUser, rawPassword)) {
             return new ResponseEntity<>("User was created.", HttpStatus.CREATED);
         }
         return new ResponseEntity<>(HttpStatus.CONFLICT);
@@ -35,8 +35,16 @@ public class UserController {
         return new ResponseEntity<>(HttpStatus.CONFLICT);
     }
 
+    @PutMapping("/update-password")
+    private ResponseEntity<String> updatePasswordUser(@RequestParam String password, @AuthenticationPrincipal @Parameter(hidden = true) UserSecurity user) {
+        if (userService.updatePassword(password, user.getId())) {
+            return new ResponseEntity<>("Password was updated.", HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.CONFLICT);
+    }
+
     @GetMapping("")
-    private ResponseEntity<UserInner> getUserInnerById(@AuthenticationPrincipal @Parameter(hidden = true) UserSecurity user) {
+    private ResponseEntity<UserInnerRequest> getUserInnerById(@AuthenticationPrincipal @Parameter(hidden = true) UserSecurity user) {
         return new ResponseEntity<>(userService.getUserInner(user.getId()), HttpStatus.OK);
     }
 

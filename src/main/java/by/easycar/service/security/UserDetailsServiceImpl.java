@@ -1,8 +1,8 @@
-package by.easycar.security.service;
+package by.easycar.service.security;
 
+import by.easycar.model.security.UserSecurity;
 import by.easycar.model.user.UserPrivate;
 import by.easycar.repository.UserRepository;
-import by.easycar.security.model.UserSecurity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

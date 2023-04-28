@@ -1,7 +1,7 @@
-package by.easycar.security.service;
+package by.easycar.service.security;
 
 
-import by.easycar.exceptions.WrongPassword;
+import by.easycar.exceptions.security.WrongPasswordException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -25,7 +25,7 @@ public class SecurityService {
         if (passwordEncoder.matches(password, userDetails.getPassword())) {
             return true;
         } else {
-            throw new WrongPassword("Invalid data");
+            throw new WrongPasswordException("Invalid data");
         }
     }
 

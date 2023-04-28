@@ -1,6 +1,6 @@
 package by.easycar.model.administration;
 
-import by.easycar.model.security.Role;
+import by.easycar.model.Role;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -23,4 +23,6 @@ public class Admin {
     private Long id;
     @Column(name = "adm_name")
     private String name;
+    @Column(name = "adm_password")
+    private String password;
 }

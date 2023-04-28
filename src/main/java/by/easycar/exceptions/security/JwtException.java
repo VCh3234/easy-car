@@ -1,4 +1,4 @@
-package by.easycar.exceptions;
+package by.easycar.exceptions.security;
 
 public class JwtException extends RuntimeException {
     public JwtException(String message) {

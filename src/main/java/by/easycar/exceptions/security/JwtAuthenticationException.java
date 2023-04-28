@@ -1,4 +1,4 @@
-package by.easycar.exceptions;
+package by.easycar.exceptions.security;
 
 import org.springframework.security.core.AuthenticationException;
 

@@ -1,8 +1,8 @@
-package by.easycar.security;
+package by.easycar.controllers;
 
-import by.easycar.security.model.AuthRequest;
-import by.easycar.security.service.JwtAuthenticationService;
-import by.easycar.security.service.SecurityService;
+import by.easycar.model.security.AuthRequest;
+import by.easycar.service.security.JwtAuthenticationService;
+import by.easycar.service.security.SecurityService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;

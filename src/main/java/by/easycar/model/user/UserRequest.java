@@ -8,6 +8,4 @@ public class UserRequest {
     private String phoneNumber;
 
     private String email;
-
-    private String password;
 }

@@ -4,9 +4,11 @@ import by.easycar.exceptions.user.SaveUserDataException;
 import by.easycar.exceptions.user.UniqueEmailException;
 import by.easycar.exceptions.user.UniquePhoneNumberException;
 import by.easycar.exceptions.user.UserFindException;
-import by.easycar.model.user.UserInner;
+import by.easycar.model.user.UserForAd;
+import by.easycar.model.user.UserInnerRequest;
 import by.easycar.model.user.UserPrivate;
 import by.easycar.model.user.UserRequest;
+import by.easycar.repository.UserForAdRepository;
 import by.easycar.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,15 +22,16 @@ public class UserService {
     private final UserRepository userRepository;
     private final UsersMapperService usersMapperService;
     private final PasswordEncoder passwordEncoder;
+    private final UserForAdRepository userForAdRepository;
 
     public UserPrivate getById(long id) {
         return userRepository.findById(id).orElseThrow(() -> new UserFindException("Can`t find user with id: " + id));
     }
 
-    public UserInner getUserInner(Long id) {
+    public UserInnerRequest getUserInner(Long id) {
         UserPrivate userPrivate = this.getById(id);
-        UserInner userInner = usersMapperService.getUserInnerFromUserPrivate(userPrivate);
-        return userInner;
+        UserInnerRequest userInnerRequest = usersMapperService.getUserInnerFromUserPrivate(userPrivate);
+        return userInnerRequest;
     }
 
     public boolean deleteUserById(long id) {
@@ -36,28 +39,25 @@ public class UserService {
         return true;
     }
 
-    public boolean saveNewUser(UserRequest newUser) {
-        UserPrivate userPrivate = usersMapperService.getUserPrivateFromNewUserRequest(newUser);
+    public boolean saveNewUser(UserRequest newUser, String rawPassword) {
+        UserPrivate userPrivate = usersMapperService.getUserPrivateFromUserRequest(newUser, passwordEncoder.encode(rawPassword));
         return saveData(userPrivate);
     }
 
     public boolean updateUser(UserRequest userRequest, Long id) {
         UserPrivate userPrivate = this.getById(id);
-        if (userRequest.getPhoneNumber() != null && !userPrivate.getPhoneNumber().equals(userRequest.getPhoneNumber())) {
+        if (userRequest.getPhoneNumber() != null) {
             userPrivate.setPhoneNumber(userRequest.getPhoneNumber());
             userPrivate.setVerifiedByPhone(false);
         }
-        if (userRequest.getEmail() != null && !userPrivate.getEmail().equals(userRequest.getEmail())) {
+        if (userRequest.getEmail() != null) {
             userPrivate.setEmail(userRequest.getEmail());
             userPrivate.setVerifiedByEmail(false);
         }
         if (userRequest.getName() != null) {
             userPrivate.setName(userRequest.getName());
         }
-        if (userRequest.getPassword() != null) {
-            userPrivate.setPassword(passwordEncoder.encode(userRequest.getPassword()));
-        }
-        return saveData(userPrivate);
+        return this.saveData(userPrivate);
     }
 
     private boolean saveData(UserPrivate userPrivate) {
@@ -93,5 +93,19 @@ public class UserService {
             throw new UniquePhoneNumberException("User already exist with phone number:" + phoneNumber);
         }
         return true;
+    }
+
+    public UserForAd getUserForAdById(Long id) {
+        return userForAdRepository.findById(id).orElseThrow(() -> new UserFindException("Can`t find user with id: " + id));
+    }
+
+    public UserForAd getUserForAdFromUserPrivate(UserPrivate userPrivate) {
+        return usersMapperService.getUserForAdFromUserPrivate(userPrivate);
+    }
+
+    public boolean updatePassword(String password, Long id) {
+        UserPrivate userPrivate = this.getById(id);
+        userPrivate.setPassword(passwordEncoder.encode(password));
+        return this.saveData(userPrivate);
     }
 }

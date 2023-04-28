@@ -1,8 +1,8 @@
 package by.easycar.model.user;
 
+import by.easycar.model.Role;
 import by.easycar.model.advertisement.Advertisement;
 import by.easycar.model.payments.Payment;
-import by.easycar.model.security.Role;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;

@@ -1,4 +1,4 @@
-package by.easycar.security.model;
+package by.easycar.model.security;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

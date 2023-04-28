@@ -1,6 +1,6 @@
 package by.easycar.model.administration;
 
-import by.easycar.model.user.UserPrivate;
+import by.easycar.model.advertisement.Advertisement;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -35,6 +35,6 @@ public class Moderation {
     private Admin admin;
 
     @ManyToOne(optional = false)
-    @JoinColumn(name = "u_id", nullable = false)
-    private UserPrivate user;
+    @JoinColumn(name = "ad_id", nullable = false)
+    private Advertisement advertisement;
 }

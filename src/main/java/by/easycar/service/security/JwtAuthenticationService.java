@@ -1,6 +1,6 @@
-package by.easycar.security.service;
+package by.easycar.service.security;
 
-import by.easycar.exceptions.JwtAuthenticationException;
+import by.easycar.exceptions.security.JwtAuthenticationException;
 import io.jsonwebtoken.*;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;

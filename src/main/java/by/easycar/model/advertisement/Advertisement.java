@@ -1,6 +1,6 @@
 package by.easycar.model.advertisement;
 
-import by.easycar.model.user.UserPrivate;
+import by.easycar.model.user.UserForAd;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -9,8 +9,6 @@ import org.hibernate.annotations.DynamicUpdate;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Set;
 
 
 @NoArgsConstructor
@@ -34,30 +32,30 @@ public class Advertisement {
     private LocalDate creationDate;
     @Column(name = "ad_up_time", nullable = false)
     private LocalDateTime upTime;
+    @Column(name = "ad_moderated", nullable = false)
+    private boolean moderated = false;
     @Column(name = "ad_count_views", nullable = false)
-    private Integer viewsCount;
+    private Integer viewsCount = 0;
     @Column(name = "ad_price", nullable = false)
     private Integer price;
-    @Column(name = "ad_vin")
+    @Column(name = "ad_vin", nullable = false)
     private String VINNumber;
     @Column(name = "ad_description", length = 1200)
     private String description;
-    @Column(name = "ad_region")
+    @Column(name = "ad_region", nullable = false)
     private String region;
-    @Column(name = "ad_phone", nullable = false)
-    private String phone;
-    @Column(name = "ad_mileage")
+    @Column(name = "ad_mileage", nullable = false)
     private Integer mileage;
-    @Column(name = "ad_status", nullable = false)
-    private String status;
-    @Transient
-    private Vehicle vehicle = null; //TODO:
-    @ManyToOne
+    @Column(name = "ad_engine_capacity", nullable = false)
+    private Integer engineCapacity;
+    @Column(name = "ad_engine_type", nullable = false)
+    private String engineType;
+    @Column(name = "ad_transmission_type", nullable = false)
+    private String transmissionType;
+    @ManyToOne(optional = false, fetch = FetchType.EAGER)
+    @JoinColumn(name = "v_id", nullable = false)
+    private Vehicle vehicle;
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "u_id", nullable = false)
-    private UserPrivate user;
-    @ElementCollection
-    @CollectionTable(
-            name = "ad_images",
-            joinColumns = @JoinColumn(name = "`IMAGE_ID`")) //TODO:
-    private Set<Image> images = new HashSet<>();
+    private UserForAd user;
 }

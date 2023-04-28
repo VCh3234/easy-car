@@ -1,10 +1,10 @@
-package by.easycar.security.config;
+package by.easycar.config;
 
 
 import by.easycar.controllers.handlers.SecurityExceptionsHandler;
+import by.easycar.filters.JwtSecurityFilter;
 import by.easycar.model.administration.Admin;
-import by.easycar.security.JwtSecurityFilter;
-import by.easycar.security.service.UserDetailsServiceImpl;
+import by.easycar.service.security.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;

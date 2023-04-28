@@ -1,6 +1,6 @@
-package by.easycar.security;
+package by.easycar.filters;
 
-import by.easycar.security.service.JwtAuthenticationService;
+import by.easycar.service.security.JwtAuthenticationService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
