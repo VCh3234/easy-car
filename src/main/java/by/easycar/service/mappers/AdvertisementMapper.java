@@ -2,7 +2,9 @@ package by.easycar.service.mappers;
 
 import by.easycar.model.advertisement.Advertisement;
 import by.easycar.model.advertisement.AdvertisementRequest;
+import org.springframework.stereotype.Component;
 
+@Component
 public class AdvertisementMapper {
     public Advertisement getAdvertisementFromAdvertisementRequest(AdvertisementRequest advertisementRequest) {
         Advertisement advertisement = new Advertisement();

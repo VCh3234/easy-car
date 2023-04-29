@@ -1,6 +1,7 @@
 package by.easycar.model.payments;
 
 import by.easycar.model.user.UserPrivate;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -26,6 +27,7 @@ public class Payment {
     private Long id;
     @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.ALL})
     @JoinColumn(name = "p_user_id")
+    @JsonBackReference
     private UserPrivate user;
     @Column(name = "p_date_time")
     @CreationTimestamp

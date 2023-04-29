@@ -1,14 +1,16 @@
 package by.easycar.controllers;
 
+import by.easycar.model.payments.Payment;
+import by.easycar.model.security.UserSecurity;
 import by.easycar.service.PaymentService;
+import io.swagger.v3.oas.annotations.Parameter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -25,6 +27,12 @@ public class PaymentController {
     private ResponseEntity<String> deposit(@RequestBody String jwt) {
         paymentService.doPay(jwt);
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @GetMapping("/payments-of-user")
+    private ResponseEntity<List<Payment>> getPaymentsOfUser(@AuthenticationPrincipal @Parameter(hidden = true) UserSecurity userSecurity) {
+        List<Payment> payments = paymentService.getPaymentsOfUser(userSecurity.getId());
+        return new ResponseEntity<>(payments, HttpStatus.OK);
     }
 
     //For demonstration

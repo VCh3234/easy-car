@@ -25,7 +25,7 @@ public class UserController {
         if (userService.saveNewUser(newUserRequest.getUserRequest(), newUserRequest.getPassword())) {
             return new ResponseEntity<>("User was created.", HttpStatus.CREATED);
         }
-        return new ResponseEntity<>(HttpStatus.CONFLICT);
+        return new ResponseEntity<>("Something go wrong.", HttpStatus.CONFLICT);
     }
 
     @PutMapping("/update")
@@ -33,15 +33,16 @@ public class UserController {
         if (userService.updateUser(userRequest, user.getId())) {
             return new ResponseEntity<>("User was updated.", HttpStatus.OK);
         }
-        return new ResponseEntity<>(HttpStatus.CONFLICT);
+        return new ResponseEntity<>("Something go wrong.",HttpStatus.CONFLICT);
     }
 
     @PutMapping("/update-password")
-    private ResponseEntity<String> updatePasswordUser(@RequestParam String password, @AuthenticationPrincipal @Parameter(hidden = true) UserSecurity user) {
+    private ResponseEntity<String> updatePasswordUser(@RequestParam String password,
+                                                      @AuthenticationPrincipal @Parameter(hidden = true) UserSecurity user) {
         if (userService.updatePassword(password, user.getId())) {
             return new ResponseEntity<>("Password was updated.", HttpStatus.OK);
         }
-        return new ResponseEntity<>(HttpStatus.CONFLICT);
+        return new ResponseEntity<>("Something go wrong.",HttpStatus.CONFLICT);
     }
 
     @GetMapping("")

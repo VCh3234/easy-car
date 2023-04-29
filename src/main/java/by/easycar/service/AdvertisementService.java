@@ -9,6 +9,7 @@ import by.easycar.model.security.UserSecurity;
 import by.easycar.model.user.UserForAd;
 import by.easycar.model.user.UserPrivate;
 import by.easycar.repository.AdvertisementRepository;
+import by.easycar.repository.VehicleRepository;
 import by.easycar.service.mappers.AdvertisementMapper;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +24,7 @@ import java.util.Set;
 public class AdvertisementService {
 
     private final AdvertisementRepository advertisementRepository;
+    private final VehicleRepository vehicleRepository;
     private final UserService userService;
     private final AdvertisementMapper advertisementMapper;
 
@@ -40,8 +42,8 @@ public class AdvertisementService {
         if (userPrivate.isVerifiedByEmail() || userPrivate.isVerifiedByPhone()) {
             Advertisement advertisement = advertisementMapper.getAdvertisementFromAdvertisementRequest(advertisementRequest);
             UserForAd userForAd = userService.getUserForAdFromUserPrivate(userPrivate);
-            userPrivate.getAdvertisements().add(advertisement);
             advertisement.setUser(userForAd);
+            vehicleRepository.save(advertisement.getVehicle());
             advertisementRepository.save(advertisement);
         } else {
             throw new VerifyException("User doesn't verified");
@@ -57,6 +59,7 @@ public class AdvertisementService {
             throw new WrongUserException("User id doesn't match.");
         } else {
             Advertisement updatedAdvertisement = advertisementMapper.setUpdates(oldAdvertisement, advertisementRequest);
+            vehicleRepository.save(updatedAdvertisement.getVehicle());
             advertisementRepository.save(updatedAdvertisement);
         }
     }
@@ -77,7 +80,7 @@ public class AdvertisementService {
         return advertisements;
     }
 
-    public Advertisement getById(Long id) {
+    public Advertisement getInnerAdvertisementById(Long id) {
         return advertisementRepository.findById(id).orElseThrow(() -> new FindAdvertisementException("Can`t find advertisement with id: " + id));
     }
 

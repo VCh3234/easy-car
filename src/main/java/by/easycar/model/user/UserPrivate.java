@@ -3,6 +3,7 @@ package by.easycar.model.user;
 import by.easycar.model.Role;
 import by.easycar.model.advertisement.Advertisement;
 import by.easycar.model.payments.Payment;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -59,14 +60,16 @@ public class UserPrivate {
     @Column(name = "u_phone_verify")
     private boolean verifiedByPhone = false;
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @JsonManagedReference
     private Set<Advertisement> advertisements = new HashSet<>();
 
     @OneToMany(mappedBy = "user", orphanRemoval = true, fetch = FetchType.LAZY)
+    @JsonManagedReference
     private Set<Payment> payments = new HashSet<>();
     @Column(name = "u_ups")
     private Integer ups = 0;
 
     public enum UserStatus {
-        ACTIVE, BANNED,
+        ACTIVE, BANNED
     }
 }

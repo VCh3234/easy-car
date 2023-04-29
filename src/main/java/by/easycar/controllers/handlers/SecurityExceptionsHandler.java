@@ -24,17 +24,21 @@ public class SecurityExceptionsHandler implements AuthenticationEntryPoint, Acce
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException)
             throws IOException, ServletException {
+        response.setStatus(401);
         resolver.resolveException(request, response, null, authException);
     }
 
     @Override
     public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException)
             throws IOException, ServletException {
+        response.setStatus(403);
         resolver.resolveException(request, response, null, accessDeniedException);
     }
 
     @Override
-    public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
+    public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception)
+            throws IOException, ServletException {
+        response.setStatus(401);
         resolver.resolveException(request, response, null, exception);
     }
 }

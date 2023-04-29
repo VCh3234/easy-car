@@ -23,7 +23,7 @@ public class AdvertisementController {
     private final AdvertisementService advertisementService;
 
     @GetMapping("/public")
-    private ResponseEntity<Object> getPublicAdvertisement(@RequestParam Long id) {
+    private ResponseEntity<Object> getPublicAdvertisement(@RequestParam(required = false) Long id) {
         if (id == null) {
             List<Advertisement> allAdvertisements = advertisementService.getAllModeratedAdvertisement();
             return new ResponseEntity<>(allAdvertisements, HttpStatus.OK);
@@ -34,12 +34,13 @@ public class AdvertisementController {
     }
 
     @GetMapping("/of-user")
-    private ResponseEntity<Object> getPrivateAdvertisement(@RequestParam("id") Long id, @AuthenticationPrincipal @Parameter(hidden = true) UserSecurity userSecurity) {
+    private ResponseEntity<Object> getPrivateAdvertisement(@RequestParam(required = false) Long id,
+                                                           @AuthenticationPrincipal @Parameter(hidden = true) UserSecurity userSecurity) {
         if (id == null) {
             Set<Advertisement> advertisements = advertisementService.getAllOfUser(userSecurity.getId());
             return ResponseEntity.ok(advertisements);
         } else {
-            Advertisement advertisement = advertisementService.getById(id);
+            Advertisement advertisement = advertisementService.getInnerAdvertisementById(id);
             return new ResponseEntity<>(advertisement, HttpStatus.OK);
         }
     }
@@ -61,8 +62,9 @@ public class AdvertisementController {
         return new ResponseEntity<>("Advertisement was updated.", HttpStatus.OK);
     }
 
-    @DeleteMapping("/delete")
-    private ResponseEntity<String> updateAdvertisement(@RequestParam Long adId, @AuthenticationPrincipal @Parameter(hidden = true) UserSecurity user) {
+    @DeleteMapping("/delete/{adId}")
+    private ResponseEntity<String> updateAdvertisement(@PathVariable Long adId,
+                                                       @AuthenticationPrincipal @Parameter(hidden = true) UserSecurity user) {
         advertisementService.delete(adId, user);
         return new ResponseEntity<>("Was deleted.", HttpStatus.OK);
     }

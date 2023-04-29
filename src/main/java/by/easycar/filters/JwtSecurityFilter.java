@@ -1,10 +1,7 @@
 package by.easycar.filters;
 
 import by.easycar.service.security.JwtAuthenticationService;
-import jakarta.servlet.FilterChain;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.ServletRequest;
-import jakarta.servlet.ServletResponse;
+import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,13 +9,12 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
-import org.springframework.web.filter.GenericFilterBean;
 
 import java.io.IOException;
 import java.io.PrintWriter;
 
 @Component
-public class JwtSecurityFilter extends GenericFilterBean {
+public class JwtSecurityFilter implements Filter {
     private final static String HEADER = "Authorization";
     private final JwtAuthenticationService jwtAuthenticationService;
 
@@ -37,8 +33,6 @@ public class JwtSecurityFilter extends GenericFilterBean {
             filterChain.doFilter(servletRequest, servletResponse);
             return;
         }
-
-
         try {
             if (jwtAuthenticationService.isValidToken(token)) {
                 Authentication authentication = jwtAuthenticationService.getAuthentication(token);

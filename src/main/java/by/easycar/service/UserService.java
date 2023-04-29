@@ -47,18 +47,29 @@ public class UserService {
 
     public boolean updateUser(UserRequest userRequest, Long id) {
         UserPrivate userPrivate = this.getById(id);
+        if(userRequest == null) {
+            throw new SaveUserDataException("UserRequest is null.");
+        }
+        boolean isUpdated = false;
         if (userRequest.getPhoneNumber() != null) {
             userPrivate.setPhoneNumber(userRequest.getPhoneNumber());
             userPrivate.setVerifiedByPhone(false);
+            isUpdated = true;
         }
         if (userRequest.getEmail() != null) {
             userPrivate.setEmail(userRequest.getEmail());
             userPrivate.setVerifiedByEmail(false);
+            isUpdated = true;
         }
         if (userRequest.getName() != null) {
             userPrivate.setName(userRequest.getName());
+            isUpdated = true;
         }
-        return this.saveData(userPrivate);
+        if (isUpdated) {
+            return this.saveData(userPrivate);
+        } else {
+            throw new SaveUserDataException("Nothing to update.");
+        }
     }
 
     private boolean saveData(UserPrivate userPrivate) {
@@ -71,9 +82,9 @@ public class UserService {
             } else if (message.contains("uk_phone")) {
                 throw new UniquePhoneNumberException("User already exists with phone: " + userPrivate.getPhoneNumber());
             } else if (message.contains("u_email")) {
-                throw new SaveUserDataException("Email must be not null");
+                throw new SaveUserDataException("Email must be not null.");
             } else if (message.contains("u_phone")) {
-                throw new SaveUserDataException("Phone must be not null");
+                throw new SaveUserDataException("Phone must be not null.");
             }
             return false;
         }
@@ -108,5 +119,17 @@ public class UserService {
         UserPrivate userPrivate = this.getById(id);
         userPrivate.setPassword(passwordEncoder.encode(password));
         return this.saveData(userPrivate);
+    }
+
+    public void setVerifiedByPhone(Long id) {
+        UserPrivate userPrivate = this.getById(id);
+        userPrivate.setVerifiedByPhone(true);
+        userRepository.save(userPrivate);
+    }
+
+    public void setVerifiedByEmail(Long id) {
+        UserPrivate userPrivate = this.getById(id);
+        userPrivate.setVerifiedByEmail(true);
+        userRepository.save(userPrivate);
     }
 }

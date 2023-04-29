@@ -31,7 +31,7 @@ public class Advertisement {
     @CreationTimestamp
     private LocalDate creationDate;
     @Column(name = "ad_up_time", nullable = false)
-    private LocalDateTime upTime;
+    private LocalDateTime upTime = LocalDateTime.now();
     @Column(name = "ad_moderated", nullable = false)
     private boolean moderated = false;
     @Column(name = "ad_count_views", nullable = false)
@@ -55,7 +55,7 @@ public class Advertisement {
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     @JoinColumn(name = "v_id", nullable = false)
     private Vehicle vehicle;
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @ManyToOne(optional = false, fetch = FetchType.EAGER)
     @JoinColumn(name = "u_id", nullable = false)
     private UserForAd user;
 }

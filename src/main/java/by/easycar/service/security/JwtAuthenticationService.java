@@ -49,7 +49,7 @@ public class JwtAuthenticationService {
             Jws<Claims> claimsJws = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
             return claimsJws.getBody().getExpiration().after(new Date());
         } catch (JwtException | IllegalArgumentException e) {
-            throw new JwtAuthenticationException("JWT token is invalid");
+            throw new JwtAuthenticationException("JWT token is invalid - time is expired.");
         }
     }
 

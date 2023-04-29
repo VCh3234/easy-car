@@ -5,6 +5,7 @@ import by.easycar.controllers.handlers.SecurityExceptionsHandler;
 import by.easycar.filters.JwtSecurityFilter;
 import by.easycar.service.security.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -45,19 +46,25 @@ public class SecurityConfig {
         http.userDetailsService(userDetailsService);
         return http.build();
     }
-
-
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
+    @Bean
+    public FilterRegistrationBean filterRegistrationBean() {
+        FilterRegistrationBean registrationBean = new FilterRegistrationBean();
+        registrationBean.setFilter(jwtSecurityFilter);
+        registrationBean.setEnabled(false);
+        return registrationBean;
+    }
     private void setAllMatchers(HttpSecurity http) throws Exception {
         this.setMatchersForUserController(http);
         this.setMatchersForOperationalEndpoints(http);
         this.setMatchersForAuthenticationController(http);
         this.setMatchersForPaymentController(http);
         this.setMatchersForAdvertisementController(http);
+        this.setMatchersForVerifyController(http);
     }
 
     private void setMatchersForUserController(HttpSecurity http) throws Exception {
@@ -88,7 +95,8 @@ public class SecurityConfig {
 
     private void setMatchersForPaymentController(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests()
-                .requestMatchers(HttpMethod.POST, "/pay/**").permitAll();
+                .requestMatchers(HttpMethod.POST, "/pay/**").permitAll()
+                .requestMatchers( "/pay/**").permitAll();
     }
 
     private void setMatchersForAdvertisementController(HttpSecurity http) throws Exception {
@@ -96,8 +104,14 @@ public class SecurityConfig {
                 .requestMatchers("/ad/public").permitAll()
                 .requestMatchers("/ad").permitAll()
                 .requestMatchers("/ad/of-user").hasAuthority("USER")
-                .requestMatchers(HttpMethod.PUT, "/ad/update").hasAuthority("USER")
+                .requestMatchers(HttpMethod.PUT, "/ad/update/**").hasAuthority("USER")
                 .requestMatchers(HttpMethod.POST, "/ad/create").hasAuthority("USER")
-                .requestMatchers(HttpMethod.DELETE, "/ad/delete").hasAnyAuthority("USER");
+                .requestMatchers(HttpMethod.DELETE, "/ad/delete/**").hasAnyAuthority("USER");
+    }
+
+    private void setMatchersForVerifyController(HttpSecurity http) throws Exception {
+        http.authorizeHttpRequests()
+                .requestMatchers(HttpMethod.POST,"/verify/**").hasAuthority("USER")
+                .requestMatchers(HttpMethod.PUT,"/verify/**").hasAuthority("USER");
     }
 }

@@ -1,6 +1,8 @@
 package by.easycar.service.verifications;
 
+import by.easycar.model.user.UserPrivate;
+
 @SuppressWarnings("SameReturnValue")
 public interface VerificationService {
-    boolean verify(Long id);
+    void sendMessage(UserPrivate userPrivate, String code);
 }

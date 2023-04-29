@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static java.util.concurrent.TimeUnit.MINUTES;
@@ -46,36 +47,37 @@ public class PaymentService {
             throw new JwtException("Invalid JWT token: " + e.getMessage());
         }
         Integer ups = operationMap.entrySet().stream()
-                .filter((x) ->x.getKey().equals(paymentRequest.getOperationName()))
-                .findFirst().orElseThrow(()-> new WrongOperationNameException("Wrong operation name")).getValue();
+                .filter((x) -> x.getKey().equals(paymentRequest.getOperationName()))
+                .findFirst()
+                .orElseThrow(() -> new WrongOperationNameException("Wrong operation name"))
+                .getValue();
         UserPrivate user = userService.getById(paymentRequest.getUserId());
         Payment payment = PaymentMapper.getPaymentFromPaymentRequest(paymentRequest, user);
         Integer currentCountOfUps = user.getUps();
         user.setUps(currentCountOfUps + ups);
-
         paymentRepository.save(payment);
     }
 
     public String getToken(Map<String, String> paymentRequest) {
         Date currentDate = new Date();
-        String token = Jwts.builder()
-                .setClaims(paymentRequest)
-                .setIssuedAt(currentDate)
-                .setExpiration(new Date(currentDate.getTime() + (MINUTES.toMillis(minutesOfExpire))))
-                .signWith(SignatureAlgorithm.HS256, signingKey)
-                .compact();
+        String token = Jwts.builder().setClaims(paymentRequest).setIssuedAt(currentDate).setExpiration(new Date(currentDate.getTime() + (MINUTES.toMillis(minutesOfExpire)))).signWith(SignatureAlgorithm.HS256, signingKey).compact();
         return token;
     }
 
     public PaymentRequest getPaymentRequestFromJwtToken(String token) {
         Claims map = Jwts.parserBuilder().setSigningKey(signingKey).build().parseClaimsJws(token).getBody();
-
         PaymentRequest paymentRequest = new PaymentRequest();
         paymentRequest.setBankName((String) map.get("bankName"));
         paymentRequest.setUserId(Long.parseLong((String) map.get("userId")));
         paymentRequest.setOperationName((String) map.get("operationName"));
         paymentRequest.setTransactionNumber((String) map.get("transactionNumber"));
         return paymentRequest;
+    }
+
+    public List<Payment> getPaymentsOfUser(Long id) {
+        UserPrivate userPrivate = new UserPrivate();
+        userPrivate.setId(id);
+        return paymentRepository.findByUser(userPrivate);
     }
 }
 

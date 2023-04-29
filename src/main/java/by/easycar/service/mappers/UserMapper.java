@@ -30,8 +30,6 @@ public class UserMapper {
         userInnerRequest.setUps(userPrivate.getUps());
         userInnerRequest.setVerifiedByPhone(userPrivate.isVerifiedByPhone());
         userInnerRequest.setVerifiedByEmail(userPrivate.isVerifiedByPhone());
-        userInnerRequest.setPayments(userPrivate.getPayments());
-        userInnerRequest.setAdvertisements(userPrivate.getAdvertisements());
         return userInnerRequest;
     }
 
