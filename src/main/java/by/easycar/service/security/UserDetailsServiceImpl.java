@@ -3,6 +3,7 @@ package by.easycar.service.security;
 import by.easycar.model.security.UserSecurity;
 import by.easycar.model.user.UserPrivate;
 import by.easycar.repository.UserRepository;
+import by.easycar.service.security.admin.AdminDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -17,19 +18,25 @@ import java.util.List;
 public class UserDetailsServiceImpl implements UserDetailsService {
 
     private final UserRepository userRepository;
+    private final AdminDetailsService adminDetailsService;
 
     @Autowired
-    public UserDetailsServiceImpl(UserRepository userRepository) {
+    public UserDetailsServiceImpl(UserRepository userRepository, AdminDetailsService adminDetailsService) {
         this.userRepository = userRepository;
+        this.adminDetailsService = adminDetailsService;
     }
 
     @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        UserPrivate userPrivate = userRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("User doesn't exist with email: " + email));
-        List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
-        grantedAuthorities.add(() -> "USER");
-        grantedAuthorities.add(() -> "id_" + userPrivate.getId());
-        UserSecurity user =  new UserSecurity(userPrivate.getId(), userPrivate.getPassword(), userPrivate.getEmail(), grantedAuthorities);
-        return user;
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        UserDetails userDetails;
+        try {
+            UserPrivate userPrivate = userRepository.findByEmail(username).orElseThrow(() -> new UsernameNotFoundException("User doesn't exist with username: " + username));
+            List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
+            grantedAuthorities.add(() -> "USER");
+            userDetails = new UserSecurity(userPrivate.getId(), userPrivate.getPassword(), userPrivate.getEmail(), grantedAuthorities);
+        } catch (UsernameNotFoundException e) {
+            userDetails = adminDetailsService.loadUserByUsername(username);
+        }
+        return userDetails;
     }
 }

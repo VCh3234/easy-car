@@ -4,6 +4,7 @@ package by.easycar.config;
 import by.easycar.controllers.handlers.SecurityExceptionsHandler;
 import by.easycar.filters.JwtSecurityFilter;
 import by.easycar.service.security.UserDetailsServiceImpl;
+import jakarta.servlet.Filter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
@@ -36,7 +37,6 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf().disable();
-        http.httpBasic();
         this.setAllMatchers(http);
         http.exceptionHandling().authenticationEntryPoint(securityExceptionsHandler);
         http.exceptionHandling().accessDeniedHandler(securityExceptionsHandler);
@@ -52,8 +52,8 @@ public class SecurityConfig {
     }
 
     @Bean
-    public FilterRegistrationBean filterRegistrationBean() {
-        FilterRegistrationBean registrationBean = new FilterRegistrationBean();
+    public FilterRegistrationBean<Filter> filterRegistrationBean() {
+        FilterRegistrationBean<Filter> registrationBean = new FilterRegistrationBean<>();
         registrationBean.setFilter(jwtSecurityFilter);
         registrationBean.setEnabled(false);
         return registrationBean;
@@ -65,6 +65,7 @@ public class SecurityConfig {
         this.setMatchersForPaymentController(http);
         this.setMatchersForAdvertisementController(http);
         this.setMatchersForVerifyController(http);
+        this.setMatchersForAdminController(http);
     }
 
     private void setMatchersForUserController(HttpSecurity http) throws Exception {
@@ -90,6 +91,7 @@ public class SecurityConfig {
     private void setMatchersForAuthenticationController(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests()
                 .requestMatchers("/auth/login").permitAll()
+                .requestMatchers("/auth/admin/login").permitAll()
                 .requestMatchers("/auth/logout").permitAll();
     }
 
@@ -113,5 +115,11 @@ public class SecurityConfig {
         http.authorizeHttpRequests()
                 .requestMatchers(HttpMethod.POST,"/verify/**").hasAuthority("USER")
                 .requestMatchers(HttpMethod.PUT,"/verify/**").hasAuthority("USER");
+    }
+
+    private void setMatchersForAdminController(HttpSecurity http) throws Exception {
+        http.authorizeHttpRequests()
+                .requestMatchers("/admin/**").hasAuthority("ADMIN")
+                .requestMatchers(HttpMethod.PUT,"/admin/**").hasAuthority("ADMIN");
     }
 }

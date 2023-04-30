@@ -87,4 +87,8 @@ public class AdvertisementService {
     public Advertisement getPublicById(Long id) {
         return advertisementRepository.findByIdAndModerated(id, true).orElseThrow(() -> new FindAdvertisementException("Can`t find advertisement with id: " + id + ", or ad isn't moderated."));
     }
+
+    public boolean accept(Long adId) {
+        return advertisementRepository.acceptModeration(adId) == 1;
+    }
 }

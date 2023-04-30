@@ -1,23 +1,23 @@
-package by.easycar.service.security;
+package by.easycar.service.security.admin;
 
 import by.easycar.exceptions.security.JwtAuthenticationException;
+import by.easycar.model.administration.Admin;
+import by.easycar.service.security.JwtService;
 import io.jsonwebtoken.*;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.util.Base64;
 import java.util.Date;
 
 @Service
-public class JwtAuthenticationService implements JwtService {
+public class AdminJwtAuthenticationService implements JwtService {
 
-    private final UserDetailsServiceImpl userDetailsServiceImpl;
+    private final AdminDetailsService adminDetailsService;
     @Value("${jwt.key}")
     private String key;
     @Value("${jwt.expire.time.minutes}")
@@ -29,16 +29,16 @@ public class JwtAuthenticationService implements JwtService {
     }
 
     @Autowired
-    public JwtAuthenticationService(@Qualifier("userDetailsServiceImpl") UserDetailsServiceImpl userDetailsServiceImpl) {
-        this.userDetailsServiceImpl = userDetailsServiceImpl;
+    public AdminJwtAuthenticationService(AdminDetailsService adminDetailsService) {
+        this.adminDetailsService = adminDetailsService;
     }
     @Override
-    public String getToken(String email) {
+    public String getToken(String name) {
         Date currentDate = new Date();
         return Jwts.builder()
-                .setSubject(email)
+                .setSubject(name)
                 .setIssuedAt(currentDate)
-                .setExpiration(new Date(currentDate.getTime() + (TIME_OF_EXPIRATION*60_000)))
+                .setExpiration(new Date(currentDate.getTime() + (TIME_OF_EXPIRATION * 60_000)))
                 .signWith(SignatureAlgorithm.HS256, key)
                 .compact();
     }
@@ -51,13 +51,13 @@ public class JwtAuthenticationService implements JwtService {
             throw new JwtAuthenticationException("JWT token is invalid - time is expired.");
         }
     }
-
-    private String getEmailFromToken(String token) {
-        return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody().getSubject();
-    }
     @Override
     public Authentication getAuthentication(String token) {
-        UserDetails userDetails = userDetailsServiceImpl.loadUserByUsername(getEmailFromToken(token));
-        return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
+        Admin admin = adminDetailsService.loadUserByUsername(getStringFromToken(token));
+        return new UsernamePasswordAuthenticationToken(admin, "", admin.getAuthorities());
+    }
+
+    private String getStringFromToken(String token) {
+        return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody().getSubject();
     }
 }
