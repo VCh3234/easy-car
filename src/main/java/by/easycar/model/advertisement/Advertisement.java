@@ -58,4 +58,6 @@ public class Advertisement {
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     @JoinColumn(name = "u_id", nullable = false)
     private UserForAd user;
+    @Embedded
+    private ImageData imageData;
 }

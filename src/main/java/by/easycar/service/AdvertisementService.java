@@ -91,4 +91,8 @@ public class AdvertisementService {
     public boolean accept(Long adId) {
         return advertisementRepository.acceptModeration(adId) == 1;
     }
+
+    public void saveData(Advertisement advertisement) {
+        advertisementRepository.save(advertisement);
+    }
 }

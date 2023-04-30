@@ -3,6 +3,8 @@ package by.easycar.config;
 
 import by.easycar.controllers.handlers.SecurityExceptionsHandler;
 import by.easycar.filters.JwtSecurityFilter;
+import by.easycar.model.administration.Admin;
+import by.easycar.model.user.UserPrivate;
 import by.easycar.service.security.UserDetailsServiceImpl;
 import jakarta.servlet.Filter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,15 +68,16 @@ public class SecurityConfig {
         this.setMatchersForAdvertisementController(http);
         this.setMatchersForVerifyController(http);
         this.setMatchersForAdminController(http);
+        this.setMatchersForImageController(http);
     }
 
     private void setMatchersForUserController(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests()
                 .requestMatchers(HttpMethod.POST, "/user/register").permitAll()
-                .requestMatchers(HttpMethod.DELETE, "/user").hasAuthority("USER")
-                .requestMatchers(HttpMethod.PUT, "/user/update").hasAuthority("USER")
-                .requestMatchers(HttpMethod.PUT, "/user/update-password").hasAuthority("USER")
-                .requestMatchers(HttpMethod.GET, "/user").hasAnyAuthority("USER");
+                .requestMatchers(HttpMethod.DELETE, "/user").hasAuthority(UserPrivate.ROLE.name())
+                .requestMatchers(HttpMethod.PUT, "/user/update").hasAuthority(UserPrivate.ROLE.name())
+                .requestMatchers(HttpMethod.PUT, "/user/update-password").hasAuthority(UserPrivate.ROLE.name())
+                .requestMatchers(HttpMethod.GET, "/user").hasAnyAuthority(UserPrivate.ROLE.name());
     }
 
     private void setMatchersForOperationalEndpoints(HttpSecurity http) throws Exception {
@@ -105,21 +108,28 @@ public class SecurityConfig {
         http.authorizeHttpRequests()
                 .requestMatchers("/ad/public").permitAll()
                 .requestMatchers("/ad").permitAll()
-                .requestMatchers("/ad/of-user").hasAuthority("USER")
-                .requestMatchers(HttpMethod.PUT, "/ad/update/**").hasAuthority("USER")
-                .requestMatchers(HttpMethod.POST, "/ad/create").hasAuthority("USER")
-                .requestMatchers(HttpMethod.DELETE, "/ad/delete/**").hasAnyAuthority("USER");
+                .requestMatchers("/ad/of-user").hasAuthority(UserPrivate.ROLE.name())
+                .requestMatchers(HttpMethod.PUT, "/ad/update/**").hasAuthority(UserPrivate.ROLE.name())
+                .requestMatchers(HttpMethod.POST, "/ad/create").hasAuthority(UserPrivate.ROLE.name())
+                .requestMatchers(HttpMethod.DELETE, "/ad/delete/**").hasAnyAuthority(UserPrivate.ROLE.name());
     }
 
     private void setMatchersForVerifyController(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests()
-                .requestMatchers(HttpMethod.POST,"/verify/**").hasAuthority("USER")
-                .requestMatchers(HttpMethod.PUT,"/verify/**").hasAuthority("USER");
+                .requestMatchers(HttpMethod.POST,"/verify/**").hasAuthority(UserPrivate.ROLE.name())
+                .requestMatchers(HttpMethod.PUT,"/verify/**").hasAuthority(UserPrivate.ROLE.name());
     }
 
     private void setMatchersForAdminController(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests()
-                .requestMatchers("/admin/**").hasAuthority("ADMIN")
-                .requestMatchers(HttpMethod.PUT,"/admin/**").hasAuthority("ADMIN");
+                .requestMatchers("/admin/**").hasAuthority(Admin.ROLE.name())
+                .requestMatchers(HttpMethod.PUT,"/admin/**").hasAuthority(Admin.ROLE.name());
+    }
+
+    private void setMatchersForImageController(HttpSecurity http) throws Exception {
+        http.authorizeHttpRequests()
+                .requestMatchers("/images/**").hasAuthority(UserPrivate.ROLE.name())
+                .requestMatchers(HttpMethod.POST,"/images/**").hasAuthority(UserPrivate.ROLE.name())
+                .requestMatchers(HttpMethod.PUT,"/images/**").hasAuthority(UserPrivate.ROLE.name());
     }
 }
