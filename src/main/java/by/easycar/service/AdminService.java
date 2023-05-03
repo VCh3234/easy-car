@@ -5,7 +5,6 @@ import by.easycar.model.administration.Moderation;
 import by.easycar.model.advertisement.Advertisement;
 import by.easycar.repository.ModerationRepository;
 import jakarta.transaction.Transactional;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -13,11 +12,18 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class AdminService {
 
     private final AdvertisementService advertisementService;
+
     private final ModerationRepository moderationRepository;
+
+    @Autowired
+    public AdminService(AdvertisementService advertisementService, ModerationRepository moderationRepository) {
+        this.advertisementService = advertisementService;
+        this.moderationRepository = moderationRepository;
+    }
+
     public List<Advertisement> getAllAdvertisementsNotModerated() {
         return advertisementService.getAllNotModeratedAdvertisement();
     }

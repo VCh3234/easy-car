@@ -1,6 +1,5 @@
 package by.easycar.service.security;
 
-
 import by.easycar.exceptions.security.WrongPasswordException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -9,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class SecurityService {
+
     private final UserDetailsServiceImpl userDetailsServiceImpl;
 
     private final PasswordEncoder passwordEncoder;
@@ -27,5 +27,4 @@ public class SecurityService {
             throw new WrongPasswordException("Wrong email or password.");
         }
     }
-
 }

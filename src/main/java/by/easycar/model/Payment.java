@@ -39,17 +39,22 @@ public class Payment {
     @SequenceGenerator(catalog = "sequences", name = "p_sequence", sequenceName = "p_sequence_id", initialValue = 1, allocationSize = 1)
     @Column(name = "p_id")
     private Long id;
+
     @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.ALL})
     @JoinColumn(name = "p_user_id")
     @JsonBackReference
     private UserPrivate user;
+
     @Column(name = "p_date_time")
     @CreationTimestamp
     private LocalDateTime payTime;
+
     @Column(name = "p_bank_name")
     private String bankName;
+
     @Column(name = "p_operation_name")
     private String operationName;
+
     @Column(name = "p_transaction_number")
     private String transactionNumber;
 }

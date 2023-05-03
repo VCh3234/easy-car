@@ -54,6 +54,7 @@ public class UserPrivate {
     @Column(name = "u_update_time", nullable = false)
     @UpdateTimestamp
     private LocalDateTime updateTime;
+
     @Column(name = "u_name")
     private String name;
 
@@ -72,8 +73,10 @@ public class UserPrivate {
 
     @Column(name = "u_email_verify")
     private boolean verifiedByEmail = false;
+
     @Column(name = "u_phone_verify")
     private boolean verifiedByPhone = false;
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @JsonManagedReference
     private Set<Advertisement> advertisements = new HashSet<>();
@@ -81,6 +84,7 @@ public class UserPrivate {
     @OneToMany(mappedBy = "user", orphanRemoval = true, fetch = FetchType.LAZY)
     @JsonManagedReference
     private Set<Payment> payments = new HashSet<>();
+
     @Column(name = "u_ups")
     private Integer ups = 0;
 

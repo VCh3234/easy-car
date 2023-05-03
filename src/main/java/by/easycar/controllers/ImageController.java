@@ -3,6 +3,7 @@ package by.easycar.controllers;
 import by.easycar.model.user.UserSecurity;
 import by.easycar.service.ImageService;
 import io.swagger.v3.oas.annotations.Parameter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +26,7 @@ public class ImageController {
 
     private final ImageService imageService;
 
+    @Autowired
     public ImageController(ImageService imageService) {
         this.imageService = imageService;
     }
@@ -63,21 +65,18 @@ public class ImageController {
             imageService.deleteImage(oldImage, adId, user.getId());
             return ResponseEntity.noContent().build();
         } catch (IOException e) {
-            e.printStackTrace();
-            return new ResponseEntity<>(e.getMessage() + e.getMessage(), HttpStatus.CONFLICT);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
         }
     }
 
     @GetMapping("/{adId}")
-    public ResponseEntity<byte[]> getImage(@PathVariable String adId,
-                                           @RequestParam String uuid) {
+    public ResponseEntity<byte[]> getImage(@PathVariable String adId, @RequestParam String uuid) {
         try {
             byte[] image = imageService.getImage(adId, uuid);
             HttpHeaders headers = new HttpHeaders();
             headers.add(HttpHeaders.CONTENT_TYPE, "image/jpeg ");
-            return new ResponseEntity<>(image,headers, HttpStatus.OK);
+            return new ResponseEntity<>(image, headers, HttpStatus.OK);
         } catch (IOException e) {
-            e.printStackTrace();
             return ResponseEntity.badRequest().build();
         }
     }

@@ -17,6 +17,7 @@ import java.util.UUID;
 public class ImageService {
 
     private final static Path ROOT_PATH = Paths.get("images");
+
     private final AdvertisementService advertisementService;
 
     static {

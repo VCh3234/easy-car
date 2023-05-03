@@ -3,7 +3,11 @@ package by.easycar.service.security.admin;
 import by.easycar.exceptions.security.JwtAuthenticationException;
 import by.easycar.model.administration.Admin;
 import by.easycar.service.security.JwtService;
-import io.jsonwebtoken.*;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
+import io.jsonwebtoken.JwtException;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -18,8 +22,10 @@ import java.util.Date;
 public class AdminJwtAuthenticationService implements JwtService {
 
     private final AdminDetailsService adminDetailsService;
+
     @Value("${jwt.key}")
     private String key;
+
     @Value("${jwt.expire.time.minutes}")
     private long TIME_OF_EXPIRATION;
 
@@ -32,6 +38,7 @@ public class AdminJwtAuthenticationService implements JwtService {
     public AdminJwtAuthenticationService(AdminDetailsService adminDetailsService) {
         this.adminDetailsService = adminDetailsService;
     }
+
     @Override
     public String getToken(String name) {
         Date currentDate = new Date();
@@ -42,6 +49,7 @@ public class AdminJwtAuthenticationService implements JwtService {
                 .signWith(SignatureAlgorithm.HS256, key)
                 .compact();
     }
+
     @Override
     public boolean isValidToken(String token) {
         try {
@@ -51,6 +59,7 @@ public class AdminJwtAuthenticationService implements JwtService {
             throw new JwtAuthenticationException("JWT token is invalid - time is expired.");
         }
     }
+
     @Override
     public Authentication getAuthentication(String token) {
         Admin admin = adminDetailsService.loadUserByUsername(getStringFromToken(token));

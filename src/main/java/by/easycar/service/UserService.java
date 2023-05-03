@@ -11,19 +11,29 @@ import by.easycar.model.user.UserPrivate;
 import by.easycar.repository.UserForAdRepository;
 import by.easycar.repository.UserRepository;
 import by.easycar.service.mappers.UserMapper;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
-@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class UserService {
+
     private final UserRepository userRepository;
+
     private final UserMapper userMapper;
+
     private final PasswordEncoder passwordEncoder;
+
     private final UserForAdRepository userForAdRepository;
+
+    @Autowired
+    public UserService(UserRepository userRepository, UserMapper userMapper, PasswordEncoder passwordEncoder, UserForAdRepository userForAdRepository) {
+        this.userRepository = userRepository;
+        this.userMapper = userMapper;
+        this.passwordEncoder = passwordEncoder;
+        this.userForAdRepository = userForAdRepository;
+    }
 
     public UserPrivate getById(long id) {
         return userRepository.findById(id).orElseThrow(() -> new UserFindException("Can`t find user with id: " + id));
@@ -47,7 +57,7 @@ public class UserService {
 
     public boolean updateUser(UserRequest userRequest, Long id) {
         UserPrivate userPrivate = this.getById(id);
-        if(userRequest == null) {
+        if (userRequest == null) {
             throw new SaveUserDataException("UserRequest is null.");
         }
         boolean isUpdated = false;

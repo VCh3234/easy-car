@@ -18,6 +18,7 @@ import java.util.List;
 public class UserDetailsServiceImpl implements UserDetailsService {
 
     private final UserRepository userRepository;
+
     private final AdminDetailsService adminDetailsService;
 
     @Autowired

@@ -6,7 +6,6 @@ import by.easycar.model.requests.UserRequest;
 import by.easycar.model.user.UserSecurity;
 import by.easycar.service.UserService;
 import io.swagger.v3.oas.annotations.Parameter;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,9 +22,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/user")
-@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class UserController {
+
     private final UserService userService;
+
+    @Autowired
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
 
     @PostMapping("/register")
     private ResponseEntity<String> registerNewUser(@RequestBody NewUserRequest newUserRequest) {

@@ -3,7 +3,6 @@ package by.easycar.controllers;
 import by.easycar.model.user.UserSecurity;
 import by.easycar.service.verifications.VerificationResolver;
 import io.swagger.v3.oas.annotations.Parameter;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,10 +15,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/verify")
-@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class VerifyController {
 
     private final VerificationResolver verificationResolver;
+
+    @Autowired
+    public VerifyController(VerificationResolver verificationResolver) {
+        this.verificationResolver = verificationResolver;
+    }
 
     @PutMapping("/{code}")
     private ResponseEntity<String> verifyUser(@PathVariable String code,

@@ -1,8 +1,16 @@
 package by.easycar.model.administration;
 
 import by.easycar.model.Role;
-import jakarta.persistence.*;
-import lombok.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.SequenceGenerator;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -10,10 +18,7 @@ import java.util.Collection;
 import java.util.List;
 
 @NoArgsConstructor
-@EqualsAndHashCode
-@Setter
-@Getter
-@ToString
+@Data
 
 @Entity
 @Table(name = "admins")
@@ -26,8 +31,10 @@ public class Admin implements UserDetails {
     @SequenceGenerator(catalog = "sequences", name = "adm_sequence", sequenceName = "admins_sequence_id", initialValue = 1, allocationSize = 1)
     @Column(name = "adm_id")
     private Long id;
+
     @Column(name = "adm_name", unique = true, nullable = false)
     private String name;
+
     @Column(name = "adm_password", nullable = false)
     private String password;
 

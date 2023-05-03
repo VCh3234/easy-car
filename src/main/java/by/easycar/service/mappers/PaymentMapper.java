@@ -3,9 +3,12 @@ package by.easycar.service.mappers;
 import by.easycar.model.Payment;
 import by.easycar.model.requests.PaymentRequest;
 import by.easycar.model.user.UserPrivate;
+import org.springframework.stereotype.Component;
 
+@Component
 public class PaymentMapper {
-    public static Payment getPaymentFromPaymentRequest(PaymentRequest paymentRequest, UserPrivate user) {
+
+    public Payment getPaymentFromPaymentRequest(PaymentRequest paymentRequest, UserPrivate user) {
         Payment payment = new Payment();
         payment.setOperationName(paymentRequest.getOperationName());
         payment.setBankName(paymentRequest.getBankName());

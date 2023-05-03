@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/auth")
 public class JwtSecurityController {
+
     private final JwtAuthenticationService jwtAuthenticationService;
     private final AdminJwtAuthenticationService adminJwtAuthenticationService;
     private final AdminSecurityService adminSecurityService;
@@ -52,12 +53,9 @@ public class JwtSecurityController {
         }
     }
 
-
-
     @PostMapping("/logout")
     private void logout(HttpServletRequest request, HttpServletResponse response) {
         SecurityContextLogoutHandler securityContextLogoutHandler = new SecurityContextLogoutHandler();
         securityContextLogoutHandler.logout(request, response, null);
     }
-
 }

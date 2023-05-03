@@ -11,12 +11,16 @@ import java.util.UUID;
 @Data
 @Embeddable
 public class ImageData {
+
     @Column(name = "im_name_1")
     private UUID uuid1;
+
     @Column(name = "im_name_2")
     private UUID uuid2;
+
     @Column(name = "im_name_3")
     private UUID uuid3;
+
     @Column(name = "im_name_4")
     private UUID uuid4;
 

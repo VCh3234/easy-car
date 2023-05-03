@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class AdminSecurityService {
+
     private final AdminDetailsService adminDetailsService;
 
     private final PasswordEncoder passwordEncoder;

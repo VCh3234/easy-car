@@ -27,19 +27,27 @@ import static java.util.concurrent.TimeUnit.MINUTES;
 
 @Service
 public class PaymentService {
+
     private final UserService userService;
+
     private final PaymentRepository paymentRepository;
-    private final String signingKey = "Vm0xNFlWbFdXWGhVV0doVVlURndUMVp0ZUdGV1ZsbDNZVVZPVjAxV2NEQlVWbHBQVlRBeFYyTkdiR0ZXVm5CUVZqQmtSMDVzV25KWGJHUnBVbXR3VEZaVldrWlBWa0pTVUZRd1BRPT1WbTE0WVZsV1dYaFVXR2hVWVRGd1QxWnRlR0ZXVmxsM1lVVk9WMDFXY0RCVVZscFBWVEF4VjJOR2JHRldWbkJRVmpCa1IwNXNXbkpYYkdScFVtdHdURlpWV2taUFZrSlNVRlF3UFE9PVZtMTRZVmxXV1hoVVdHaFVZVEZ3VDFadGVHRldWbGwzWVVWT1YwMVdjREJVVmxwUFZUQXhWMk5HYkdGV1ZuQlFWakJrUjA1c1duSlhiR1JwVW10d1RGWlZXa1pQVmtKU1VGUXdQUT09Vm0xNFlWbFdXWGhVV0doVVlURndUMVp0ZUdGV1ZsbDNZVVZPVjAxV2NEQlVWbHBQVlRBeFYyTkdiR0ZXVm5CUVZqQmtSMDVzV25KWGJHUnBVbXR3VEZaVldrWlBWa0pTVUZRd1BRPT1WbTE0WVZsV1dYaFVXR2hVWVRGd1QxWnRlR0ZXVmxsM1lVVk9WMDFXY0RCVVZscFBWVEF4VjJOR2JHRldWbkJRVmpCa1IwNXNXbkpYYkdScFVtdHdURlpWV2taUFZrSlNVRlF3UFE9PQ";
-    private final int minutesOfExpire = 10;
-    private final Map<String, Integer> operationMap = new HashMap<>();
+
+    private final String SIGNING_KEY = "Vm0xNFlWbFdXWGhVV0doVVlURndUMVp0ZUdGV1ZsbDNZVVZPVjAxV2NEQlVWbHBQVlRBeFYyTkdiR0ZXVm5CUVZqQmtSMDVzV25KWGJHUnBVbXR3VEZaVldrWlBWa0pTVUZRd1BRPT1WbTE0WVZsV1dYaFVXR2hVWVRGd1QxWnRlR0ZXVmxsM1lVVk9WMDFXY0RCVVZscFBWVEF4VjJOR2JHRldWbkJRVmpCa1IwNXNXbkpYYkdScFVtdHdURlpWV2taUFZrSlNVRlF3UFE9PVZtMTRZVmxXV1hoVVdHaFVZVEZ3VDFadGVHRldWbGwzWVVWT1YwMVdjREJVVmxwUFZUQXhWMk5HYkdGV1ZuQlFWakJrUjA1c1duSlhiR1JwVW10d1RGWlZXa1pQVmtKU1VGUXdQUT09Vm0xNFlWbFdXWGhVV0doVVlURndUMVp0ZUdGV1ZsbDNZVVZPVjAxV2NEQlVWbHBQVlRBeFYyTkdiR0ZXVm5CUVZqQmtSMDVzV25KWGJHUnBVbXR3VEZaVldrWlBWa0pTVUZRd1BRPT1WbTE0WVZsV1dYaFVXR2hVWVRGd1QxWnRlR0ZXVmxsM1lVVk9WMDFXY0RCVVZscFBWVEF4VjJOR2JHRldWbkJRVmpCa1IwNXNXbkpYYkdScFVtdHdURlpWV2taUFZrSlNVRlF3UFE9PQ";
+
+    private final int MINUTES_OF_EXPIRE = 10;
+
+    private final Map<String, Integer> MAP_OF_OPERATIONS = new HashMap<>();
+
+    private final PaymentMapper paymentMapper;
 
     @Autowired
-    public PaymentService(UserService userService, PaymentRepository paymentRepository) {
+    public PaymentService(UserService userService, PaymentRepository paymentRepository, PaymentMapper paymentMapper) {
         this.userService = userService;
         this.paymentRepository = paymentRepository;
-        operationMap.put("10_ups", 10);
-        operationMap.put("20_ups", 20);
-        operationMap.put("30_ups", 30);
+        this.paymentMapper = paymentMapper;
+        MAP_OF_OPERATIONS.put("10_ups", 10);
+        MAP_OF_OPERATIONS.put("20_ups", 20);
+        MAP_OF_OPERATIONS.put("30_ups", 30);
 
     }
 
@@ -51,13 +59,13 @@ public class PaymentService {
         } catch (ExpiredJwtException | MalformedJwtException | SignatureException | DecodingException e) {
             throw new JwtException("Invalid JWT token: " + e.getMessage());
         }
-        Integer ups = operationMap.entrySet().stream()
+        Integer ups = MAP_OF_OPERATIONS.entrySet().stream()
                 .filter((x) -> x.getKey().equals(paymentRequest.getOperationName()))
                 .findFirst()
                 .orElseThrow(() -> new WrongOperationNameException("Wrong operation name"))
                 .getValue();
         UserPrivate user = userService.getById(paymentRequest.getUserId());
-        Payment payment = PaymentMapper.getPaymentFromPaymentRequest(paymentRequest, user);
+        Payment payment = paymentMapper.getPaymentFromPaymentRequest(paymentRequest, user);
         Integer currentCountOfUps = user.getUps();
         user.setUps(currentCountOfUps + ups);
         paymentRepository.save(payment);
@@ -65,12 +73,14 @@ public class PaymentService {
 
     public String getToken(Map<String, String> paymentRequest) {
         Date currentDate = new Date();
-        String token = Jwts.builder().setClaims(paymentRequest).setIssuedAt(currentDate).setExpiration(new Date(currentDate.getTime() + (MINUTES.toMillis(minutesOfExpire)))).signWith(SignatureAlgorithm.HS256, signingKey).compact();
-        return token;
+        return Jwts.builder().setClaims(paymentRequest)
+                .setIssuedAt(currentDate)
+                .setExpiration(new Date(currentDate.getTime() + (MINUTES.toMillis(MINUTES_OF_EXPIRE))))
+                .signWith(SignatureAlgorithm.HS256, SIGNING_KEY).compact();
     }
 
     public PaymentRequest getPaymentRequestFromJwtToken(String token) {
-        Claims map = Jwts.parserBuilder().setSigningKey(signingKey).build().parseClaimsJws(token).getBody();
+        Claims map = Jwts.parserBuilder().setSigningKey(SIGNING_KEY).build().parseClaimsJws(token).getBody();
         PaymentRequest paymentRequest = new PaymentRequest();
         paymentRequest.setBankName((String) map.get("bankName"));
         paymentRequest.setUserId(Long.parseLong((String) map.get("userId")));

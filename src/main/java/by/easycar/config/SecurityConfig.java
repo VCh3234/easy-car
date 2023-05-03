@@ -42,12 +42,11 @@ public class SecurityConfig {
         this.setAllMatchers(http);
         http.exceptionHandling().authenticationEntryPoint(securityExceptionsHandler);
         http.exceptionHandling().accessDeniedHandler(securityExceptionsHandler);
-        http.formLogin().failureHandler(securityExceptionsHandler);
-
         http.addFilterBefore(jwtSecurityFilter, UsernamePasswordAuthenticationFilter.class);
         http.userDetailsService(userDetailsService);
         return http.build();
     }
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -60,6 +59,7 @@ public class SecurityConfig {
         registrationBean.setEnabled(false);
         return registrationBean;
     }
+
     private void setAllMatchers(HttpSecurity http) throws Exception {
         this.setMatchersForUserController(http);
         this.setMatchersForOperationalEndpoints(http);

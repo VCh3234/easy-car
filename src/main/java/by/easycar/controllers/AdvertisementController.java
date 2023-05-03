@@ -5,7 +5,6 @@ import by.easycar.model.requests.AdvertisementRequest;
 import by.easycar.model.user.UserSecurity;
 import by.easycar.service.AdvertisementService;
 import io.swagger.v3.oas.annotations.Parameter;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,10 +24,14 @@ import java.util.Set;
 
 @RestController
 @RequestMapping("/ad")
-@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class AdvertisementController {
 
     private final AdvertisementService advertisementService;
+
+    @Autowired
+    public AdvertisementController(AdvertisementService advertisementService) {
+        this.advertisementService = advertisementService;
+    }
 
     @GetMapping("/public")
     private ResponseEntity<Object> getPublicAdvertisement(@RequestParam(required = false) Long id) {

@@ -24,9 +24,7 @@ import java.io.PrintWriter;
 public class JwtSecurityFilter implements Filter {
 
     private final static String HEADER = "Authorization";
-
     private final JwtAuthenticationService jwtAuthenticationService;
-
     private final AdminJwtAuthenticationService adminJwtAuthenticationService;
 
     @Autowired

@@ -12,28 +12,17 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.DynamicInsert;
-import org.hibernate.annotations.DynamicUpdate;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-
 @NoArgsConstructor
-@EqualsAndHashCode
-@Setter
-@Getter
-@ToString
+@Data
 
 @Entity
-@DynamicUpdate
-@DynamicInsert
 @Table(name = "advertisements")
 public class Advertisement {
 

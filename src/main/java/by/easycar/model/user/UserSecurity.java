@@ -15,8 +15,11 @@ import java.util.List;
 public class UserSecurity implements UserDetails {
 
     private Long id;
+
     private String password;
+
     private String email;
+
     private List<GrantedAuthority> authorityList;
 
     @Override

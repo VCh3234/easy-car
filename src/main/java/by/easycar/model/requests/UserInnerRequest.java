@@ -16,14 +16,24 @@ import java.time.LocalDateTime;
 @Getter
 @ToString
 public class UserInnerRequest {
+
     private Long id;
+
     private LocalDate creationDate;
+
     private LocalDateTime updateTime;
+
     private String name;
+
     private String phoneNumber;
+
     private String email;
+
     private UserPrivate.UserStatus status;
+
     private Integer ups;
+
     private boolean isVerifiedByEmail;
+
     private boolean isVerifiedByPhone;
 }

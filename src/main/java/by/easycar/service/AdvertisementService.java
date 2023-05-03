@@ -12,7 +12,6 @@ import by.easycar.repository.AdvertisementRepository;
 import by.easycar.repository.VehicleRepository;
 import by.easycar.service.mappers.AdvertisementMapper;
 import jakarta.transaction.Transactional;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,7 +19,6 @@ import java.util.List;
 import java.util.Set;
 
 @Service
-@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class AdvertisementService {
 
     private final AdvertisementRepository advertisementRepository;
@@ -28,8 +26,12 @@ public class AdvertisementService {
     private final UserService userService;
     private final AdvertisementMapper advertisementMapper;
 
-    public List<Advertisement> getAllModeratedAdvertisement() {
-        return advertisementRepository.findAllByModerated(true);
+    @Autowired
+    public AdvertisementService(AdvertisementRepository advertisementRepository, VehicleRepository vehicleRepository, UserService userService, AdvertisementMapper advertisementMapper) {
+        this.advertisementRepository = advertisementRepository;
+        this.vehicleRepository = vehicleRepository;
+        this.userService = userService;
+        this.advertisementMapper = advertisementMapper;
     }
 
     public List<Advertisement> getAllNotModeratedAdvertisement() {

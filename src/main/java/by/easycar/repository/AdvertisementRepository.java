@@ -10,7 +10,9 @@ import java.util.List;
 import java.util.Optional;
 
 public interface AdvertisementRepository extends JpaRepository<Advertisement, Long>, JpaSpecificationExecutor<Advertisement> {
+
     List<Advertisement> findAllByModeratedOrderByUpTimeDesc(boolean b);
+
     List<Advertisement> findAllByModerated(boolean b);
 
     Optional<Advertisement> findByIdAndModerated(Long id, boolean b);
