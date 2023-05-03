@@ -1,5 +1,7 @@
-package by.easycar.model.payments;
+package by.easycar.service.mappers;
 
+import by.easycar.model.Payment;
+import by.easycar.model.requests.PaymentRequest;
 import by.easycar.model.user.UserPrivate;
 
 public class PaymentMapper {

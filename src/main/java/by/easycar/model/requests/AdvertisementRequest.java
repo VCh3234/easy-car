@@ -1,5 +1,6 @@
-package by.easycar.model.advertisement;
+package by.easycar.model.requests;
 
+import by.easycar.model.advertisement.Vehicle;
 import lombok.Data;
 
 @Data

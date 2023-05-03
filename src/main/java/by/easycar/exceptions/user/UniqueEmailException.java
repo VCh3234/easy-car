@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ResponseStatus(code = HttpStatus.CONFLICT)
 public class UniqueEmailException extends RuntimeException {
+
     public UniqueEmailException(String message) {
         super(message);
     }

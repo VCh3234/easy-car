@@ -1,4 +1,4 @@
-package by.easycar.model.payments;
+package by.easycar.model.requests;
 
 import lombok.Data;
 

@@ -1,7 +1,7 @@
 package by.easycar.model.advertisement;
 
-import by.easycar.exceptions.advertisement.CantFindOldUuidException;
-import by.easycar.exceptions.advertisement.FullImageDataException;
+import by.easycar.exceptions.advertisement.images.CantFindOldUuidException;
+import by.easycar.exceptions.advertisement.images.FullImageDataException;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import lombok.Data;

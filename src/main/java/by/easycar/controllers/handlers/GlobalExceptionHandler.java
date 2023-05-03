@@ -10,7 +10,6 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import java.util.HashMap;
@@ -38,6 +37,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Map<String, String>> handleAllExceptions(RuntimeException ex) {
         Map<String, String> responseBody = new HashMap<>();
         responseBody.put("message", ex.getMessage());
+        responseBody.put("from", ex.getClass().getSimpleName());
         ResponseStatus responseStatus = AnnotatedElementUtils.findMergedAnnotation(ex.getClass(), ResponseStatus.class);
         if (responseStatus != null) {
             return new ResponseEntity<>(responseBody, responseStatus.code());
@@ -46,13 +46,11 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler({ AuthenticationException.class })
-    @ResponseBody
     public ResponseEntity<String> handleAuthenticationException(Exception ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler({ AccessDeniedException.class })
-    @ResponseBody
     public ResponseEntity<String> handleAccessDenied(Exception ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.FORBIDDEN);
     }

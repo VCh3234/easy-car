@@ -1,7 +1,7 @@
 package by.easycar.service.verifications;
 
+import by.easycar.exceptions.VerifyException;
 import by.easycar.exceptions.VerifyMethodNotSupportedException;
-import by.easycar.exceptions.advertisement.VerifyException;
 import by.easycar.model.user.UserPrivate;
 import by.easycar.service.UserService;
 import lombok.AllArgsConstructor;

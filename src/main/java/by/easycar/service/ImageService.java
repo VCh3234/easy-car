@@ -3,11 +3,11 @@ package by.easycar.service;
 import by.easycar.model.advertisement.Advertisement;
 import by.easycar.model.advertisement.ImageData;
 import jakarta.transaction.Transactional;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.nio.file.AccessDeniedException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -40,7 +40,7 @@ public class ImageService {
         Files.copy(file.getInputStream(), fullPath);
     }
 
-    public void deleteImage(Long adId, UUID uuid) throws IOException {
+    private void deleteImage(Long adId, UUID uuid) throws IOException {
         Files.delete(ROOT_PATH.resolve(String.valueOf(adId)).resolve(uuid.toString() + ".jpg"));
     }
 
@@ -90,5 +90,27 @@ public class ImageService {
         this.saveImage(file, adId, newUuid);
         advertisement.setModerated(false);
         advertisementService.saveData(advertisement);
+    }
+
+    @Transactional
+    public void deleteImage(String oldImage, Long adId, Long userId) throws IOException {
+        Advertisement advertisement = advertisementService.getInnerAdvertisementById(adId);
+        if (!advertisement.getUser().getId().equals(userId)) {
+            throw new AccessDeniedException("Your id don't match with id in advertisement.");
+        }
+        this.deleteImage(adId, UUID.fromString(oldImage));
+        advertisement.getImageData().replace(oldImage, null);
+        advertisementService.saveData(advertisement);
+    }
+
+    public byte[] getImage(String adId, String uuid) throws IOException {
+        Path path = ROOT_PATH.resolve(adId).resolve(uuid + ".jpg");
+        byte[] image = new byte[0];
+        try {
+            image = Files.readAllBytes(path);
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
+        return image;
     }
 }

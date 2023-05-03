@@ -1,4 +1,4 @@
-package by.easycar.model.security;
+package by.easycar.model.requests;
 
 import lombok.Data;
 

@@ -1,9 +1,9 @@
 package by.easycar.controllers;
 
-import by.easycar.model.security.UserSecurity;
-import by.easycar.model.user.NewUserRequest;
-import by.easycar.model.user.UserInnerRequest;
-import by.easycar.model.user.UserRequest;
+import by.easycar.model.requests.NewUserRequest;
+import by.easycar.model.requests.UserInnerRequest;
+import by.easycar.model.requests.UserRequest;
+import by.easycar.model.user.UserSecurity;
 import by.easycar.service.UserService;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
@@ -12,7 +12,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/user")

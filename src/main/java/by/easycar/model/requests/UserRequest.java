@@ -1,4 +1,4 @@
-package by.easycar.model.user;
+package by.easycar.model.requests;
 
 import lombok.Data;
 @Data

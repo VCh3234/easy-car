@@ -1,6 +1,6 @@
 package by.easycar.repository;
 
-import by.easycar.model.payments.Payment;
+import by.easycar.model.Payment;
 import by.easycar.model.user.UserPrivate;
 import org.springframework.data.jpa.repository.JpaRepository;
 

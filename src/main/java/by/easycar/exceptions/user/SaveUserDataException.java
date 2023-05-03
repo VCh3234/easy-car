@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ResponseStatus(code = HttpStatus.CONFLICT)
 public class SaveUserDataException extends RuntimeException{
+
     public SaveUserDataException(String message) {
         super(message);
     }

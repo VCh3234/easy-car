@@ -1,10 +1,11 @@
-package by.easycar.exceptions.advertisement;
+package by.easycar.exceptions.advertisement.images;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-@ResponseStatus(HttpStatus.CONFLICT)
+@ResponseStatus(HttpStatus.BAD_REQUEST)
 public class FullImageDataException extends RuntimeException {
+
     public FullImageDataException(String message) {
         super(message);
     }

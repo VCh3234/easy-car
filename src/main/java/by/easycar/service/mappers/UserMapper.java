@@ -1,9 +1,9 @@
 package by.easycar.service.mappers;
 
+import by.easycar.model.requests.UserInnerRequest;
+import by.easycar.model.requests.UserRequest;
 import by.easycar.model.user.UserForAd;
-import by.easycar.model.user.UserInnerRequest;
 import by.easycar.model.user.UserPrivate;
-import by.easycar.model.user.UserRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;

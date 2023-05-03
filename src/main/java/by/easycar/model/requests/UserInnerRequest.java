@@ -1,6 +1,11 @@
-package by.easycar.model.user;
+package by.easycar.model.requests;
 
-import lombok.*;
+import by.easycar.model.user.UserPrivate;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;

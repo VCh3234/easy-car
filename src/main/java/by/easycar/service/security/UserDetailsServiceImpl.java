@@ -1,7 +1,7 @@
 package by.easycar.service.security;
 
-import by.easycar.model.security.UserSecurity;
 import by.easycar.model.user.UserPrivate;
+import by.easycar.model.user.UserSecurity;
 import by.easycar.repository.UserRepository;
 import by.easycar.service.security.admin.AdminDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;

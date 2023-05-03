@@ -1,12 +1,17 @@
 package by.easycar.service;
 
 import by.easycar.exceptions.WrongOperationNameException;
-import by.easycar.model.payments.Payment;
-import by.easycar.model.payments.PaymentMapper;
-import by.easycar.model.payments.PaymentRequest;
+import by.easycar.model.Payment;
+import by.easycar.model.requests.PaymentRequest;
 import by.easycar.model.user.UserPrivate;
 import by.easycar.repository.PaymentRepository;
-import io.jsonwebtoken.*;
+import by.easycar.service.mappers.PaymentMapper;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.DecodingException;
 import io.jsonwebtoken.security.SignatureException;
 import jakarta.transaction.Transactional;

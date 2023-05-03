@@ -106,6 +106,7 @@ public class SecurityConfig {
 
     private void setMatchersForAdvertisementController(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests()
+                .requestMatchers("/search/ad/**").permitAll()
                 .requestMatchers("/ad/public").permitAll()
                 .requestMatchers("/ad").permitAll()
                 .requestMatchers("/ad/of-user").hasAuthority(UserPrivate.ROLE.name())
@@ -128,8 +129,9 @@ public class SecurityConfig {
 
     private void setMatchersForImageController(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests()
-                .requestMatchers("/images/**").hasAuthority(UserPrivate.ROLE.name())
+                .requestMatchers("/images/**").permitAll()
                 .requestMatchers(HttpMethod.POST,"/images/**").hasAuthority(UserPrivate.ROLE.name())
-                .requestMatchers(HttpMethod.PUT,"/images/**").hasAuthority(UserPrivate.ROLE.name());
+                .requestMatchers(HttpMethod.PUT,"/images/**").hasAuthority(UserPrivate.ROLE.name())
+                .requestMatchers(HttpMethod.DELETE,"/images/**").hasAnyAuthority(UserPrivate.ROLE.name(), Admin.ROLE.name());
     }
 }

@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ResponseStatus(code = HttpStatus.BAD_REQUEST)
 public class VerifyMethodNotSupportedException extends RuntimeException {
+
     public VerifyMethodNotSupportedException(String message) {
         super(message);
     }

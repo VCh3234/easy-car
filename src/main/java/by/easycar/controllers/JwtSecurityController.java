@@ -1,6 +1,6 @@
 package by.easycar.controllers;
 
-import by.easycar.model.security.AuthRequest;
+import by.easycar.model.requests.AuthRequest;
 import by.easycar.service.security.JwtAuthenticationService;
 import by.easycar.service.security.SecurityService;
 import by.easycar.service.security.admin.AdminJwtAuthenticationService;

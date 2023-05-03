@@ -1,7 +1,11 @@
 package by.easycar.service.security;
 
 import by.easycar.exceptions.security.JwtAuthenticationException;
-import io.jsonwebtoken.*;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
+import io.jsonwebtoken.JwtException;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -18,8 +22,10 @@ import java.util.Date;
 public class JwtAuthenticationService implements JwtService {
 
     private final UserDetailsServiceImpl userDetailsServiceImpl;
+
     @Value("${jwt.key}")
     private String key;
+
     @Value("${jwt.expire.time.minutes}")
     private long TIME_OF_EXPIRATION;
 
@@ -32,6 +38,7 @@ public class JwtAuthenticationService implements JwtService {
     public JwtAuthenticationService(@Qualifier("userDetailsServiceImpl") UserDetailsServiceImpl userDetailsServiceImpl) {
         this.userDetailsServiceImpl = userDetailsServiceImpl;
     }
+
     @Override
     public String getToken(String email) {
         Date currentDate = new Date();
@@ -42,19 +49,21 @@ public class JwtAuthenticationService implements JwtService {
                 .signWith(SignatureAlgorithm.HS256, key)
                 .compact();
     }
+
     @Override
     public boolean isValidToken(String token) {
         try {
             Jws<Claims> claimsJws = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
             return claimsJws.getBody().getExpiration().after(new Date());
         } catch (JwtException | IllegalArgumentException e) {
-            throw new JwtAuthenticationException("JWT token is invalid - time is expired.");
+            throw new JwtAuthenticationException("JWT token is invalid.");
         }
     }
 
     private String getEmailFromToken(String token) {
         return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody().getSubject();
     }
+
     @Override
     public Authentication getAuthentication(String token) {
         UserDetails userDetails = userDetailsServiceImpl.loadUserByUsername(getEmailFromToken(token));

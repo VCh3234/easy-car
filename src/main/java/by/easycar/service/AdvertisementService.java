@@ -1,13 +1,13 @@
 package by.easycar.service;
 
+import by.easycar.exceptions.VerifyException;
 import by.easycar.exceptions.advertisement.FindAdvertisementException;
-import by.easycar.exceptions.advertisement.VerifyException;
 import by.easycar.exceptions.advertisement.WrongUserException;
 import by.easycar.model.advertisement.Advertisement;
-import by.easycar.model.advertisement.AdvertisementRequest;
-import by.easycar.model.security.UserSecurity;
+import by.easycar.model.requests.AdvertisementRequest;
 import by.easycar.model.user.UserForAd;
 import by.easycar.model.user.UserPrivate;
+import by.easycar.model.user.UserSecurity;
 import by.easycar.repository.AdvertisementRepository;
 import by.easycar.repository.VehicleRepository;
 import by.easycar.service.mappers.AdvertisementMapper;
@@ -94,5 +94,9 @@ public class AdvertisementService {
 
     public void saveData(Advertisement advertisement) {
         advertisementRepository.save(advertisement);
+    }
+
+    public List<Advertisement> getAllModeratedAdvertisementOrdered() {
+        return advertisementRepository.findAllByModeratedOrderByUpTimeDesc(true);
     }
 }
