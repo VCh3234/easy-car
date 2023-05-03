@@ -3,6 +3,7 @@ package by.easycar.service;
 import by.easycar.exceptions.VerifyException;
 import by.easycar.exceptions.advertisement.FindAdvertisementException;
 import by.easycar.exceptions.advertisement.WrongUserException;
+import by.easycar.exceptions.user.UpException;
 import by.easycar.model.advertisement.Advertisement;
 import by.easycar.model.requests.AdvertisementRequest;
 import by.easycar.model.user.UserForAd;
@@ -15,6 +16,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 
@@ -90,15 +92,32 @@ public class AdvertisementService {
         return advertisementRepository.findByIdAndModerated(id, true).orElseThrow(() -> new FindAdvertisementException("Can`t find advertisement with id: " + id + ", or ad isn't moderated."));
     }
 
-    public boolean accept(Long adId) {
+    public boolean acceptModeration(Long adId) {
         return advertisementRepository.acceptModeration(adId) == 1;
     }
 
-    public void saveData(Advertisement advertisement) {
+    public void saveChanges(Advertisement advertisement) {
         advertisementRepository.save(advertisement);
     }
 
     public List<Advertisement> getAllModeratedAdvertisementOrdered() {
         return advertisementRepository.findAllByModeratedOrderByUpTimeDesc(true);
+    }
+
+    @Transactional
+    public void upAdvertisement(Long adId, Long userId) {
+        UserPrivate user = userService.getById(userId);
+        Advertisement advertisement = this.getPublicById(adId);
+        if(!user.getId().equals(advertisement.getUser().getId())) {
+            throw new WrongUserException("User id doesn't match.");
+        }
+        if(user.getUps() > 0) {
+            advertisement.setUpTime(LocalDateTime.now());
+            user.setUps(user.getUps() - 1);
+            this.saveChanges(advertisement);
+            userService.saveChanges(user);
+        } else {
+            throw new UpException("You don't have enough ups.");
+        }
     }
 }

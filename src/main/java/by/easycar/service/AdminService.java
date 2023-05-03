@@ -30,9 +30,9 @@ public class AdminService {
 
     @Transactional
     public boolean accept(Long adId) {
-        if(advertisementService.accept(adId)) {
+        if(advertisementService.acceptModeration(adId)) {
             Moderation moderation = new Moderation();
-            moderation.setMessage("Accept advertisement");
+            moderation.setMessage("Accept advertisement moderation");
             moderation.setAdmin((Admin) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
             moderation.setAdvertisement(advertisementService.getInnerAdvertisementById(adId));
             moderationRepository.save(moderation);

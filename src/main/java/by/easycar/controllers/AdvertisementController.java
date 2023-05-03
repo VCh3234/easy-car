@@ -79,4 +79,11 @@ public class AdvertisementController {
         advertisementService.delete(adId, user);
         return new ResponseEntity<>("Was deleted.", HttpStatus.OK);
     }
+
+    @PutMapping("/{adId}")
+    private ResponseEntity<String> upAdvertisement(@PathVariable Long adId,
+                                                   @AuthenticationPrincipal @Parameter(hidden = true) UserSecurity user) {
+        advertisementService.upAdvertisement(adId, user.getId());
+        return new ResponseEntity<>("Advertisement was upped.", HttpStatus.OK);
+    }
 }

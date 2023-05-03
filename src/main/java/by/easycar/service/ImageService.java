@@ -71,7 +71,7 @@ public class ImageService {
         advertisement.setImageData(imageData);
         this.saveImage(file, adId, uuid);
         advertisement.setModerated(false);
-        advertisementService.saveData(advertisement);
+        advertisementService.saveChanges(advertisement);
     }
 
     @Transactional
@@ -90,7 +90,7 @@ public class ImageService {
         this.deleteImage(adId, UUID.fromString(oldUuid));
         this.saveImage(file, adId, newUuid);
         advertisement.setModerated(false);
-        advertisementService.saveData(advertisement);
+        advertisementService.saveChanges(advertisement);
     }
 
     @Transactional
@@ -101,7 +101,7 @@ public class ImageService {
         }
         this.deleteImage(adId, UUID.fromString(oldImage));
         advertisement.getImageData().replace(oldImage, null);
-        advertisementService.saveData(advertisement);
+        advertisementService.saveChanges(advertisement);
     }
 
     public byte[] getImage(String adId, String uuid) throws IOException {

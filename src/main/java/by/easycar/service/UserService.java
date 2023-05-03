@@ -142,4 +142,8 @@ public class UserService {
         userPrivate.setVerifiedByEmail(true);
         userRepository.save(userPrivate);
     }
+
+    public void saveChanges(UserPrivate user) {
+        userRepository.save(user);
+    }
 }
