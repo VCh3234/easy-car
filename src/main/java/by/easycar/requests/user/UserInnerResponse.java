@@ -1,6 +1,5 @@
-package by.easycar.model.requests;
+package by.easycar.requests.user;
 
-import by.easycar.model.user.UserPrivate;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,7 +14,7 @@ import java.time.LocalDateTime;
 @Setter
 @Getter
 @ToString
-public class UserInnerRequest {
+public class UserInnerResponse {
 
     private Long id;
 
@@ -28,8 +27,6 @@ public class UserInnerRequest {
     private String phoneNumber;
 
     private String email;
-
-    private UserPrivate.UserStatus status;
 
     private Integer ups;
 
