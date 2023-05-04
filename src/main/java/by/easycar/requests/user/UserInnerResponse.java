@@ -1,19 +1,11 @@
 package by.easycar.requests.user;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.Data;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-@NoArgsConstructor
-@EqualsAndHashCode
-@Setter
-@Getter
-@ToString
+@Data
 public class UserInnerResponse {
 
     private Long id;
