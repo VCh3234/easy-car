@@ -5,12 +5,12 @@ import by.easycar.exceptions.advertisement.FindAdvertisementException;
 import by.easycar.exceptions.advertisement.WrongUserException;
 import by.easycar.exceptions.user.UpException;
 import by.easycar.model.advertisement.Advertisement;
-import by.easycar.model.requests.AdvertisementRequest;
 import by.easycar.model.user.UserForAd;
+import by.easycar.model.user.UserPrincipal;
 import by.easycar.model.user.UserPrivate;
-import by.easycar.model.user.UserSecurity;
 import by.easycar.repository.AdvertisementRepository;
 import by.easycar.repository.VehicleRepository;
+import by.easycar.requests.AdvertisementRequest;
 import by.easycar.service.mappers.AdvertisementMapper;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,14 +18,16 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Set;
 
 @Service
 public class AdvertisementService {
 
     private final AdvertisementRepository advertisementRepository;
+
     private final VehicleRepository vehicleRepository;
+
     private final UserService userService;
+
     private final AdvertisementMapper advertisementMapper;
 
     @Autowired
@@ -41,7 +43,7 @@ public class AdvertisementService {
     }
 
     @Transactional
-    public boolean saveNewAd(AdvertisementRequest advertisementRequest, Long userId) {
+    public void saveNewAd(AdvertisementRequest advertisementRequest, Long userId) {
         UserPrivate userPrivate = userService.getById(userId);
         if (userPrivate.isVerifiedByEmail() || userPrivate.isVerifiedByPhone()) {
             Advertisement advertisement = advertisementMapper.getAdvertisementFromAdvertisementRequest(advertisementRequest);
@@ -52,44 +54,44 @@ public class AdvertisementService {
         } else {
             throw new VerifyException("User doesn't verified");
         }
-        return true;
     }
 
-    public void update(Long adId, AdvertisementRequest advertisementRequest, UserSecurity user) {
+    @Transactional
+    public void update(Long adId, AdvertisementRequest advertisementRequest, UserPrincipal user) {
         Advertisement oldAdvertisement = advertisementRepository
                 .findById(adId)
                 .orElseThrow(() -> new FindAdvertisementException("Can`t find ad with id: " + adId));
-        if (!oldAdvertisement.getUser().getId().equals(user.getId())) {
-            throw new WrongUserException("User id doesn't match.");
-        } else {
-            Advertisement updatedAdvertisement = advertisementMapper.setUpdates(oldAdvertisement, advertisementRequest);
-            vehicleRepository.save(updatedAdvertisement.getVehicle());
-            advertisementRepository.save(updatedAdvertisement);
-        }
+        this.checkAuthorities(oldAdvertisement, user.getId());
+        Advertisement updatedAdvertisement = advertisementMapper.setUpdates(oldAdvertisement, advertisementRequest);
+        vehicleRepository.save(updatedAdvertisement.getVehicle());
+        advertisementRepository.save(updatedAdvertisement);
+
     }
 
-    public void delete(Long adId, UserSecurity user) {
+    @Transactional
+    public void delete(Long adId, UserPrincipal user) {
         Advertisement oldAd = advertisementRepository
                 .findById(adId)
                 .orElseThrow(() -> new FindAdvertisementException("Can`t find ad with id: " + adId));
-        if (!oldAd.getUser().getId().equals(user.getId())) {
-            throw new WrongUserException("User id doesn't match.");
-        } else {
-            advertisementRepository.deleteById(adId);
-        }
+        this.checkAuthorities(oldAd, user.getId());
+        ImageService.deleteDir(adId);
+        advertisementRepository.deleteById(adId);
+
     }
 
-    public Set<Advertisement> getAllOfUser(Long id) {
-        Set<Advertisement> advertisements = userService.getById(id).getAdvertisements();
-        return advertisements;
+    public List<Advertisement> getAllOfUser(Long userId) {
+        return userService.getById(userId).getAdvertisements();
     }
 
-    public Advertisement getInnerAdvertisementById(Long id) {
-        return advertisementRepository.findById(id).orElseThrow(() -> new FindAdvertisementException("Can`t find advertisement with id: " + id));
+    public Advertisement getInnerAdvertisementById(Long adId, Long userId) {
+        Advertisement advertisement = advertisementRepository.findById(adId).orElseThrow(() -> new FindAdvertisementException("Can`t find advertisement with id: " + adId));
+        this.checkAuthorities(advertisement, userId);
+        return advertisement;
     }
 
-    public Advertisement getPublicById(Long id) {
-        return advertisementRepository.findByIdAndModerated(id, true).orElseThrow(() -> new FindAdvertisementException("Can`t find advertisement with id: " + id + ", or ad isn't moderated."));
+    public Advertisement getPublicById(Long adId) {
+        return advertisementRepository.findByIdAndModerated(adId, true)
+                .orElseThrow(() -> new FindAdvertisementException("Can`t find advertisement with id: " + adId + ", or ad isn't moderated."));
     }
 
     public boolean acceptModeration(Long adId) {
@@ -108,10 +110,8 @@ public class AdvertisementService {
     public void upAdvertisement(Long adId, Long userId) {
         UserPrivate user = userService.getById(userId);
         Advertisement advertisement = this.getPublicById(adId);
-        if(!user.getId().equals(advertisement.getUser().getId())) {
-            throw new WrongUserException("User id doesn't match.");
-        }
-        if(user.getUps() > 0) {
+        this.checkAuthorities(advertisement, user);
+        if (user.getUps() > 0) {
             advertisement.setUpTime(LocalDateTime.now());
             user.setUps(user.getUps() - 1);
             this.saveChanges(advertisement);
@@ -119,5 +119,25 @@ public class AdvertisementService {
         } else {
             throw new UpException("You don't have enough ups.");
         }
+    }
+
+    private void checkAuthorities(Advertisement advertisement, UserPrivate user) {
+        this.checkAuthorities(advertisement, user.getId());
+    }
+
+    private void checkAuthorities(Advertisement advertisement, Long userId) {
+        if (!userId.equals(advertisement.getUser().getId())) {
+            throw new WrongUserException("User id doesn't match.");
+        }
+    }
+
+    public Advertisement getInnerAdvertisementByIdForAdmin(Long adId) {
+        return advertisementRepository.findById(adId)
+                .orElseThrow(() -> new FindAdvertisementException("Can`t find advertisement with id: " + adId + ", or ad isn't moderated."));
+    }
+
+    public void deleteForAdmin(Long adId) {
+        ImageService.deleteDir(adId);
+        advertisementRepository.deleteById(adId);
     }
 }

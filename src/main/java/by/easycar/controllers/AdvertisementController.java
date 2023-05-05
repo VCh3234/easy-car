@@ -1,10 +1,15 @@
 package by.easycar.controllers;
 
+import by.easycar.model.administration.Moderation;
 import by.easycar.model.advertisement.Advertisement;
-import by.easycar.model.requests.AdvertisementRequest;
-import by.easycar.model.user.UserSecurity;
+import by.easycar.model.user.UserPrincipal;
+import by.easycar.requests.AdvertisementRequest;
+import by.easycar.requests.SearchParams;
+import by.easycar.service.AdminService;
 import by.easycar.service.AdvertisementService;
+import by.easycar.service.search.SearchAdvertisementService;
 import io.swagger.v3.oas.annotations.Parameter;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,20 +25,25 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.Set;
 
 @RestController
-@RequestMapping("/ad")
+@RequestMapping("/ads")
 public class AdvertisementController {
 
     private final AdvertisementService advertisementService;
 
+    private final SearchAdvertisementService searchAdvertisementService;
+
+    private final AdminService adminService;
+
     @Autowired
-    public AdvertisementController(AdvertisementService advertisementService) {
+    public AdvertisementController(AdvertisementService advertisementService, SearchAdvertisementService searchAdvertisementService, AdminService adminService) {
         this.advertisementService = advertisementService;
+        this.searchAdvertisementService = searchAdvertisementService;
+        this.adminService = adminService;
     }
 
-    @GetMapping("/public")
+    @GetMapping
     private ResponseEntity<Object> getPublicAdvertisement(@RequestParam(required = false) Long id) {
         if (id == null) {
             List<Advertisement> allAdvertisements = advertisementService.getAllModeratedAdvertisementOrdered();
@@ -44,45 +54,55 @@ public class AdvertisementController {
         }
     }
 
-    @GetMapping("/of-user")
-    private ResponseEntity<Object> getPrivateAdvertisement(@RequestParam(required = false) Long id,
-                                                           @AuthenticationPrincipal @Parameter(hidden = true) UserSecurity userSecurity) {
+    @GetMapping
+    private ResponseEntity<List<Moderation>> getModerationsOfUser(@AuthenticationPrincipal @Parameter(hidden = true) UserPrincipal userPrincipal) {
+        List<Moderation> moderations = adminService.getModerationsOfUser(userPrincipal);
+        return new ResponseEntity<>(moderations, HttpStatus.OK);
+    }
+
+    @PostMapping("/search")
+    public ResponseEntity<List<Advertisement>> getAdvertisementsWithFilter(@RequestBody List<SearchParams> searchParams) {
+        List<Advertisement> advertisements = searchAdvertisementService.getAllByParams(searchParams);
+        return new ResponseEntity<>(advertisements, HttpStatus.OK);
+    }
+
+    @GetMapping("/my-ads")
+    private ResponseEntity<Object> getInnerAdvertisements(@RequestParam(required = false) Long id,
+                                                          @AuthenticationPrincipal @Parameter(hidden = true) UserPrincipal userPrincipal) {
         if (id == null) {
-            Set<Advertisement> advertisements = advertisementService.getAllOfUser(userSecurity.getId());
-            return ResponseEntity.ok(advertisements);
+            List<Advertisement> advertisements = advertisementService.getAllOfUser(userPrincipal.getId());
+            return new ResponseEntity<>(advertisements, HttpStatus.OK);
         } else {
-            Advertisement advertisement = advertisementService.getInnerAdvertisementById(id);
+            Advertisement advertisement = advertisementService.getInnerAdvertisementById(id, userPrincipal.getId());
             return new ResponseEntity<>(advertisement, HttpStatus.OK);
         }
     }
 
-    @PostMapping("/create")
-    private ResponseEntity<String> addNewAdvertisement(@RequestBody AdvertisementRequest advertisementRequest,
-                                                       @AuthenticationPrincipal @Parameter(hidden = true) UserSecurity user) {
-        if (advertisementService.saveNewAd(advertisementRequest, user.getId())) {
-            return new ResponseEntity<>("Wait moderation.", HttpStatus.OK);
-        }
-        return new ResponseEntity<>("Something go wrong.", HttpStatus.CONFLICT);
+    @PostMapping
+    private ResponseEntity<String> postNewAdvertisement(@RequestBody @Valid AdvertisementRequest advertisementRequest,
+                                                        @AuthenticationPrincipal @Parameter(hidden = true) UserPrincipal user) {
+        advertisementService.saveNewAd(advertisementRequest, user.getId());
+        return new ResponseEntity<>("Wait moderation.", HttpStatus.OK);
     }
 
-    @PutMapping("/update/{adId}")
+    @PutMapping("/{adId}")
     private ResponseEntity<String> updateAdvertisement(@PathVariable("adId") Long adId,
-                                                       @RequestBody AdvertisementRequest advertisementRequest,
-                                                       @AuthenticationPrincipal @Parameter(hidden = true) UserSecurity user) {
+                                                       @RequestBody @Valid AdvertisementRequest advertisementRequest,
+                                                       @AuthenticationPrincipal @Parameter(hidden = true) UserPrincipal user) {
         advertisementService.update(adId, advertisementRequest, user);
         return new ResponseEntity<>("Advertisement was updated.", HttpStatus.OK);
     }
 
     @DeleteMapping("/delete/{adId}")
-    private ResponseEntity<String> updateAdvertisement(@PathVariable Long adId,
-                                                       @AuthenticationPrincipal @Parameter(hidden = true) UserSecurity user) {
+    private ResponseEntity<String> deleteAdvertisement(@PathVariable Long adId,
+                                                       @AuthenticationPrincipal @Parameter(hidden = true) UserPrincipal user) {
         advertisementService.delete(adId, user);
-        return new ResponseEntity<>("Was deleted.", HttpStatus.OK);
+        return new ResponseEntity<>("Was deleted.", HttpStatus.NO_CONTENT);
     }
 
-    @PutMapping("/{adId}")
+    @PutMapping("/up/{adId}")
     private ResponseEntity<String> upAdvertisement(@PathVariable Long adId,
-                                                   @AuthenticationPrincipal @Parameter(hidden = true) UserSecurity user) {
+                                                   @AuthenticationPrincipal @Parameter(hidden = true) UserPrincipal user) {
         advertisementService.upAdvertisement(adId, user.getId());
         return new ResponseEntity<>("Advertisement was upped.", HttpStatus.OK);
     }

@@ -12,14 +12,13 @@ import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 @Data
-
 @Entity
 @Table(name = "users")
 public class UserForAd {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "u_sequence")
-    @SequenceGenerator(catalog = "sequences", name = "u_sequence", sequenceName = "u_sequence_id", initialValue = 1, allocationSize = 1)
+    @SequenceGenerator(catalog = "sequences", name = "u_sequence", sequenceName = "u_sequence_id")
     @Column(name = "u_id")
     private Long id;
 

@@ -20,5 +20,4 @@ public interface AdvertisementRepository extends JpaRepository<Advertisement, Lo
     @Modifying
     @Query(value = "UPDATE Advertisement a SET a.moderated = true WHERE a.id =:adId")
     int acceptModeration(Long adId);
-
 }

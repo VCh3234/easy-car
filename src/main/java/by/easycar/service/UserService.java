@@ -1,18 +1,17 @@
 package by.easycar.service;
 
 import by.easycar.exceptions.user.SaveUserDataException;
-import by.easycar.exceptions.user.UniqueEmailException;
-import by.easycar.exceptions.user.UniquePhoneNumberException;
 import by.easycar.exceptions.user.UserFindException;
-import by.easycar.model.requests.UserInnerRequest;
-import by.easycar.model.requests.UserRequest;
 import by.easycar.model.user.UserForAd;
 import by.easycar.model.user.UserPrivate;
 import by.easycar.repository.UserForAdRepository;
 import by.easycar.repository.UserRepository;
+import by.easycar.requests.user.UserInnerResponse;
+import by.easycar.requests.user.UserRegisterRequest;
+import by.easycar.requests.user.UserRequest;
 import by.easycar.service.mappers.UserMapper;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -35,100 +34,63 @@ public class UserService {
         this.userForAdRepository = userForAdRepository;
     }
 
-    public UserPrivate getById(long id) {
-        return userRepository.findById(id).orElseThrow(() -> new UserFindException("Can`t find user with id: " + id));
+    public UserPrivate getById(Long userId) {
+        return userRepository.findById(userId).orElseThrow(() -> new UserFindException("Can`t find user with id: " + userId));
     }
 
-    public UserInnerRequest getUserInner(Long id) {
+    public UserInnerResponse getUserInner(Long userId) {
+        UserPrivate userPrivate = this.getById(userId);
+        return userMapper.getUserInnerFromUserPrivate(userPrivate);
+    }
+
+    @Transactional
+    public void deleteUserById(Long id) {
         UserPrivate userPrivate = this.getById(id);
-        UserInnerRequest userInnerRequest = userMapper.getUserInnerFromUserPrivate(userPrivate);
-        return userInnerRequest;
-    }
-
-    public boolean deleteUserById(long id) {
+        userPrivate.getAdvertisements().forEach(x-> ImageService.deleteDir(x.getId()));
         userRepository.deleteById(id);
-        return true;
     }
 
-    public boolean saveNewUser(UserRequest newUser, String rawPassword) {
-        UserPrivate userPrivate = userMapper.getUserPrivateFromUserRequest(newUser, passwordEncoder.encode(rawPassword));
-        return saveData(userPrivate);
+    public void saveNewUser(UserRegisterRequest userRegisterRequest) {
+        String password = passwordEncoder.encode(userRegisterRequest.getPasswordRequest().getPassword());
+        UserPrivate userPrivate = userMapper.getUserPrivateFromUserRegisterRequest(userRegisterRequest.getUserRequest(), password);
+        userRepository.save(userPrivate);
     }
 
-    public boolean updateUser(UserRequest userRequest, Long id) {
+    public void updateUser(UserRequest userRequest, Long id) {
         UserPrivate userPrivate = this.getById(id);
         if (userRequest == null) {
             throw new SaveUserDataException("UserRequest is null.");
         }
         boolean isUpdated = false;
-        if (userRequest.getPhoneNumber() != null) {
+        if (!userPrivate.getPhoneNumber().equals(userRequest.getPhoneNumber())) {
             userPrivate.setPhoneNumber(userRequest.getPhoneNumber());
             userPrivate.setVerifiedByPhone(false);
             isUpdated = true;
         }
-        if (userRequest.getEmail() != null) {
+        if (!userPrivate.getEmail().equals(userRequest.getEmail())) {
             userPrivate.setEmail(userRequest.getEmail());
             userPrivate.setVerifiedByEmail(false);
             isUpdated = true;
         }
-        if (userRequest.getName() != null) {
+        if (!userPrivate.getName().equals(userRequest.getName())) {
             userPrivate.setName(userRequest.getName());
             isUpdated = true;
         }
         if (isUpdated) {
-            return this.saveData(userPrivate);
+            userRepository.save(userPrivate);
         } else {
             throw new SaveUserDataException("Nothing to update.");
         }
-    }
-
-    private boolean saveData(UserPrivate userPrivate) {
-        try {
-            userRepository.save(userPrivate);
-        } catch (DataIntegrityViolationException e) {
-            String message = e.getMessage();
-            if (message.contains("uk_email")) {
-                throw new UniqueEmailException("User already exists with email: " + userPrivate.getEmail());
-            } else if (message.contains("uk_phone")) {
-                throw new UniquePhoneNumberException("User already exists with phone: " + userPrivate.getPhoneNumber());
-            } else if (message.contains("u_email")) {
-                throw new SaveUserDataException("Email must be not null.");
-            } else if (message.contains("u_phone")) {
-                throw new SaveUserDataException("Phone must be not null.");
-            }
-            return false;
-        }
-        return true;
-    }
-
-    @Deprecated
-    private boolean isEmailUnique(String email) {
-        if (userRepository.existsByEmail(email)) {
-            throw new UniqueEmailException("User already exist with email:" + email);
-        }
-        return true;
-    }
-
-    @Deprecated
-    private boolean isPhoneNumberUnique(String phoneNumber) {
-        if (userRepository.existsByPhoneNumber(phoneNumber)) {
-            throw new UniquePhoneNumberException("User already exist with phone number:" + phoneNumber);
-        }
-        return true;
-    }
-
-    public UserForAd getUserForAdById(Long id) {
-        return userForAdRepository.findById(id).orElseThrow(() -> new UserFindException("Can`t find user with id: " + id));
     }
 
     public UserForAd getUserForAdFromUserPrivate(UserPrivate userPrivate) {
         return userMapper.getUserForAdFromUserPrivate(userPrivate);
     }
 
-    public boolean updatePassword(String password, Long id) {
-        UserPrivate userPrivate = this.getById(id);
-        userPrivate.setPassword(passwordEncoder.encode(password));
-        return this.saveData(userPrivate);
+    public void updatePassword(String newPassword, Long userId) {
+        UserPrivate userPrivate = this.getById(userId);
+        userPrivate.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(userPrivate);
     }
 
     public void setVerifiedByPhone(Long id) {
@@ -145,5 +107,9 @@ public class UserService {
 
     public void saveChanges(UserPrivate user) {
         userRepository.save(user);
+    }
+
+    public UserForAd getUserForAdById(Long userId) {
+        return userForAdRepository.findById(userId).orElseThrow(() -> new UserFindException("Can`t find user with id: " + userId));
     }
 }

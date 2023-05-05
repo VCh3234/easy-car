@@ -13,22 +13,13 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.Immutable;
 
 import java.time.LocalDateTime;
 
-@NoArgsConstructor
-@EqualsAndHashCode
-@Setter
-@Getter
-@ToString
-
+@Data
 @Entity
 @Table(name = "payments")
 @Immutable
@@ -36,12 +27,12 @@ public class Payment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "p_sequence")
-    @SequenceGenerator(catalog = "sequences", name = "p_sequence", sequenceName = "p_sequence_id", initialValue = 1, allocationSize = 1)
+    @SequenceGenerator(catalog = "sequences", name = "p_sequence", sequenceName = "p_sequence_id")
     @Column(name = "p_id")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.ALL})
-    @JoinColumn(name = "p_user_id")
+    @JoinColumn(name = "u_id")
     @JsonBackReference
     private UserPrivate user;
 

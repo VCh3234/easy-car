@@ -1,6 +1,6 @@
 package by.easycar.controllers;
 
-import by.easycar.model.user.UserSecurity;
+import by.easycar.model.user.UserPrincipal;
 import by.easycar.service.ImageService;
 import io.swagger.v3.oas.annotations.Parameter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,53 +31,52 @@ public class ImageController {
         this.imageService = imageService;
     }
 
-    @PostMapping("/upload/{adId}")
-    public ResponseEntity<String> uploadNew(@RequestParam MultipartFile file,
-                                            @PathVariable Long adId,
-                                            @AuthenticationPrincipal @Parameter(hidden = true) UserSecurity user) {
+    @PostMapping("/{adId}")
+    public ResponseEntity<String> postNewImage(@RequestParam MultipartFile file,
+                                               @PathVariable Long adId,
+                                               @AuthenticationPrincipal @Parameter(hidden = true) UserPrincipal user) {
         try {
             imageService.postNewImages(file, adId, user.getId());
-            return ResponseEntity.ok("Image was upload");
+            return new ResponseEntity<>("Image was post.", HttpStatus.OK);
         } catch (IOException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
+            return new ResponseEntity<>("Can't save image.", HttpStatus.CONFLICT);
         }
     }
 
-    @PutMapping("/upload/{adId}")
-    public ResponseEntity<String> upload(@RequestParam MultipartFile file,
-                                         @RequestParam String oldImage,
-                                         @PathVariable Long adId,
-                                         @AuthenticationPrincipal @Parameter(hidden = true) UserSecurity user) {
+    @PutMapping("/{adId}")
+    public ResponseEntity<String> replaceImage(@RequestParam MultipartFile file,
+                                               @RequestParam String oldImage,
+                                               @PathVariable Long adId,
+                                               @AuthenticationPrincipal @Parameter(hidden = true) UserPrincipal user) {
         try {
-            imageService.postNewImagesWithReplace(file, oldImage, adId, user.getId());
-            return ResponseEntity.ok("Image was changed.");
+            imageService.replaceImage(file, oldImage, adId, user.getId());
+            return new ResponseEntity<>("Image was replaced.", HttpStatus.OK);
         } catch (IOException e) {
-            e.printStackTrace();
-            return new ResponseEntity<>(e.getMessage() + e.getMessage(), HttpStatus.CONFLICT);
+            return new ResponseEntity<>("Can't save image.", HttpStatus.CONFLICT);
         }
     }
 
-    @DeleteMapping("/delete/{adId}")
+    @DeleteMapping("/{adId}")
     public ResponseEntity<String> deleteImage(@RequestParam String oldImage,
                                               @PathVariable Long adId,
-                                              @AuthenticationPrincipal @Parameter(hidden = true) UserSecurity user) {
+                                              @AuthenticationPrincipal @Parameter(hidden = true) UserPrincipal user) {
         try {
             imageService.deleteImage(oldImage, adId, user.getId());
-            return ResponseEntity.noContent().build();
+            return new ResponseEntity<>("Image was deleted.", HttpStatus.NO_CONTENT);
         } catch (IOException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
+            return new ResponseEntity<>("Can't delete image.", HttpStatus.CONFLICT);
         }
     }
 
     @GetMapping("/{adId}")
-    public ResponseEntity<byte[]> getImage(@PathVariable String adId, @RequestParam String uuid) {
+    public ResponseEntity<byte[]> getImage(@PathVariable Long adId, @RequestParam String uuid) {
         try {
             byte[] image = imageService.getImage(adId, uuid);
             HttpHeaders headers = new HttpHeaders();
             headers.add(HttpHeaders.CONTENT_TYPE, "image/jpeg ");
             return new ResponseEntity<>(image, headers, HttpStatus.OK);
         } catch (IOException e) {
-            return ResponseEntity.badRequest().build();
+            return new ResponseEntity<>("Can't find image.".getBytes(), HttpStatus.BAD_REQUEST);
         }
     }
 }

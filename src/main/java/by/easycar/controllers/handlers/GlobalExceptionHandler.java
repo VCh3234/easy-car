@@ -1,7 +1,9 @@
 package by.easycar.controllers.handlers;
 
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
 import org.springframework.core.annotation.AnnotatedElementUtils;
-import org.springframework.http.HttpHeaders;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -21,10 +23,13 @@ import java.util.stream.Collectors;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Map<String, List<String>>> handleValidationErrors(MethodArgumentNotValidException ex) {
-        List<String> errors = ex.getBindingResult().getFieldErrors()
-                .stream().map(FieldError::getDefaultMessage).collect(Collectors.toList());
-        return new ResponseEntity<>(getErrorsMap(errors), new HttpHeaders(), HttpStatus.BAD_REQUEST);
+    public ResponseEntity<Map<String, List<String>>> handleErrorsFromBindingResult(MethodArgumentNotValidException ex) {
+        List<String> errors = ex.getBindingResult()
+                .getFieldErrors()
+                .stream()
+                .map(FieldError::getDefaultMessage)
+                .collect(Collectors.toList());
+        return new ResponseEntity<>(getErrorsMap(errors), HttpStatus.BAD_REQUEST);
     }
 
     private Map<String, List<String>> getErrorsMap(List<String> errors) {
@@ -33,8 +38,17 @@ public class GlobalExceptionHandler {
         return errorResponse;
     }
 
-    @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<Map<String, String>> handleAllExceptions(RuntimeException ex) {
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<Map<String, List<String>>> handleJakartaViolations(ConstraintViolationException ex) {
+        List<String> errors = ex.getConstraintViolations()
+                .stream()
+                .map(ConstraintViolation::getMessage)
+                .collect(Collectors.toList());
+        return new ResponseEntity<>(getErrorsMap(errors), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(Throwable.class)
+    public ResponseEntity<Map<String, String>> handleAllExceptions(Throwable ex) {
         Map<String, String> responseBody = new HashMap<>();
         responseBody.put("message", ex.getMessage());
         responseBody.put("from", ex.getClass().getSimpleName());
@@ -45,12 +59,29 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(responseBody, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler({ AuthenticationException.class })
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<Map<String, String>> handleDataIntegrityViolationException(RuntimeException ex) {
+        Map<String, String> responseBody = new HashMap<>();
+        responseBody.put("from", ex.getClass().getSimpleName());
+        String message = ex.getMessage();
+        if (message.contains("uk_email")) {
+            responseBody.put("message", "User with your email is exist.");
+        } else if (message.contains("uk_ia0qnm02sw2gxn3d9mcomshea")) {
+            responseBody.put("message", "User with your phone is exist.");
+        } else if (message.contains("u_email")) {
+            responseBody.put("message", "Null email.");
+        } else if (message.contains("u_phone")) {
+            responseBody.put("message", "Null phone.");
+        }
+        return new ResponseEntity<>(responseBody, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(AuthenticationException.class)
     public ResponseEntity<String> handleAuthenticationException(Exception ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.UNAUTHORIZED);
     }
 
-    @ExceptionHandler({ AccessDeniedException.class })
+    @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<String> handleAccessDenied(Exception ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.FORBIDDEN);
     }

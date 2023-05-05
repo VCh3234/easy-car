@@ -1,7 +1,7 @@
-package by.easycar.service.security;
+package by.easycar.service.security.user;
 
+import by.easycar.model.user.UserPrincipal;
 import by.easycar.model.user.UserPrivate;
-import by.easycar.model.user.UserSecurity;
 import by.easycar.repository.UserRepository;
 import by.easycar.service.security.admin.AdminDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,8 +33,8 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         try {
             UserPrivate userPrivate = userRepository.findByEmail(username).orElseThrow(() -> new UsernameNotFoundException("User doesn't exist with username: " + username));
             List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
-            grantedAuthorities.add(() -> "USER");
-            userDetails = new UserSecurity(userPrivate.getId(), userPrivate.getPassword(), userPrivate.getEmail(), grantedAuthorities);
+            grantedAuthorities.add(UserPrivate.ROLE::name);
+            userDetails = new UserPrincipal(userPrivate.getId(), userPrivate.getPassword(), userPrivate.getEmail(), grantedAuthorities);
         } catch (UsernameNotFoundException e) {
             userDetails = adminDetailsService.loadUserByUsername(username);
         }

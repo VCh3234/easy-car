@@ -1,9 +1,9 @@
 package by.easycar.filters;
 
 import by.easycar.exceptions.security.JwtAuthenticationException;
-import by.easycar.service.security.JwtAuthenticationService;
 import by.easycar.service.security.JwtService;
 import by.easycar.service.security.admin.AdminJwtAuthenticationService;
+import by.easycar.service.security.user.UserJwtAuthenticationService;
 import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -24,12 +24,14 @@ import java.io.PrintWriter;
 public class JwtSecurityFilter implements Filter {
 
     private final static String HEADER = "Authorization";
-    private final JwtAuthenticationService jwtAuthenticationService;
+
+    private final UserJwtAuthenticationService userJwtAuthenticationService;
+
     private final AdminJwtAuthenticationService adminJwtAuthenticationService;
 
     @Autowired
-    public JwtSecurityFilter(JwtAuthenticationService jwtAuthenticationService, AdminJwtAuthenticationService adminJwtAuthenticationService) {
-        this.jwtAuthenticationService = jwtAuthenticationService;
+    public JwtSecurityFilter(UserJwtAuthenticationService userJwtAuthenticationService, AdminJwtAuthenticationService adminJwtAuthenticationService) {
+        this.userJwtAuthenticationService = userJwtAuthenticationService;
         this.adminJwtAuthenticationService = adminJwtAuthenticationService;
     }
 
@@ -47,7 +49,7 @@ public class JwtSecurityFilter implements Filter {
             if (((HttpServletRequest) servletRequest).getRequestURI().contains("/admin/")) {
                 authenticate(adminJwtAuthenticationService, token);
             } else {
-                authenticate(jwtAuthenticationService, token);
+                authenticate(userJwtAuthenticationService, token);
             }
         } catch (AuthenticationException e) {
             ((HttpServletResponse) servletResponse).setStatus(401);

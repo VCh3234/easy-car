@@ -3,7 +3,7 @@ package by.easycar.service.search;
 import by.easycar.exceptions.SearchException;
 import by.easycar.model.advertisement.Advertisement;
 import by.easycar.model.advertisement.Vehicle;
-import by.easycar.model.requests.SearchParams;
+import by.easycar.requests.SearchParams;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Join;
@@ -60,24 +60,27 @@ public class AdvertisementSpecification implements Specification<Advertisement> 
     }
 
     private Predicate getPredicateForAdvertisement(Root<Advertisement> root, CriteriaQuery<?> query, CriteriaBuilder builder) {
-        if (searchParams.getOperation().equals(">")) {
-            if(getJavaType(root) == String.class) {
-                throw new SearchException("Unsupported operation for this key.");
+        switch (searchParams.getOperation()) {
+            case ">" -> {
+                if (this.getJavaType(root) == String.class) {
+                    throw new SearchException("Unsupported operation for this key.");
+                }
+                return builder.greaterThanOrEqualTo(root.get(searchParams.getKey()), searchParams.getValue());
             }
-            return builder.greaterThanOrEqualTo(root.get(searchParams.getKey()), searchParams.getValue());
-        } else if (searchParams.getOperation().equals("<")) {
-            if(getJavaType(root) == String.class) {
-                throw new SearchException("Unsupported operation for this key.");
+            case "<" -> {
+                if (this.getJavaType(root) == String.class) {
+                    throw new SearchException("Unsupported operation for this key.");
+                }
+                return builder.lessThanOrEqualTo(root.get(searchParams.getKey()), searchParams.getValue());
             }
-            return builder.lessThanOrEqualTo(root.get(searchParams.getKey()), searchParams.getValue());
-        } else if (searchParams.getOperation().equals(":")) {
-            if (getJavaType(root) == String.class) {
-                return builder.like(root.get(searchParams.getKey()), "%" + searchParams.getValue() + "%");
-            } else {
-                return builder.equal(root.get(searchParams.getKey()), searchParams.getValue());
+            case ":" -> {
+                if (this.getJavaType(root) == String.class) {
+                    return builder.like(root.get(searchParams.getKey()), "%" + searchParams.getValue() + "%");
+                } else {
+                    return builder.equal(root.get(searchParams.getKey()), searchParams.getValue());
+                }
             }
-        } else {
-            throw new SearchException("Unsupported operation type.");
+            default -> throw new SearchException("Unsupported operation type.");
         }
     }
 

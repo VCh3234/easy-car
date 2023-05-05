@@ -42,12 +42,7 @@ public class AdminJwtAuthenticationService implements JwtService {
     @Override
     public String getToken(String name) {
         Date currentDate = new Date();
-        return Jwts.builder()
-                .setSubject(name)
-                .setIssuedAt(currentDate)
-                .setExpiration(new Date(currentDate.getTime() + (TIME_OF_EXPIRATION * 60_000)))
-                .signWith(SignatureAlgorithm.HS256, key)
-                .compact();
+        return Jwts.builder().setSubject(name).setIssuedAt(currentDate).setExpiration(new Date(currentDate.getTime() + (TIME_OF_EXPIRATION * 60_000))).signWith(SignatureAlgorithm.HS256, key).compact();
     }
 
     @Override
@@ -56,7 +51,7 @@ public class AdminJwtAuthenticationService implements JwtService {
             Jws<Claims> claimsJws = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
             return claimsJws.getBody().getExpiration().after(new Date());
         } catch (JwtException | IllegalArgumentException e) {
-            throw new JwtAuthenticationException("JWT token is invalid - time is expired.");
+            throw new JwtAuthenticationException("JWT token is invalid.");
         }
     }
 

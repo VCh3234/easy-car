@@ -1,8 +1,8 @@
 package by.easycar.service.search;
 
 import by.easycar.model.advertisement.Advertisement;
-import by.easycar.model.requests.SearchParams;
 import by.easycar.repository.AdvertisementRepository;
+import by.easycar.requests.SearchParams;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
@@ -28,7 +28,6 @@ public class SearchAdvertisementService {
                     .and(new AdvertisementSpecification(searchParams.get(i)));
         }
         Sort sort = Sort.by("upTime").descending();
-        List<Advertisement> advertisements = advertisementRepository.findAll(advertisementSpecification, sort);
-        return advertisements;
+        return advertisementRepository.findAll(advertisementSpecification, sort);
     }
 }

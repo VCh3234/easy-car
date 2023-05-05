@@ -25,7 +25,7 @@ public class AdminDetailsService implements UserDetailsService {
     public Admin loadUserByUsername(String name) throws UsernameNotFoundException {
         Admin admin = adminRepository.findByName(name).orElseThrow(() -> new UsernameNotFoundException("Admin doesn't exist with name: " + name));
         List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
-        grantedAuthorities.add(() -> "ADMIN");
+        grantedAuthorities.add(Admin.ROLE::name);
         admin.setAuthorityList(grantedAuthorities);
         return admin;
     }

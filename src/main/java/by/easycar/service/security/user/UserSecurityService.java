@@ -1,4 +1,4 @@
-package by.easycar.service.security;
+package by.easycar.service.security.user;
 
 import by.easycar.exceptions.security.WrongPasswordException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,14 +7,14 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
-public class SecurityService {
+public class UserSecurityService {
 
     private final UserDetailsServiceImpl userDetailsServiceImpl;
 
     private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public SecurityService(UserDetailsServiceImpl userDetailsServiceImpl, PasswordEncoder passwordEncoder) {
+    public UserSecurityService(UserDetailsServiceImpl userDetailsServiceImpl, PasswordEncoder passwordEncoder) {
         this.userDetailsServiceImpl = userDetailsServiceImpl;
         this.passwordEncoder = passwordEncoder;
     }

@@ -1,7 +1,7 @@
 package by.easycar.controllers;
 
 import by.easycar.model.Payment;
-import by.easycar.model.user.UserSecurity;
+import by.easycar.model.user.UserPrincipal;
 import by.easycar.service.PaymentService;
 import io.swagger.v3.oas.annotations.Parameter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/pay")
+@RequestMapping("/pays")
 public class PaymentController {
 
     private final PaymentService paymentService;
@@ -28,20 +28,19 @@ public class PaymentController {
         this.paymentService = paymentService;
     }
 
-    @PostMapping("")
+    @PostMapping
     private ResponseEntity<String> deposit(@RequestBody String jwt) {
-        paymentService.doPay(jwt);
-        return new ResponseEntity<>(HttpStatus.OK);
+        paymentService.verifyAndMakePay(jwt);
+        return new ResponseEntity<>("Payment was created", HttpStatus.OK);
     }
 
     @GetMapping("/payments-of-user")
-    private ResponseEntity<List<Payment>> getPaymentsOfUser(@AuthenticationPrincipal @Parameter(hidden = true) UserSecurity userSecurity) {
-        List<Payment> payments = paymentService.getPaymentsOfUser(userSecurity.getId());
+    private ResponseEntity<List<Payment>> getPaymentsOfUser(@AuthenticationPrincipal @Parameter(hidden = true) UserPrincipal userPrincipal) {
+        List<Payment> payments = paymentService.getPaymentsOfUser(userPrincipal.getId());
         return new ResponseEntity<>(payments, HttpStatus.OK);
     }
 
-    //For demonstration
-    @PostMapping("/token")
+    @PostMapping("/get-token-for-demonstration")
     private ResponseEntity<String> getToken(@RequestBody Map<String, String> paymentRequest) {
         String token = paymentService.getToken(paymentRequest);
         return new ResponseEntity<>(token, HttpStatus.OK);

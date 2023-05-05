@@ -13,16 +13,17 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.Immutable;
+import org.hibernate.validator.constraints.Length;
 
 import java.time.LocalDateTime;
 
 @NoArgsConstructor
 @Data
-
 @Entity
 @Immutable
 @Table(name = "moderations")
@@ -31,7 +32,7 @@ public class Moderation {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "mo_sequence")
-    @SequenceGenerator(catalog = "sequences", name = "mo_sequence", sequenceName = "moderations_sequence_id", initialValue = 1, allocationSize = 1)
+    @SequenceGenerator(catalog = "sequences", name = "mo_sequence", sequenceName = "moderations_sequence_id")
     @Column(name = "mo_id")
     private Long id;
 
@@ -40,13 +41,15 @@ public class Moderation {
     private LocalDateTime creationDate;
 
     @Column(name = "mo_message", nullable = false)
+    @Length(min = 8, max = 500)
+    @NotBlank
     private String message;
 
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     @JoinColumn(name = "adm_id", nullable = false)
     private Admin admin;
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "ad_id", nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "ad_id")
     private Advertisement advertisement;
 }

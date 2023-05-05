@@ -1,6 +1,7 @@
-package by.easycar.service.security;
+package by.easycar.service.security.user;
 
 import by.easycar.exceptions.security.JwtAuthenticationException;
+import by.easycar.service.security.JwtService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.JwtException;
@@ -19,7 +20,7 @@ import java.util.Base64;
 import java.util.Date;
 
 @Service
-public class JwtAuthenticationService implements JwtService {
+public class UserJwtAuthenticationService implements JwtService {
 
     private final UserDetailsServiceImpl userDetailsServiceImpl;
 
@@ -35,7 +36,7 @@ public class JwtAuthenticationService implements JwtService {
     }
 
     @Autowired
-    public JwtAuthenticationService(@Qualifier("userDetailsServiceImpl") UserDetailsServiceImpl userDetailsServiceImpl) {
+    public UserJwtAuthenticationService(@Qualifier("userDetailsServiceImpl") UserDetailsServiceImpl userDetailsServiceImpl) {
         this.userDetailsServiceImpl = userDetailsServiceImpl;
     }
 
@@ -45,7 +46,7 @@ public class JwtAuthenticationService implements JwtService {
         return Jwts.builder()
                 .setSubject(email)
                 .setIssuedAt(currentDate)
-                .setExpiration(new Date(currentDate.getTime() + (TIME_OF_EXPIRATION*60_000)))
+                .setExpiration(new Date(currentDate.getTime() + (TIME_OF_EXPIRATION * 60_000)))
                 .signWith(SignatureAlgorithm.HS256, key)
                 .compact();
     }

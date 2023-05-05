@@ -21,14 +21,13 @@ import java.time.LocalDateTime;
 
 @NoArgsConstructor
 @Data
-
 @Entity
 @Table(name = "advertisements")
 public class Advertisement {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "ad_sequence")
-    @SequenceGenerator(catalog = "sequences", name = "ad_sequence", sequenceName = "advertisements_sequence_id", initialValue = 1, allocationSize = 1)
+    @SequenceGenerator(catalog = "sequences", name = "ad_sequence", sequenceName = "advertisements_sequence_id")
     @Column(name = "ad_id")
     private Long id;
 
@@ -41,9 +40,6 @@ public class Advertisement {
 
     @Column(name = "ad_moderated", nullable = false)
     private boolean moderated = false;
-
-    @Column(name = "ad_count_views", nullable = false)
-    private Integer viewsCount = 0;
 
     @Column(name = "ad_price", nullable = false)
     private Integer price;

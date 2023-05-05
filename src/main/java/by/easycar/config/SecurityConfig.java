@@ -1,11 +1,10 @@
 package by.easycar.config;
 
-
 import by.easycar.controllers.handlers.SecurityExceptionsHandler;
 import by.easycar.filters.JwtSecurityFilter;
 import by.easycar.model.administration.Admin;
 import by.easycar.model.user.UserPrivate;
-import by.easycar.service.security.UserDetailsServiceImpl;
+import by.easycar.service.security.user.UserDetailsServiceImpl;
 import jakarta.servlet.Filter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
@@ -101,7 +100,7 @@ public class SecurityConfig {
     private void setMatchersForPaymentController(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests()
                 .requestMatchers(HttpMethod.POST, "/pay/**").permitAll()
-                .requestMatchers( "/pay/**").permitAll();
+                .requestMatchers("/pay/**").permitAll();
     }
 
     private void setMatchersForAdvertisementController(HttpSecurity http) throws Exception {
@@ -117,21 +116,21 @@ public class SecurityConfig {
 
     private void setMatchersForVerifyController(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests()
-                .requestMatchers(HttpMethod.POST,"/verify/**").hasAuthority(UserPrivate.ROLE.name())
-                .requestMatchers(HttpMethod.PUT,"/verify/**").hasAuthority(UserPrivate.ROLE.name());
+                .requestMatchers("/verify/**").permitAll()
+                .requestMatchers(HttpMethod.POST, "/verify/**").hasAuthority(UserPrivate.ROLE.name());
     }
 
     private void setMatchersForAdminController(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests()
                 .requestMatchers("/admin/**").hasAuthority(Admin.ROLE.name())
-                .requestMatchers(HttpMethod.PUT,"/admin/**").hasAuthority(Admin.ROLE.name());
+                .requestMatchers(HttpMethod.PUT, "/admin/**").hasAuthority(Admin.ROLE.name());
     }
 
     private void setMatchersForImageController(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests()
                 .requestMatchers("/images/**").permitAll()
-                .requestMatchers(HttpMethod.POST,"/images/**").hasAuthority(UserPrivate.ROLE.name())
-                .requestMatchers(HttpMethod.PUT,"/images/**").hasAuthority(UserPrivate.ROLE.name())
-                .requestMatchers(HttpMethod.DELETE,"/images/**").hasAnyAuthority(UserPrivate.ROLE.name(), Admin.ROLE.name());
+                .requestMatchers(HttpMethod.POST, "/images/**").hasAuthority(UserPrivate.ROLE.name())
+                .requestMatchers(HttpMethod.PUT, "/images/**").hasAuthority(UserPrivate.ROLE.name())
+                .requestMatchers(HttpMethod.DELETE, "/images/**").hasAnyAuthority(UserPrivate.ROLE.name(), Admin.ROLE.name());
     }
 }

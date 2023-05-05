@@ -2,9 +2,9 @@ package by.easycar.service;
 
 import by.easycar.exceptions.WrongOperationNameException;
 import by.easycar.model.Payment;
-import by.easycar.model.requests.PaymentRequest;
 import by.easycar.model.user.UserPrivate;
 import by.easycar.repository.PaymentRepository;
+import by.easycar.requests.PaymentRequest;
 import by.easycar.service.mappers.PaymentMapper;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -15,6 +15,9 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.DecodingException;
 import io.jsonwebtoken.security.SignatureException;
 import jakarta.transaction.Transactional;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
+import jakarta.validation.Validator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +25,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static java.util.concurrent.TimeUnit.MINUTES;
 
@@ -40,25 +44,21 @@ public class PaymentService {
 
     private final PaymentMapper paymentMapper;
 
+    private final Validator validator;
+
     @Autowired
-    public PaymentService(UserService userService, PaymentRepository paymentRepository, PaymentMapper paymentMapper) {
+    public PaymentService(UserService userService, PaymentRepository paymentRepository, PaymentMapper paymentMapper, Validator validator) {
         this.userService = userService;
         this.paymentRepository = paymentRepository;
         this.paymentMapper = paymentMapper;
+        this.validator = validator;
         MAP_OF_OPERATIONS.put("10_ups", 10);
         MAP_OF_OPERATIONS.put("20_ups", 20);
         MAP_OF_OPERATIONS.put("30_ups", 30);
-
     }
 
     @Transactional
-    public void doPay(String jwt) {
-        PaymentRequest paymentRequest;
-        try {
-            paymentRequest = getPaymentRequestFromJwtToken(jwt);
-        } catch (ExpiredJwtException | MalformedJwtException | SignatureException | DecodingException e) {
-            throw new JwtException("Invalid JWT token: " + e.getMessage());
-        }
+    public void makePay(PaymentRequest paymentRequest) {
         Integer ups = MAP_OF_OPERATIONS.entrySet().stream()
                 .filter((x) -> x.getKey().equals(paymentRequest.getOperationName()))
                 .findFirst()
@@ -71,6 +71,15 @@ public class PaymentService {
         paymentRepository.save(payment);
     }
 
+    public void verifyAndMakePay(String jwt) {
+        PaymentRequest paymentRequest = getPaymentRequestFromJwtToken(jwt);
+        Set<ConstraintViolation<PaymentRequest>> violations = validator.validate(paymentRequest);
+        if (violations.size() != 0) {
+            throw new ConstraintViolationException(violations);
+        }
+        this.makePay(paymentRequest);
+    }
+
     public String getToken(Map<String, String> paymentRequest) {
         Date currentDate = new Date();
         return Jwts.builder().setClaims(paymentRequest)
@@ -80,12 +89,19 @@ public class PaymentService {
     }
 
     public PaymentRequest getPaymentRequestFromJwtToken(String token) {
-        Claims map = Jwts.parserBuilder().setSigningKey(SIGNING_KEY).build().parseClaimsJws(token).getBody();
-        PaymentRequest paymentRequest = new PaymentRequest();
-        paymentRequest.setBankName((String) map.get("bankName"));
-        paymentRequest.setUserId(Long.parseLong((String) map.get("userId")));
-        paymentRequest.setOperationName((String) map.get("operationName"));
-        paymentRequest.setTransactionNumber((String) map.get("transactionNumber"));
+        PaymentRequest paymentRequest = null;
+        try {
+            Claims map = Jwts.parserBuilder().setSigningKey(SIGNING_KEY).build().parseClaimsJws(token).getBody();
+            paymentRequest = new PaymentRequest();
+            paymentRequest.setBankName((String) map.get("bankName"));
+            paymentRequest.setUserId(Long.parseLong((String) map.get("userId")));
+            paymentRequest.setOperationName((String) map.get("operationName"));
+            paymentRequest.setTransactionNumber((String) map.get("transactionNumber"));
+        } catch (ExpiredJwtException | MalformedJwtException | SignatureException | DecodingException ignored) {
+        }
+        if (paymentRequest == null) {
+            throw new JwtException("JWT token is invalid.");
+        }
         return paymentRequest;
     }
 
@@ -95,4 +111,3 @@ public class PaymentService {
         return paymentRepository.findByUser(userPrivate);
     }
 }
-

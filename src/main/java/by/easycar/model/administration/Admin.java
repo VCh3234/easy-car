@@ -9,8 +9,10 @@ import jakarta.persistence.Id;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.validator.constraints.Length;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -19,7 +21,6 @@ import java.util.List;
 
 @NoArgsConstructor
 @Data
-
 @Entity
 @Table(name = "admins")
 public class Admin implements UserDetails {
@@ -28,14 +29,18 @@ public class Admin implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "adm_sequence")
-    @SequenceGenerator(catalog = "sequences", name = "adm_sequence", sequenceName = "admins_sequence_id", initialValue = 1, allocationSize = 1)
+    @SequenceGenerator(catalog = "sequences", name = "adm_sequence", sequenceName = "admins_sequence_id")
     @Column(name = "adm_id")
     private Long id;
 
     @Column(name = "adm_name", unique = true, nullable = false)
+    @Length(min = 4, max = 30)
+    @NotBlank
     private String name;
 
     @Column(name = "adm_password", nullable = false)
+    @Length(min = 8, max = 30)
+    @NotBlank
     private String password;
 
     @Transient

@@ -1,39 +1,29 @@
 package by.easycar.service.mappers;
 
-import by.easycar.model.requests.UserInnerRequest;
-import by.easycar.model.requests.UserRequest;
 import by.easycar.model.user.UserForAd;
 import by.easycar.model.user.UserPrivate;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import by.easycar.requests.user.UserInnerResponse;
+import by.easycar.requests.user.UserRequest;
 import org.springframework.stereotype.Service;
 
 @Service
 public class UserMapper {
 
-    private final PasswordEncoder passwordEncoder;
-
-    @Autowired
-    public UserMapper(PasswordEncoder passwordEncoder) {
-        this.passwordEncoder = passwordEncoder;
+    public UserInnerResponse getUserInnerFromUserPrivate(UserPrivate userPrivate) {
+        UserInnerResponse userInnerResponse = new UserInnerResponse();
+        userInnerResponse.setEmail(userPrivate.getEmail());
+        userInnerResponse.setId(userPrivate.getId());
+        userInnerResponse.setName(userPrivate.getName());
+        userInnerResponse.setPhoneNumber(userPrivate.getPhoneNumber());
+        userInnerResponse.setCreationDate(userPrivate.getCreationDate());
+        userInnerResponse.setUpdateTime(userPrivate.getUpdateTime());
+        userInnerResponse.setUps(userPrivate.getUps());
+        userInnerResponse.setVerifiedByPhone(userPrivate.isVerifiedByPhone());
+        userInnerResponse.setVerifiedByEmail(userPrivate.isVerifiedByPhone());
+        return userInnerResponse;
     }
 
-    public UserInnerRequest getUserInnerFromUserPrivate(UserPrivate userPrivate) {
-        UserInnerRequest userInnerRequest = new UserInnerRequest();
-        userInnerRequest.setEmail(userPrivate.getEmail());
-        userInnerRequest.setId(userPrivate.getId());
-        userInnerRequest.setStatus(userPrivate.getStatus());
-        userInnerRequest.setName(userPrivate.getName());
-        userInnerRequest.setPhoneNumber(userPrivate.getPhoneNumber());
-        userInnerRequest.setCreationDate(userPrivate.getCreationDate());
-        userInnerRequest.setUpdateTime(userPrivate.getUpdateTime());
-        userInnerRequest.setUps(userPrivate.getUps());
-        userInnerRequest.setVerifiedByPhone(userPrivate.isVerifiedByPhone());
-        userInnerRequest.setVerifiedByEmail(userPrivate.isVerifiedByPhone());
-        return userInnerRequest;
-    }
-
-    public UserPrivate getUserPrivateFromUserRequest(UserRequest userRequest, String password) {
+    public UserPrivate getUserPrivateFromUserRegisterRequest(UserRequest userRequest, String password) {
         UserPrivate userPrivate = new UserPrivate();
         userPrivate.setPassword(password);
         userPrivate.setPhoneNumber(userRequest.getPhoneNumber());

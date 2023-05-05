@@ -2,82 +2,99 @@ package by.easycar.service.verifications;
 
 import by.easycar.exceptions.VerifyException;
 import by.easycar.exceptions.VerifyMethodNotSupportedException;
-import by.easycar.model.user.UserPrivate;
 import by.easycar.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.util.Base64;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 @Component
 public class VerificationResolver {
 
-    private final Map<String, VerificationService> verificationServicesMap;
+    private final Map<String, VerificationService> MAP_OF_VERIFY_SERVICES;
 
-    public static Map<Long, VerifyModel> codesWithMethods = new HashMap<>();
+    private Map<String, VerifyModel> MESSAGES = new ConcurrentHashMap<>();
 
-    private final Base64.Encoder encoder = Base64.getEncoder();
+    private final Base64.Encoder ENCODER = Base64.getEncoder();
 
     private final UserService userService;
 
     @Autowired
-    public VerificationResolver(Map<String, VerificationService> verificationServicesMap, UserService userService) {
-        this.verificationServicesMap = verificationServicesMap;
+    public VerificationResolver(Map<String, VerificationService> MAP_OF_VERIFY_SERVICES, UserService userService) {
+        this.MAP_OF_VERIFY_SERVICES = MAP_OF_VERIFY_SERVICES;
         this.userService = userService;
     }
 
     @AllArgsConstructor
-    private class VerifyModel {
+    private static class VerifyModel {
 
-        private Class<? extends VerificationService> verificationService;
+        private VerificationService verificationService;
 
-        private String code;
+        private Long id;
+
+        private LocalDateTime localDateTime;
     }
 
-    public boolean verify(Long userId, String code) {
-        VerifyModel verifyModel;
+    public void verify(String code) {
+        VerifyModel verifyModel = null;
         try {
-            verifyModel = codesWithMethods.get(userId);
-        } catch (Throwable e) {
-            throw new VerifyException("You don`t send request for verify.");
+            verifyModel = MESSAGES.get(code);
+        } catch (NullPointerException ignored) {
         }
-        if (verifyModel.verificationService.equals(SmsUserVerificationService.class)) {
-            if (verifyModel.code.equals(code)) {
-                userService.setVerifiedByPhone(userId);
-            }
-        } else if (verifyModel.verificationService.equals(EmailUserVerificationService.class)) {
-            if (verifyModel.code.equals(code)) {
-                userService.setVerifiedByEmail(userId);
-            }
-        } else if (verifyModel.verificationService.equals(VerifyStub.class)) {
-            if (verifyModel.code.equals(code)) {
-                userService.setVerifiedByEmail(userId);
-            }
+        if (verifyModel == null) {
+            throw new VerifyException("Wrong code.");
+        }
+        if (verifyModel.verificationService instanceof SmsUserVerificationService) {
+            userService.setVerifiedByPhone(verifyModel.id);
+        } else if (verifyModel.verificationService instanceof EmailUserVerificationService) {
+            userService.setVerifiedByEmail(verifyModel.id);
+        } else if (verifyModel.verificationService instanceof VerifyStub) {
+            userService.setVerifiedByEmail(verifyModel.id);
         } else {
-            return false;
+            throw new VerifyException("Can't verify user.");
         }
-        return true;
+        MESSAGES.remove(code);
     }
 
-    public boolean sendMessage(Long userId, String verificationType) {
-        String rawCode = userId + "superSecretKey" + Math.random();
-        String code = encoder.encodeToString(rawCode.getBytes());
-        UserPrivate userPrivate = userService.getById(userId);
-        String serviceType = this.getNameOfService(verificationType);
-        var verifyTypeService = verificationServicesMap.get(serviceType);
-        codesWithMethods.put(userId, new VerifyModel(verifyTypeService.getClass(), code));
-        verifyTypeService.sendMessage(userPrivate, code);
-        return true;
+    public void sendMessage(Long userId, String verificationType) {
+        VerificationService verificationService = null;
+        try {
+            verificationService = MAP_OF_VERIFY_SERVICES.get(verificationType);
+        } catch (NullPointerException ignored) {
+        }
+        if (verificationService == null) {
+            throw new VerifyMethodNotSupportedException("Unsupported type of service.");
+        }
+        String code = getRandomCode();
+        VerifyModel verifyModel = new VerifyModel(verificationService, userId, LocalDateTime.now());
+        if (!MESSAGES.containsKey(code)) {
+            MESSAGES.put(code, verifyModel);
+        } else {
+            sendMessage(userId, verificationType);
+            return;
+        }
+        verificationService.sendMessage(userService.getById(userId), code);
     }
 
-    private String getNameOfService(String verificationType) {
-        return verificationServicesMap
-                .keySet().stream()
-                .filter(type -> type.equals(verificationType))
-                .findFirst()
-                .orElseThrow(() -> new VerifyMethodNotSupportedException("Incorrect type of verification."));
+    @Scheduled(fixedDelay = 1, timeUnit = TimeUnit.HOURS)
+    private void deleteOldMessages() {
+        System.out.println(MESSAGES);
+        MESSAGES = MESSAGES.entrySet()
+                .stream().filter((x) -> {
+                    LocalDateTime ldt = x.getValue().localDateTime;
+                    return !ldt.isBefore(LocalDateTime.now().minusHours(2));
+                }).collect(Collectors.toConcurrentMap((Map.Entry::getKey), (Map.Entry::getValue)));
+    }
+
+    private String getRandomCode() {
+        String rawCode = Math.random() + "" + Math.random();
+        return ENCODER.encodeToString(rawCode.getBytes());
     }
 }

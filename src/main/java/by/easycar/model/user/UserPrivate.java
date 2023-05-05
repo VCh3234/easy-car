@@ -7,8 +7,6 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -26,15 +24,14 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 @NoArgsConstructor
 @EqualsAndHashCode(exclude = {"payments", "advertisements"})
 @Setter
 @Getter
 @ToString(exclude = {"payments", "advertisements"})
-
 @Entity
 @Table(name = "users")
 public class UserPrivate {
@@ -43,7 +40,7 @@ public class UserPrivate {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "u_sequence")
-    @SequenceGenerator(catalog = "sequences", name = "u_sequence", sequenceName = "u_sequence_id", initialValue = 1, allocationSize = 1)
+    @SequenceGenerator(catalog = "sequences", name = "u_sequence", sequenceName = "u_sequence_id")
     @Column(name = "u_id")
     private Long id;
 
@@ -55,7 +52,7 @@ public class UserPrivate {
     @UpdateTimestamp
     private LocalDateTime updateTime;
 
-    @Column(name = "u_name")
+    @Column(name = "u_name", nullable = false)
     private String name;
 
     @Column(name = "u_phone", unique = true, nullable = false)
@@ -67,28 +64,20 @@ public class UserPrivate {
     @Column(name = "u_password", nullable = false)
     private String password;
 
-    @Column(name = "u_status", nullable = false)
-    @Enumerated(EnumType.STRING)
-    private UserStatus status = UserStatus.ACTIVE;
-
-    @Column(name = "u_email_verify")
+    @Column(name = "u_email_verify", nullable = false)
     private boolean verifiedByEmail = false;
 
-    @Column(name = "u_phone_verify")
+    @Column(name = "u_phone_verify", nullable = false)
     private boolean verifiedByPhone = false;
+
+    @Column(name = "u_ups", nullable = false)
+    private Integer ups = 0;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @JsonManagedReference
-    private Set<Advertisement> advertisements = new HashSet<>();
+    private List<Advertisement> advertisements = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", orphanRemoval = true, fetch = FetchType.LAZY)
     @JsonManagedReference
-    private Set<Payment> payments = new HashSet<>();
-
-    @Column(name = "u_ups")
-    private Integer ups = 0;
-
-    public enum UserStatus {
-        ACTIVE, BANNED
-    }
+    private List<Payment> payments = new ArrayList<>();
 }

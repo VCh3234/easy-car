@@ -12,7 +12,6 @@ import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 @Data
-
 @Entity
 @Table(name = "vehicles")
 public class Vehicle {
