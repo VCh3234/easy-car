@@ -2,9 +2,9 @@ package by.easycar.service;
 
 import by.easycar.exceptions.WrongOperationNameException;
 import by.easycar.model.Payment;
+import by.easycar.model.requests.PaymentRequest;
 import by.easycar.model.user.UserPrivate;
 import by.easycar.repository.PaymentRepository;
-import by.easycar.requests.PaymentRequest;
 import by.easycar.service.mappers.PaymentMapper;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;

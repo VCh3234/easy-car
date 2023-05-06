@@ -1,4 +1,4 @@
-package by.easycar.requests.user;
+package by.easycar.model.requests.user;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;

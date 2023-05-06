@@ -3,7 +3,7 @@ package by.easycar.service.search;
 import by.easycar.exceptions.SearchException;
 import by.easycar.model.advertisement.Advertisement;
 import by.easycar.model.advertisement.Vehicle;
-import by.easycar.requests.SearchParams;
+import by.easycar.model.requests.SearchParams;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Join;

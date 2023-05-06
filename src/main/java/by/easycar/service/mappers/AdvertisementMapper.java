@@ -2,7 +2,7 @@ package by.easycar.service.mappers;
 
 import by.easycar.model.advertisement.Advertisement;
 import by.easycar.model.advertisement.Vehicle;
-import by.easycar.requests.AdvertisementRequest;
+import by.easycar.model.requests.AdvertisementRequest;
 import org.springframework.stereotype.Component;
 
 @Component

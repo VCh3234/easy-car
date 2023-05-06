@@ -2,9 +2,9 @@ package by.easycar.controllers;
 
 import by.easycar.model.administration.Moderation;
 import by.easycar.model.advertisement.Advertisement;
+import by.easycar.model.requests.AdvertisementRequest;
+import by.easycar.model.requests.SearchParams;
 import by.easycar.model.user.UserPrincipal;
-import by.easycar.requests.AdvertisementRequest;
-import by.easycar.requests.SearchParams;
 import by.easycar.service.AdminService;
 import by.easycar.service.AdvertisementService;
 import by.easycar.service.search.SearchAdvertisementService;

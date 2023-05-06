@@ -1,4 +1,4 @@
-package by.easycar.requests;
+package by.easycar.model.requests;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;

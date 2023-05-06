@@ -4,7 +4,7 @@ import by.easycar.model.Payment;
 import by.easycar.model.administration.Admin;
 import by.easycar.model.administration.Moderation;
 import by.easycar.model.advertisement.Advertisement;
-import by.easycar.requests.user.UserInnerResponse;
+import by.easycar.model.requests.user.UserInnerResponse;
 import by.easycar.service.AdminService;
 import io.swagger.v3.oas.annotations.Parameter;
 import org.springframework.beans.factory.annotation.Autowired;

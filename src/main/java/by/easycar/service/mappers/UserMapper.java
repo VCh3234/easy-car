@@ -1,9 +1,9 @@
 package by.easycar.service.mappers;
 
+import by.easycar.model.requests.user.UserInnerResponse;
+import by.easycar.model.requests.user.UserRequest;
 import by.easycar.model.user.UserForAd;
 import by.easycar.model.user.UserPrivate;
-import by.easycar.requests.user.UserInnerResponse;
-import by.easycar.requests.user.UserRequest;
 import org.springframework.stereotype.Service;
 
 @Service

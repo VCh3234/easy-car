@@ -1,10 +1,10 @@
 package by.easycar.controllers;
 
+import by.easycar.model.requests.user.PasswordRequest;
+import by.easycar.model.requests.user.UserInnerResponse;
+import by.easycar.model.requests.user.UserRegisterRequest;
+import by.easycar.model.requests.user.UserRequest;
 import by.easycar.model.user.UserPrincipal;
-import by.easycar.requests.user.PasswordRequest;
-import by.easycar.requests.user.UserInnerResponse;
-import by.easycar.requests.user.UserRegisterRequest;
-import by.easycar.requests.user.UserRequest;
 import by.easycar.service.UserService;
 import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.validation.Valid;

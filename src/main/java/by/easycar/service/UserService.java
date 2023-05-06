@@ -2,13 +2,13 @@ package by.easycar.service;
 
 import by.easycar.exceptions.user.SaveUserDataException;
 import by.easycar.exceptions.user.UserFindException;
+import by.easycar.model.requests.user.UserInnerResponse;
+import by.easycar.model.requests.user.UserRegisterRequest;
+import by.easycar.model.requests.user.UserRequest;
 import by.easycar.model.user.UserForAd;
 import by.easycar.model.user.UserPrivate;
 import by.easycar.repository.UserForAdRepository;
 import by.easycar.repository.UserRepository;
-import by.easycar.requests.user.UserInnerResponse;
-import by.easycar.requests.user.UserRegisterRequest;
-import by.easycar.requests.user.UserRequest;
 import by.easycar.service.mappers.UserMapper;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
