@@ -1,8 +1,9 @@
-package by.easycar.service.verifications;
+package by.easycar.service.verification;
 
 import by.easycar.exceptions.VerifyException;
 import by.easycar.exceptions.VerifyMethodNotSupportedException;
 import by.easycar.service.UserService;
+import jakarta.mail.MessagingException;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -55,15 +56,13 @@ public class VerificationResolver {
             userService.setVerifiedByPhone(verifyModel.id);
         } else if (verifyModel.verificationService instanceof EmailUserVerificationService) {
             userService.setVerifiedByEmail(verifyModel.id);
-        } else if (verifyModel.verificationService instanceof VerifyStub) {
-            userService.setVerifiedByEmail(verifyModel.id);
         } else {
             throw new VerifyException("Can't verify user.");
         }
         MESSAGES.remove(code);
     }
 
-    public void sendMessage(Long userId, String verificationType) {
+    public void sendMessage(Long userId, String verificationType) throws MessagingException {
         VerificationService verificationService = null;
         try {
             verificationService = MAP_OF_VERIFY_SERVICES.get(verificationType);
@@ -84,8 +83,7 @@ public class VerificationResolver {
     }
 
     @Scheduled(fixedDelay = 1, timeUnit = TimeUnit.HOURS)
-    private void deleteOldMessages() {
-        System.out.println(MESSAGES);
+    void deleteOldMessages() {
         MESSAGES = MESSAGES.entrySet()
                 .stream().filter((x) -> {
                     LocalDateTime ldt = x.getValue().localDateTime;

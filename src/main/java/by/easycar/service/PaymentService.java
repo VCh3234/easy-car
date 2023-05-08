@@ -2,7 +2,7 @@ package by.easycar.service;
 
 import by.easycar.exceptions.WrongOperationNameException;
 import by.easycar.model.Payment;
-import by.easycar.model.requests.PaymentRequest;
+import by.easycar.model.dto.PaymentRequest;
 import by.easycar.model.user.UserPrivate;
 import by.easycar.repository.PaymentRepository;
 import by.easycar.service.mappers.PaymentMapper;

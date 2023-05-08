@@ -3,7 +3,7 @@ package by.easycar.service.search;
 import by.easycar.exceptions.SearchException;
 import by.easycar.model.advertisement.Advertisement;
 import by.easycar.model.advertisement.Vehicle;
-import by.easycar.model.requests.SearchParams;
+import by.easycar.model.dto.SearchParams;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Join;
@@ -39,9 +39,9 @@ public class AdvertisementSpecification implements Specification<Advertisement> 
     public Predicate toPredicate(Root<Advertisement> root, CriteriaQuery<?> query, CriteriaBuilder builder) {
         if (whiteListOfAttributes.contains(searchParams.getKey())) {
             if (searchParams.getEntity().equals("advertisement")) {
-                return getPredicateForAdvertisement(root, query, builder);
+                return getPredicateForAdvertisement(root, builder);
             } else if (searchParams.getEntity().equals("vehicle")) {
-                return getPredicateForVehicle(root, query, builder);
+                return getPredicateForVehicle(root, builder);
             } else {
                 throw new SearchException("Unsupported entity value.");
             }
@@ -50,7 +50,7 @@ public class AdvertisementSpecification implements Specification<Advertisement> 
         }
     }
 
-    private Predicate getPredicateForVehicle(Root<Advertisement> root, CriteriaQuery<?> query, CriteriaBuilder builder) {
+    private Predicate getPredicateForVehicle(Root<Advertisement> root, CriteriaBuilder builder) {
         if (searchParams.getOperation().equals(":")) {
             Join<Vehicle, Advertisement> join = root.join("vehicle");
             return builder.like(join.get(searchParams.getKey()), "%" + searchParams.getValue() + "%");
@@ -59,7 +59,7 @@ public class AdvertisementSpecification implements Specification<Advertisement> 
         }
     }
 
-    private Predicate getPredicateForAdvertisement(Root<Advertisement> root, CriteriaQuery<?> query, CriteriaBuilder builder) {
+    private Predicate getPredicateForAdvertisement(Root<Advertisement> root, CriteriaBuilder builder) {
         switch (searchParams.getOperation()) {
             case ">" -> {
                 if (this.getJavaType(root) == String.class) {

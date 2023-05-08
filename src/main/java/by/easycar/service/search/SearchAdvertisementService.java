@@ -1,7 +1,7 @@
 package by.easycar.service.search;
 
 import by.easycar.model.advertisement.Advertisement;
-import by.easycar.model.requests.SearchParams;
+import by.easycar.model.dto.SearchParams;
 import by.easycar.repository.AdvertisementRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;

@@ -1,6 +1,5 @@
 package by.easycar.service;
 
-import by.easycar.exceptions.advertisement.images.DeleteImageException;
 import by.easycar.model.advertisement.Advertisement;
 import by.easycar.model.advertisement.ImageData;
 import jakarta.transaction.Transactional;
@@ -47,6 +46,10 @@ public class ImageService {
 
     private void deleteImage(Long adId, UUID uuid) throws IOException {
         Files.delete(ROOT_PATH.resolve(String.valueOf(adId)).resolve(uuid.toString() + ".jpg"));
+    }
+
+    private void deleteImage(Long adId, String uuid) throws IOException {
+        this.deleteImage(adId, UUID.fromString(uuid));
     }
 
     private void checkDirectory(Path path) {
@@ -125,8 +128,10 @@ public class ImageService {
                 deleteFiles(file);
             }
         }
-        if (!dirOrFile.delete()) {
-            throw new DeleteImageException("Something go wrong.");
-        }
+        dirOrFile.delete();
+    }
+
+    public void deleteImageForAdmin(Long adId, String imageUuid) throws IOException {
+        this.deleteImage(adId, imageUuid);
     }
 }

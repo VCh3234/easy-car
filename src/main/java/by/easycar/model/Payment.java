@@ -2,7 +2,6 @@ package by.easycar.model;
 
 import by.easycar.model.user.UserPrivate;
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -31,7 +30,7 @@ public class Payment {
     @Column(name = "p_id")
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.ALL})
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "u_id")
     @JsonBackReference
     private UserPrivate user;

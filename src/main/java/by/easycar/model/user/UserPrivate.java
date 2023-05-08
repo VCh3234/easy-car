@@ -28,10 +28,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 @NoArgsConstructor
-@EqualsAndHashCode(exclude = {"payments", "advertisements"})
+@EqualsAndHashCode(exclude = {"payments"})
 @Setter
 @Getter
-@ToString(exclude = {"payments", "advertisements"})
+@ToString(exclude = {"payments"})
 @Entity
 @Table(name = "users")
 public class UserPrivate {
@@ -74,10 +74,9 @@ public class UserPrivate {
     private Integer ups = 0;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    @JsonManagedReference
     private List<Advertisement> advertisements = new ArrayList<>();
 
-    @OneToMany(mappedBy = "user", orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @JsonManagedReference
     private List<Payment> payments = new ArrayList<>();
 }

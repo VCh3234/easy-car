@@ -5,7 +5,8 @@ import by.easycar.exceptions.advertisement.FindAdvertisementException;
 import by.easycar.exceptions.advertisement.WrongUserException;
 import by.easycar.exceptions.user.UpException;
 import by.easycar.model.advertisement.Advertisement;
-import by.easycar.model.requests.AdvertisementRequest;
+import by.easycar.model.advertisement.Vehicle;
+import by.easycar.model.dto.AdvertisementRequest;
 import by.easycar.model.user.UserForAd;
 import by.easycar.model.user.UserPrincipal;
 import by.easycar.model.user.UserPrivate;
@@ -14,10 +15,12 @@ import by.easycar.repository.VehicleRepository;
 import by.easycar.service.mappers.AdvertisementMapper;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class AdvertisementService {
@@ -49,7 +52,7 @@ public class AdvertisementService {
             Advertisement advertisement = advertisementMapper.getAdvertisementFromAdvertisementRequest(advertisementRequest);
             UserForAd userForAd = userService.getUserForAdFromUserPrivate(userPrivate);
             advertisement.setUser(userForAd);
-            vehicleRepository.save(advertisement.getVehicle());
+            checkVehicleAndSet(advertisement, advertisement.getVehicle());
             advertisementRepository.save(advertisement);
         } else {
             throw new VerifyException("User doesn't verified");
@@ -62,10 +65,16 @@ public class AdvertisementService {
                 .findById(adId)
                 .orElseThrow(() -> new FindAdvertisementException("Can`t find ad with id: " + adId));
         this.checkAuthorities(oldAdvertisement, user.getId());
-        Advertisement updatedAdvertisement = advertisementMapper.setUpdates(oldAdvertisement, advertisementRequest);
-        vehicleRepository.save(updatedAdvertisement.getVehicle());
-        advertisementRepository.save(updatedAdvertisement);
+        oldAdvertisement.setModerated(false);
+        Vehicle vehicle = advertisementMapper.getVehicleFromAdvertisementRequest(advertisementRequest);
+        checkVehicleAndSet(oldAdvertisement, vehicle);
+        advertisementMapper.setUpdates(oldAdvertisement, advertisementRequest);
+    }
 
+    private void checkVehicleAndSet(Advertisement advertisement, Vehicle vehicle) {
+        Example<Vehicle> vehicleExample = Example.of(vehicle);
+        Optional<Vehicle> optional = vehicleRepository.findOne(vehicleExample);
+        optional.ifPresent(advertisement::setVehicle);
     }
 
     @Transactional
@@ -76,7 +85,6 @@ public class AdvertisementService {
         this.checkAuthorities(oldAd, user.getId());
         ImageService.deleteDir(adId);
         advertisementRepository.deleteById(adId);
-
     }
 
     public List<Advertisement> getAllOfUser(Long userId) {
@@ -94,8 +102,8 @@ public class AdvertisementService {
                 .orElseThrow(() -> new FindAdvertisementException("Can`t find advertisement with id: " + adId + ", or ad isn't moderated."));
     }
 
-    public boolean acceptModeration(Long adId) {
-        return advertisementRepository.acceptModeration(adId) == 1;
+    public void acceptModeration(Long adId) {
+        advertisementRepository.acceptModeration(adId);
     }
 
     public void saveChanges(Advertisement advertisement) {
@@ -114,7 +122,7 @@ public class AdvertisementService {
         if (user.getUps() > 0) {
             advertisement.setUpTime(LocalDateTime.now());
             user.setUps(user.getUps() - 1);
-            this.saveChanges(advertisement);
+            advertisementRepository.save(advertisement);
             userService.saveChanges(user);
         } else {
             throw new UpException("You don't have enough ups.");
@@ -133,7 +141,7 @@ public class AdvertisementService {
 
     public Advertisement getInnerAdvertisementByIdForAdmin(Long adId) {
         return advertisementRepository.findById(adId)
-                .orElseThrow(() -> new FindAdvertisementException("Can`t find advertisement with id: " + adId + ", or ad isn't moderated."));
+                .orElseThrow(() -> new FindAdvertisementException("Can`t find advertisement with id: " + adId));
     }
 
     public void deleteForAdmin(Long adId) {

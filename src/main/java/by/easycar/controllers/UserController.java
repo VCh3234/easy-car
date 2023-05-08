@@ -1,12 +1,15 @@
 package by.easycar.controllers;
 
-import by.easycar.model.requests.user.PasswordRequest;
-import by.easycar.model.requests.user.UserInnerResponse;
-import by.easycar.model.requests.user.UserRegisterRequest;
-import by.easycar.model.requests.user.UserRequest;
+import by.easycar.model.dto.user.PasswordRequest;
+import by.easycar.model.dto.user.UserInnerResponse;
+import by.easycar.model.dto.user.UserRegisterRequest;
+import by.easycar.model.dto.user.UserRequest;
 import by.easycar.model.user.UserPrincipal;
 import by.easycar.service.UserService;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,6 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/users")
+@Tag(name = "User")
 public class UserController {
 
     private final UserService userService;
@@ -31,12 +35,14 @@ public class UserController {
         this.userService = userService;
     }
 
+    @Operation(summary = "Register new user", security = {@SecurityRequirement(name = "User JWT")})
     @PostMapping("/register")
     private ResponseEntity<String> registerUser(@RequestBody @Valid UserRegisterRequest userRegisterRequest) {
         userService.saveNewUser(userRegisterRequest);
         return new ResponseEntity<>("User was created.", HttpStatus.CREATED);
     }
 
+    @Operation(summary = "Update user", security = {@SecurityRequirement(name = "User JWT")})
     @PutMapping
     private ResponseEntity<String> updateUser(@RequestBody @Valid UserRequest userRequest,
                                               @AuthenticationPrincipal @Parameter(hidden = true) UserPrincipal user) {
@@ -44,6 +50,7 @@ public class UserController {
         return new ResponseEntity<>("User was updated.", HttpStatus.OK);
     }
 
+    @Operation(summary = "Update password", security = {@SecurityRequirement(name = "User JWT")})
     @PutMapping("/update-password")
     private ResponseEntity<String> updatePasswordUser(@RequestBody @Valid PasswordRequest passwordRequest,
                                                       @AuthenticationPrincipal @Parameter(hidden = true) UserPrincipal user) {
@@ -51,11 +58,13 @@ public class UserController {
         return new ResponseEntity<>("Password was updated.", HttpStatus.OK);
     }
 
+    @Operation(summary = "Get inner user", security = {@SecurityRequirement(name = "User JWT")})
     @GetMapping
     private ResponseEntity<UserInnerResponse> getUserInner(@AuthenticationPrincipal @Parameter(hidden = true) UserPrincipal user) {
         return new ResponseEntity<>(userService.getUserInner(user.getId()), HttpStatus.OK);
     }
 
+    @Operation(summary = "Delete user", security = {@SecurityRequirement(name = "User JWT")})
     @DeleteMapping
     private ResponseEntity<String> deleteUser(@AuthenticationPrincipal @Parameter(hidden = true) UserPrincipal user) {
         userService.deleteUserById(user.getId());

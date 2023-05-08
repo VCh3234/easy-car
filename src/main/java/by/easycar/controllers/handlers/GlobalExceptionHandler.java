@@ -2,6 +2,8 @@ package by.easycar.controllers.handlers;
 
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -21,6 +23,8 @@ import java.util.stream.Collectors;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
+
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, List<String>>> handleErrorsFromBindingResult(MethodArgumentNotValidException ex) {
@@ -49,6 +53,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Throwable.class)
     public ResponseEntity<Map<String, String>> handleAllExceptions(Throwable ex) {
+        logger.warn(ex.getMessage());
         Map<String, String> responseBody = new HashMap<>();
         responseBody.put("message", ex.getMessage());
         responseBody.put("from", ex.getClass().getSimpleName());
@@ -66,12 +71,8 @@ public class GlobalExceptionHandler {
         String message = ex.getMessage();
         if (message.contains("uk_email")) {
             responseBody.put("message", "User with your email is exist.");
-        } else if (message.contains("uk_ia0qnm02sw2gxn3d9mcomshea")) {
+        } else if (message.contains("uk_phone")) {
             responseBody.put("message", "User with your phone is exist.");
-        } else if (message.contains("u_email")) {
-            responseBody.put("message", "Null email.");
-        } else if (message.contains("u_phone")) {
-            responseBody.put("message", "Null phone.");
         }
         return new ResponseEntity<>(responseBody, HttpStatus.BAD_REQUEST);
     }

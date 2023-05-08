@@ -1,6 +1,9 @@
 package by.easycar.model.advertisement;
 
+import by.easycar.model.administration.Moderation;
 import by.easycar.model.user.UserForAd;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
@@ -10,17 +13,26 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
-import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @NoArgsConstructor
-@Data
+@Getter
+@Setter
+@ToString(exclude = {"moderation"})
+@EqualsAndHashCode(exclude = {"moderation"})
 @Entity
 @Table(name = "advertisements")
 public class Advertisement {
@@ -68,7 +80,7 @@ public class Advertisement {
     @Column(name = "ad_transmission_type", nullable = false)
     private String transmissionType;
 
-    @ManyToOne(optional = false, fetch = FetchType.EAGER)
+    @ManyToOne(optional = false, cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
     @JoinColumn(name = "v_id", nullable = false)
     private Vehicle vehicle;
 
@@ -78,4 +90,8 @@ public class Advertisement {
 
     @Embedded
     private ImageData imageData;
+
+    @OneToMany(mappedBy = "advertisement", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JsonIgnore
+    private List<Moderation> moderation = new ArrayList<>();
 }

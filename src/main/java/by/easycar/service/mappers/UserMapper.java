@@ -1,7 +1,7 @@
 package by.easycar.service.mappers;
 
-import by.easycar.model.requests.user.UserInnerResponse;
-import by.easycar.model.requests.user.UserRequest;
+import by.easycar.model.dto.user.UserInnerResponse;
+import by.easycar.model.dto.user.UserRequest;
 import by.easycar.model.user.UserForAd;
 import by.easycar.model.user.UserPrivate;
 import org.springframework.stereotype.Service;
@@ -19,7 +19,7 @@ public class UserMapper {
         userInnerResponse.setUpdateTime(userPrivate.getUpdateTime());
         userInnerResponse.setUps(userPrivate.getUps());
         userInnerResponse.setVerifiedByPhone(userPrivate.isVerifiedByPhone());
-        userInnerResponse.setVerifiedByEmail(userPrivate.isVerifiedByPhone());
+        userInnerResponse.setVerifiedByEmail(userPrivate.isVerifiedByEmail());
         return userInnerResponse;
     }
 

@@ -72,11 +72,11 @@ public class SecurityConfig {
 
     private void setMatchersForUserController(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests()
-                .requestMatchers(HttpMethod.POST, "/user/register").permitAll()
-                .requestMatchers(HttpMethod.DELETE, "/user").hasAuthority(UserPrivate.ROLE.name())
-                .requestMatchers(HttpMethod.PUT, "/user/update").hasAuthority(UserPrivate.ROLE.name())
-                .requestMatchers(HttpMethod.PUT, "/user/update-password").hasAuthority(UserPrivate.ROLE.name())
-                .requestMatchers(HttpMethod.GET, "/user").hasAnyAuthority(UserPrivate.ROLE.name());
+                .requestMatchers(HttpMethod.POST, "/users/register").permitAll()
+                .requestMatchers(HttpMethod.DELETE, "/users").hasAuthority(UserPrivate.ROLE.name())
+                .requestMatchers(HttpMethod.PUT, "/users").hasAuthority(UserPrivate.ROLE.name())
+                .requestMatchers(HttpMethod.PUT, "/users/update-password").hasAuthority(UserPrivate.ROLE.name())
+                .requestMatchers(HttpMethod.GET, "/users").hasAnyAuthority(UserPrivate.ROLE.name());
     }
 
     private void setMatchersForOperationalEndpoints(HttpSecurity http) throws Exception {
@@ -93,25 +93,26 @@ public class SecurityConfig {
     private void setMatchersForAuthenticationController(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests()
                 .requestMatchers("/auth/login").permitAll()
-                .requestMatchers("/auth/admin/login").permitAll()
-                .requestMatchers("/auth/logout").permitAll();
+                .requestMatchers("/auth/admin/login").permitAll();
     }
 
     private void setMatchersForPaymentController(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests()
-                .requestMatchers(HttpMethod.POST, "/pay/**").permitAll()
-                .requestMatchers("/pay/**").permitAll();
+                .requestMatchers(HttpMethod.POST, "/pays").hasAuthority(Admin.ROLE.name())
+                .requestMatchers("/pays").hasAnyAuthority(UserPrivate.ROLE.name(), Admin.ROLE.name())
+                .requestMatchers(HttpMethod.POST, "/pays/get-token-for-demonstration").hasAuthority(Admin.ROLE.name());
     }
 
     private void setMatchersForAdvertisementController(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests()
-                .requestMatchers("/search/ad/**").permitAll()
-                .requestMatchers("/ad/public").permitAll()
-                .requestMatchers("/ad").permitAll()
-                .requestMatchers("/ad/of-user").hasAuthority(UserPrivate.ROLE.name())
-                .requestMatchers(HttpMethod.PUT, "/ad/update/**").hasAuthority(UserPrivate.ROLE.name())
-                .requestMatchers(HttpMethod.POST, "/ad/create").hasAuthority(UserPrivate.ROLE.name())
-                .requestMatchers(HttpMethod.DELETE, "/ad/delete/**").hasAnyAuthority(UserPrivate.ROLE.name());
+                .requestMatchers("/ads").permitAll()
+                .requestMatchers("/ads/moderation").hasAuthority(UserPrivate.ROLE.name())
+                .requestMatchers(HttpMethod.POST, "/ads/search").permitAll()
+                .requestMatchers(HttpMethod.POST, "/ads").hasAuthority(UserPrivate.ROLE.name())
+                .requestMatchers("/ads/my-ads").hasAuthority(UserPrivate.ROLE.name())
+                .requestMatchers(HttpMethod.PUT, "/ads/**").hasAuthority(UserPrivate.ROLE.name())
+                .requestMatchers(HttpMethod.PUT, "/ads/up/**").hasAuthority(UserPrivate.ROLE.name())
+                .requestMatchers(HttpMethod.DELETE, "/ads/**").hasAnyAuthority(UserPrivate.ROLE.name());
     }
 
     private void setMatchersForVerifyController(HttpSecurity http) throws Exception {
@@ -122,8 +123,11 @@ public class SecurityConfig {
 
     private void setMatchersForAdminController(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests()
+                .requestMatchers(HttpMethod.POST, "/admin/add").permitAll()
                 .requestMatchers("/admin/**").hasAuthority(Admin.ROLE.name())
-                .requestMatchers(HttpMethod.PUT, "/admin/**").hasAuthority(Admin.ROLE.name());
+                .requestMatchers(HttpMethod.PUT, "/admin/**").hasAuthority(Admin.ROLE.name())
+                .requestMatchers(HttpMethod.POST, "/admin/**").hasAuthority(Admin.ROLE.name())
+                .requestMatchers(HttpMethod.DELETE, "/admin/**").hasAuthority(Admin.ROLE.name());
     }
 
     private void setMatchersForImageController(HttpSecurity http) throws Exception {
@@ -131,6 +135,6 @@ public class SecurityConfig {
                 .requestMatchers("/images/**").permitAll()
                 .requestMatchers(HttpMethod.POST, "/images/**").hasAuthority(UserPrivate.ROLE.name())
                 .requestMatchers(HttpMethod.PUT, "/images/**").hasAuthority(UserPrivate.ROLE.name())
-                .requestMatchers(HttpMethod.DELETE, "/images/**").hasAnyAuthority(UserPrivate.ROLE.name(), Admin.ROLE.name());
+                .requestMatchers(HttpMethod.DELETE, "/images/**").hasAnyAuthority(UserPrivate.ROLE.name());
     }
 }

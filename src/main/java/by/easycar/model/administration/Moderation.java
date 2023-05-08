@@ -14,16 +14,22 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.Immutable;
 import org.hibernate.validator.constraints.Length;
 
 import java.time.LocalDateTime;
 
-@NoArgsConstructor
-@Data
+@Getter
+@Setter
+@RequiredArgsConstructor
+@ToString(exclude = {"advertisement", "admin"})
+@EqualsAndHashCode(exclude = {"advertisement", "admin"})
 @Entity
 @Immutable
 @Table(name = "moderations")
@@ -49,7 +55,7 @@ public class Moderation {
     @JoinColumn(name = "adm_id", nullable = false)
     private Admin admin;
 
-    @ManyToOne
+    @ManyToOne(optional = false)
     @JoinColumn(name = "ad_id")
     private Advertisement advertisement;
 }

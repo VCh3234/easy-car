@@ -8,5 +8,7 @@ import java.util.List;
 
 public interface ModerationRepository extends JpaRepository<Moderation, Long> {
 
-    List<Moderation> findAllByAdvertisementUserContaining(UserForAd userForAd);
+    List<Moderation> findModerationByAdvertisement_User(UserForAd userForAd);
+
+    List<Moderation> findModerationByAdvertisement_UserId(Long userId);
 }

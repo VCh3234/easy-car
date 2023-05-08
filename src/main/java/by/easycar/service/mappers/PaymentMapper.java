@@ -1,7 +1,7 @@
 package by.easycar.service.mappers;
 
 import by.easycar.model.Payment;
-import by.easycar.model.requests.PaymentRequest;
+import by.easycar.model.dto.PaymentRequest;
 import by.easycar.model.user.UserPrivate;
 import org.springframework.stereotype.Component;
 

@@ -1,11 +1,11 @@
-package by.easycar.model.requests;
+package by.easycar.model.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
-import jakarta.validation.constraints.Size;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.Range;
 
 @Data
 public class AdvertisementRequest {
@@ -59,6 +59,6 @@ public class AdvertisementRequest {
     private String bodyType;
 
     @NotNull(message = "Car year must be not null.")
-    @Size(min = 1900, max = 2100, message = "Car year must be validated")
+    @Range(min = 1900, max = 2100, message = "Car year must be validated")
     private Integer carYear;
 }
