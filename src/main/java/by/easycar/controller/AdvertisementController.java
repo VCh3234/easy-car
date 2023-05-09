@@ -1,4 +1,4 @@
-package by.easycar.controllers;
+package by.easycar.controller;
 
 import by.easycar.model.advertisement.Advertisement;
 import by.easycar.model.dto.AdvertisementRequest;

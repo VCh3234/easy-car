@@ -1,6 +1,6 @@
 package by.easycar.config;
 
-import by.easycar.controllers.handlers.SecurityExceptionsHandler;
+import by.easycar.controller.handlers.SecurityExceptionsHandler;
 import by.easycar.filters.JwtSecurityFilter;
 import by.easycar.model.administration.Admin;
 import by.easycar.model.user.UserPrivate;

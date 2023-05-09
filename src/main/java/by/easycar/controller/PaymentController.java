@@ -1,4 +1,4 @@
-package by.easycar.controllers;
+package by.easycar.controller;
 
 import by.easycar.model.Payment;
 import by.easycar.model.user.UserPrincipal;

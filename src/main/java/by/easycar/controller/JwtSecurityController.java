@@ -1,4 +1,4 @@
-package by.easycar.controllers;
+package by.easycar.controller;
 
 import by.easycar.model.dto.AuthRequest;
 import by.easycar.service.security.admin.AdminJwtAuthenticationService;
