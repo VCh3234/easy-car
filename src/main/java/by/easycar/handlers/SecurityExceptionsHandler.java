@@ -1,4 +1,4 @@
-package by.easycar.controller.handlers;
+package by.easycar.handlers;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

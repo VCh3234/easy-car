@@ -9,5 +9,4 @@ class EasyCarApplicationTests {
     @Test
     void contextLoads() {
     }
-
 }

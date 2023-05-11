@@ -1,7 +1,7 @@
 package by.easycar.config;
 
-import by.easycar.controller.handlers.SecurityExceptionsHandler;
 import by.easycar.filters.JwtSecurityFilter;
+import by.easycar.handlers.SecurityExceptionsHandler;
 import by.easycar.model.administration.Admin;
 import by.easycar.model.user.UserPrivate;
 import by.easycar.service.security.user.UserDetailsServiceImpl;
@@ -72,7 +72,7 @@ public class SecurityConfig {
 
     private void setMatchersForUserController(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests()
-                .requestMatchers(HttpMethod.POST, "/users/register").permitAll()
+                .requestMatchers(HttpMethod.POST, "/users").permitAll()
                 .requestMatchers(HttpMethod.DELETE, "/users").hasAuthority(UserPrivate.ROLE.name())
                 .requestMatchers(HttpMethod.PUT, "/users").hasAuthority(UserPrivate.ROLE.name())
                 .requestMatchers(HttpMethod.PUT, "/users/update-password").hasAuthority(UserPrivate.ROLE.name())

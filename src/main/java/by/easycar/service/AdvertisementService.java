@@ -8,7 +8,6 @@ import by.easycar.model.advertisement.Advertisement;
 import by.easycar.model.advertisement.Vehicle;
 import by.easycar.model.dto.AdvertisementRequest;
 import by.easycar.model.user.UserForAd;
-import by.easycar.model.user.UserPrincipal;
 import by.easycar.model.user.UserPrivate;
 import by.easycar.repository.AdvertisementRepository;
 import by.easycar.repository.VehicleRepository;
@@ -60,11 +59,11 @@ public class AdvertisementService {
     }
 
     @Transactional
-    public void update(Long adId, AdvertisementRequest advertisementRequest, UserPrincipal user) {
+    public void update(Long adId, AdvertisementRequest advertisementRequest, Long userId) {
         Advertisement oldAdvertisement = advertisementRepository
                 .findById(adId)
                 .orElseThrow(() -> new FindAdvertisementException("Can`t find ad with id: " + adId));
-        this.checkAuthorities(oldAdvertisement, user.getId());
+        this.checkAuthorities(oldAdvertisement, userId);
         oldAdvertisement.setModerated(false);
         Vehicle vehicle = advertisementMapper.getVehicleFromAdvertisementRequest(advertisementRequest);
         checkVehicleAndSet(oldAdvertisement, vehicle);
@@ -78,11 +77,11 @@ public class AdvertisementService {
     }
 
     @Transactional
-    public void delete(Long adId, UserPrincipal user) {
+    public void delete(Long adId, Long userId) {
         Advertisement oldAd = advertisementRepository
                 .findById(adId)
                 .orElseThrow(() -> new FindAdvertisementException("Can`t find ad with id: " + adId));
-        this.checkAuthorities(oldAd, user.getId());
+        this.checkAuthorities(oldAd, userId);
         ImageService.deleteDir(adId);
         advertisementRepository.deleteById(adId);
     }

@@ -1,4 +1,4 @@
-package by.easycar.controller.handlers;
+package by.easycar.handlers;
 
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;

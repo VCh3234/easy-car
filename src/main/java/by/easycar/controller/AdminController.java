@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -40,21 +41,21 @@ public class AdminController {
     }
 
     @Operation(summary = "Get advertisements for moderation", security = {@SecurityRequirement(name = "Admin JWT")})
-    @GetMapping("/advertisements")
+    @GetMapping(path = "/advertisements", produces = MediaType.APPLICATION_JSON_VALUE)
     private ResponseEntity<List<Advertisement>> getAdvertisementsForModeration() {
         List<Advertisement> advertisements = adminService.getAllAdvertisementsNotModerated();
         return new ResponseEntity<>(advertisements, HttpStatus.OK);
     }
 
     @Operation(summary = "Get inner user", security = {@SecurityRequirement(name = "Admin JWT")})
-    @GetMapping("/get-user/{userId}")
+    @GetMapping(path = "/get-user/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
     private ResponseEntity<UserInnerResponse> getInnerUser(@PathVariable Long userId) {
         UserInnerResponse user = adminService.getUserInner(userId);
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
     @Operation(summary = "Get inner advertisement", security = {@SecurityRequirement(name = "Admin JWT")})
-    @GetMapping("/advertisement/{adId}")
+    @GetMapping(path = "/advertisement/{adId}", produces = MediaType.APPLICATION_JSON_VALUE)
     private ResponseEntity<Advertisement> getInnerAdvertisement(@PathVariable Long adId) {
         Advertisement advertisement = adminService.getInnerAdvertisement(adId);
         return new ResponseEntity<>(advertisement, HttpStatus.OK);
@@ -75,7 +76,7 @@ public class AdminController {
     }
 
     @Operation(summary = "Get payments of user", security = {@SecurityRequirement(name = "Admin JWT")})
-    @GetMapping("/payments/{userId}")
+    @GetMapping(path = "/payments/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
     private ResponseEntity<List<Payment>> getAllPaymentsOfUser(@PathVariable Long userId) {
         List<Payment> payments = adminService.getAllPaymentsOfUser(userId);
         return new ResponseEntity<>(payments, HttpStatus.OK);
@@ -106,21 +107,21 @@ public class AdminController {
     }
 
     @Operation(summary = "Get advertisements of user", security = {@SecurityRequirement(name = "Admin JWT")})
-    @GetMapping("/advertisements/{userId}")
+    @GetMapping(path = "/advertisements/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
     private ResponseEntity<List<Advertisement>> getAllAdvertisementsOfUser(@PathVariable Long userId) {
         List<Advertisement> advertisements = adminService.getAllAdvertisementsOfUser(userId);
         return new ResponseEntity<>(advertisements, HttpStatus.OK);
     }
 
     @Operation(summary = "Get moderation by user", security = {@SecurityRequirement(name = "Admin JWT")})
-    @GetMapping("/moderation/{userId}")
+    @GetMapping(path = "/moderation/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
     private ResponseEntity<List<ModerationResponse>> getAllModerationByUser(@PathVariable Long userId) {
         List<ModerationResponse> moderation = adminService.getAllModerationByUser(userId);
         return new ResponseEntity<>(moderation, HttpStatus.OK);
     }
 
     @Operation(summary = "Get all moderation", security = {@SecurityRequirement(name = "Admin JWT")})
-    @GetMapping("/moderation")
+    @GetMapping(path = "/moderation", produces = MediaType.APPLICATION_JSON_VALUE)
     private ResponseEntity<List<ModerationResponse>> getAllModeration() {
         List<ModerationResponse> moderation = adminService.getAllModeration();
         return new ResponseEntity<>(moderation, HttpStatus.OK);

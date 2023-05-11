@@ -18,13 +18,13 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserService {
 
-    private final UserRepository userRepository;
+    private UserRepository userRepository;
 
-    private final UserMapper userMapper;
+    private UserMapper userMapper;
 
-    private final PasswordEncoder passwordEncoder;
+    private PasswordEncoder passwordEncoder;
 
-    private final UserForAdRepository userForAdRepository;
+    private UserForAdRepository userForAdRepository;
 
     @Autowired
     public UserService(UserRepository userRepository, UserMapper userMapper, PasswordEncoder passwordEncoder, UserForAdRepository userForAdRepository) {
@@ -32,6 +32,9 @@ public class UserService {
         this.userMapper = userMapper;
         this.passwordEncoder = passwordEncoder;
         this.userForAdRepository = userForAdRepository;
+    }
+
+    public UserService() {
     }
 
     public UserPrivate getById(Long userId) {
@@ -46,7 +49,7 @@ public class UserService {
     @Transactional
     public void deleteUserById(Long id) {
         UserPrivate userPrivate = this.getById(id);
-        userPrivate.getAdvertisements().forEach(x-> ImageService.deleteDir(x.getId()));
+        userPrivate.getAdvertisements().forEach(advertisement-> ImageService.deleteDir(advertisement.getId()));
         userRepository.deleteById(id);
     }
 

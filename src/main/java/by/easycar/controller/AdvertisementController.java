@@ -17,6 +17,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -50,7 +51,7 @@ public class AdvertisementController {
     }
 
     @Operation(summary = "Get all public advertisements")
-    @GetMapping
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     private ResponseEntity<Object> getPublicAdvertisement(@RequestParam(required = false) Long id) {
         if (id == null) {
             List<Advertisement> allAdvertisements = advertisementService.getAllModeratedAdvertisementOrdered();
@@ -62,7 +63,7 @@ public class AdvertisementController {
     }
 
     @Operation(summary = "Get moderation of user", security = {@SecurityRequirement(name = "User JWT")})
-    @GetMapping("/moderation")
+    @GetMapping(path = "/moderation", produces = MediaType.APPLICATION_JSON_VALUE)
     private ResponseEntity<List<ModerationResponse>> getModerationOfUser(@AuthenticationPrincipal @Parameter(hidden = true) UserPrincipal userPrincipal) {
         List<ModerationResponse> moderation = adminService.getModerationOfUser(userPrincipal);
         return new ResponseEntity<>(moderation, HttpStatus.OK);
@@ -85,14 +86,14 @@ public class AdvertisementController {
                     "  }\n" +
                     "]")
             })))
-    @PostMapping("/search")
+    @PostMapping(path = "/search", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<Advertisement>> getAdvertisementsWithFilter(@RequestBody List<SearchParams> searchParams) {
         List<Advertisement> advertisements = searchAdvertisementService.getAllByParams(searchParams);
         return new ResponseEntity<>(advertisements, HttpStatus.OK);
     }
 
     @Operation(summary = "Get advertisements of user", security = {@SecurityRequirement(name = "User JWT")})
-    @GetMapping("/my-ads")
+    @GetMapping(path = "/my-ads", produces = MediaType.APPLICATION_JSON_VALUE)
     private ResponseEntity<Object> getInnerAdvertisements(@RequestParam(required = false) Long id,
                                                           @AuthenticationPrincipal @Parameter(hidden = true) UserPrincipal userPrincipal) {
         if (id == null) {
@@ -117,7 +118,7 @@ public class AdvertisementController {
     private ResponseEntity<String> updateAdvertisement(@PathVariable("adId") Long adId,
                                                        @RequestBody @Valid AdvertisementRequest advertisementRequest,
                                                        @AuthenticationPrincipal @Parameter(hidden = true) UserPrincipal user) {
-        advertisementService.update(adId, advertisementRequest, user);
+        advertisementService.update(adId, advertisementRequest, user.getId());
         return new ResponseEntity<>("Advertisement was updated.", HttpStatus.OK);
     }
 
@@ -125,7 +126,7 @@ public class AdvertisementController {
     @DeleteMapping("/{adId}")
     private ResponseEntity<String> deleteAdvertisement(@PathVariable Long adId,
                                                        @AuthenticationPrincipal @Parameter(hidden = true) UserPrincipal user) {
-        advertisementService.delete(adId, user);
+        advertisementService.delete(adId, user.getId());
         return new ResponseEntity<>("Advertisement was deleted.", HttpStatus.NO_CONTENT);
     }
 
