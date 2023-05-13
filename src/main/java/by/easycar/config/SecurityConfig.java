@@ -99,7 +99,7 @@ public class SecurityConfig {
     private void setMatchersForPaymentController(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests()
                 .requestMatchers(HttpMethod.POST, "/pays").hasAuthority(Admin.ROLE.name())
-                .requestMatchers("/pays").hasAnyAuthority(UserPrivate.ROLE.name(), Admin.ROLE.name())
+                .requestMatchers("/pays").hasAuthority(UserPrivate.ROLE.name())
                 .requestMatchers(HttpMethod.POST, "/pays/get-token-for-demonstration").hasAuthority(Admin.ROLE.name());
     }
 
@@ -123,7 +123,6 @@ public class SecurityConfig {
 
     private void setMatchersForAdminController(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests()
-                .requestMatchers(HttpMethod.POST, "/admin/add").permitAll()
                 .requestMatchers("/admin/**").hasAuthority(Admin.ROLE.name())
                 .requestMatchers(HttpMethod.PUT, "/admin/**").hasAuthority(Admin.ROLE.name())
                 .requestMatchers(HttpMethod.POST, "/admin/**").hasAuthority(Admin.ROLE.name())
