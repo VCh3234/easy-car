@@ -18,11 +18,13 @@ import java.util.UUID;
 @Service
 public class ImageService {
 
-    private final static Path ROOT_PATH = Paths.get("images");
+    private static Path ROOT_PATH = Paths.get("images");
 
-    private final AdvertisementService advertisementService;
+    private AdvertisementService advertisementService;
 
-    static {
+    @Autowired
+    public ImageService(AdvertisementService advertisementService) {
+        this.advertisementService = advertisementService;
         if (!Files.exists(ROOT_PATH)) {
             try {
                 Files.createDirectory(ROOT_PATH);
@@ -32,33 +34,20 @@ public class ImageService {
         }
     }
 
-    @Autowired
-    public ImageService(AdvertisementService advertisementService) {
-        this.advertisementService = advertisementService;
-    }
-
-    public void saveImage(MultipartFile file, Long adId, UUID uuid) throws IOException {
+    private void saveImage(MultipartFile file, Long adId, UUID uuid) throws IOException {
         Path pathWithoutUuid = ROOT_PATH.resolve(String.valueOf(adId));
         checkDirectory(pathWithoutUuid);
         Path fullPath = pathWithoutUuid.resolve(uuid.toString() + ".jpg");
         Files.copy(file.getInputStream(), fullPath);
     }
 
-    private void deleteImage(Long adId, UUID uuid) throws IOException {
-        Files.delete(ROOT_PATH.resolve(String.valueOf(adId)).resolve(uuid.toString() + ".jpg"));
-    }
-
     private void deleteImage(Long adId, String uuid) throws IOException {
-        this.deleteImage(adId, UUID.fromString(uuid));
+        Files.delete(ROOT_PATH.resolve(String.valueOf(adId)).resolve(uuid + ".jpg"));
     }
 
-    private void checkDirectory(Path path) {
+    private void checkDirectory(Path path) throws IOException {
         if (!Files.exists(path)) {
-            try {
-                Files.createDirectory(path);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+            Files.createDirectory(path);
         }
     }
 
@@ -71,7 +60,6 @@ public class ImageService {
         ImageData imageData = advertisement.getImageData();
         if (imageData == null) {
             imageData = new ImageData();
-            advertisement.setImageData(imageData);
         }
         UUID uuid = UUID.randomUUID();
         imageData.postNewImage(uuid);
@@ -94,7 +82,7 @@ public class ImageService {
         }
         UUID newUuid = UUID.randomUUID();
         imageData.replace(oldUuid, newUuid);
-        this.deleteImage(adId, UUID.fromString(oldUuid));
+        this.deleteImage(adId, oldUuid);
         this.saveImage(file, adId, newUuid);
         advertisement.setModerated(false);
         advertisementService.saveChanges(advertisement);
@@ -106,7 +94,7 @@ public class ImageService {
         if (!advertisement.getUser().getId().equals(userId)) {
             throw new AccessDeniedException("Your id don't match with id in advertisement.");
         }
-        this.deleteImage(adId, UUID.fromString(oldImage));
+        this.deleteImage(adId, oldImage);
         advertisement.getImageData().replace(oldImage, null);
         advertisementService.saveChanges(advertisement);
     }

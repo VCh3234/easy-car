@@ -86,7 +86,7 @@ public class AdminController {
     @PutMapping("/accept-advertisement")
     private ResponseEntity<String> acceptAdvertisement(@RequestParam Long adId,
                                                        @AuthenticationPrincipal @Parameter(hidden = true) Admin admin) {
-        adminService.accept(adId, admin);
+        adminService.acceptAdvertisement(adId, admin);
         return new ResponseEntity<>("Advertisement was accepted.", HttpStatus.OK);
     }
 
@@ -116,7 +116,7 @@ public class AdminController {
     @Operation(summary = "Get moderation by user", security = {@SecurityRequirement(name = "Admin JWT")})
     @GetMapping(path = "/moderation/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
     private ResponseEntity<List<ModerationResponse>> getAllModerationByUser(@PathVariable Long userId) {
-        List<ModerationResponse> moderation = adminService.getAllModerationByUser(userId);
+        List<ModerationResponse> moderation = adminService.getModerationOfUser(userId);
         return new ResponseEntity<>(moderation, HttpStatus.OK);
     }
 

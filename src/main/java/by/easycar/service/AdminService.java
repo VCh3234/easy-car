@@ -7,7 +7,6 @@ import by.easycar.model.advertisement.Advertisement;
 import by.easycar.model.dto.ModerationResponse;
 import by.easycar.model.dto.user.UserInnerResponse;
 import by.easycar.model.user.UserForAd;
-import by.easycar.model.user.UserPrincipal;
 import by.easycar.repository.AdminRepository;
 import by.easycar.repository.ModerationRepository;
 import by.easycar.service.mappers.ModerationMapper;
@@ -55,7 +54,7 @@ public class AdminService {
     }
 
     @Transactional
-    public void accept(Long adId, Admin admin) {
+    public void acceptAdvertisement(Long adId, Admin admin) {
         advertisementService.acceptModeration(adId);
         Moderation moderation = new Moderation();
         moderation.setMessage("Accept advertisement moderation");
@@ -97,8 +96,8 @@ public class AdminService {
         moderationRepository.save(moderation);
     }
 
-    public List<ModerationResponse> getModerationOfUser(UserPrincipal userPrincipal) {
-        UserForAd userForAd = userService.getUserForAdById(userPrincipal.getId());
+    public List<ModerationResponse> getModerationOfUser(Long userId) {
+        UserForAd userForAd = userService.getUserForAdById(userId);
         List<Moderation> moderation = moderationRepository.findModerationByAdvertisement_User(userForAd);
         return moderation.stream()
                 .map(moderationMapper::getModerationResponseFromModeration)
@@ -112,11 +111,6 @@ public class AdminService {
 
     public List<Advertisement> getAllAdvertisementsOfUser(Long userId) {
         return advertisementService.getAllOfUser(userId);
-    }
-
-    public List<ModerationResponse> getAllModerationByUser(Long userId) {
-        return moderationRepository.findModerationByAdvertisement_UserId(userId)
-                .stream().map(moderationMapper::getModerationResponseFromModeration).toList();
     }
 
     public void deleteImage(Long adId, String imageUuid) throws IOException {

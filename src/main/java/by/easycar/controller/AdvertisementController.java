@@ -65,7 +65,7 @@ public class AdvertisementController {
     @Operation(summary = "Get moderation of user", security = {@SecurityRequirement(name = "User JWT")})
     @GetMapping(path = "/moderation", produces = MediaType.APPLICATION_JSON_VALUE)
     private ResponseEntity<List<ModerationResponse>> getModerationOfUser(@AuthenticationPrincipal @Parameter(hidden = true) UserPrincipal userPrincipal) {
-        List<ModerationResponse> moderation = adminService.getModerationOfUser(userPrincipal);
+        List<ModerationResponse> moderation = adminService.getModerationOfUser(userPrincipal.getId());
         return new ResponseEntity<>(moderation, HttpStatus.OK);
     }
 

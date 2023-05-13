@@ -130,13 +130,13 @@ public class AdvertisementControllerTest {
     public void getModerationOfUserTest() throws Exception {
         UserPrincipal userPrincipal = (UserPrincipal) userPrincipalResolver.resolveArgument(null, null, null, null);
         assert userPrincipal != null;
-        when(adminService.getModerationOfUser(userPrincipal)).thenReturn(moderationResponses);
+        when(adminService.getModerationOfUser(userId)).thenReturn(moderationResponses);
         mockMvc.perform(get("/ads/moderation"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(content().json(jsonMapper.writeValueAsString(moderationResponses)))
                 .andReturn();
-        verify(adminService, times(1)).getModerationOfUser(userPrincipal);
+        verify(adminService, times(1)).getModerationOfUser(userId);
     }
 
     @Test

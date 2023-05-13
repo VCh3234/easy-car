@@ -166,7 +166,7 @@ public class AdminControllerTest {
         mockMvc.perform(put("/admin/accept-advertisement").param("adId", "1"))
                 .andExpect(status().isOk())
                 .andReturn();
-        verify(adminService, times(1)).accept(adId, admin);
+        verify(adminService, times(1)).acceptAdvertisement(adId, admin);
     }
 
     @Test
@@ -200,13 +200,13 @@ public class AdminControllerTest {
 
     @Test
     public void getAllModerationByUserTest() throws Exception {
-        when(adminService.getAllModerationByUser(userId)).thenReturn(moderationResponses);
+        when(adminService.getModerationOfUser(userId)).thenReturn(moderationResponses);
         mockMvc.perform(get("/admin/moderation/{userId}", userId))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(content().json(jsonMapper.writeValueAsString(moderationResponses)))
                 .andReturn();
-        verify(adminService, times(1)).getAllModerationByUser(userId);
+        verify(adminService, times(1)).getModerationOfUser(userId);
     }
 
     @Test
