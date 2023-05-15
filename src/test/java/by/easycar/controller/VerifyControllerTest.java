@@ -25,11 +25,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ExtendWith(MockitoExtension.class)
 public class VerifyControllerTest {
 
-    private MockMvc mockMvc;
-
-    @Mock
-    private VerificationResolver verificationResolver;
-
     private final HandlerMethodArgumentResolver userPrincipalResolver = new HandlerMethodArgumentResolver() {
         @Override
         public boolean supportsParameter(MethodParameter parameter) {
@@ -42,6 +37,11 @@ public class VerifyControllerTest {
             return new UserPrincipal(1L, null, null, null);
         }
     };
+
+    private MockMvc mockMvc;
+
+    @Mock
+    private VerificationResolver verificationResolver;
 
     @BeforeEach
     public void init() {

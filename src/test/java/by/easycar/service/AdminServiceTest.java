@@ -27,6 +27,15 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class AdminServiceTest {
+
+    private final List<Advertisement> advertisementList = new ArrayList<>();
+
+    private final List<Moderation> moderations = new ArrayList<>();
+
+    private final List<ModerationResponse> moderationResponses = new ArrayList<>();
+
+    private final List<Payment> payments = new ArrayList<>();
+
     @Mock
     private AdvertisementService advertisementService;
 
@@ -59,8 +68,6 @@ public class AdminServiceTest {
 
     private Long adId;
 
-    private final List<Advertisement> advertisementList = new ArrayList<>();
-
     private AdminService adminService;
 
     private Admin admin;
@@ -69,13 +76,7 @@ public class AdminServiceTest {
 
     private UserInnerResponse userInnerResponse;
 
-    private final List<Moderation> moderations = new ArrayList<>();
-
-    private final List<ModerationResponse> moderationResponses = new ArrayList<>();
-
     private ModerationResponse moderationResponse;
-
-    private final List<Payment> payments = new ArrayList<>();
 
     @BeforeEach
     public void init() {

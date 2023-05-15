@@ -46,9 +46,10 @@ public class PaymentServiceTest {
 
     private Payment payment;
 
-    private Map<String, String> paymentMap = new HashMap<>();
+    private final Map<String, String> paymentMap = new HashMap<>();
 
-    private List<Payment> paymentList = new ArrayList<>();
+    private final List<Payment> paymentList = new ArrayList<>();
+
     @BeforeEach
     public void init() {
         paymentRequest = new PaymentRequest();
@@ -77,7 +78,7 @@ public class PaymentServiceTest {
     @Test
     public void makePayTest() {
         when(userService.getById(1L)).thenReturn(userPrivate);
-        when(paymentMapper.getPaymentFromPaymentRequest(paymentRequest,userPrivate)).thenReturn(payment);
+        when(paymentMapper.getPaymentFromPaymentRequest(paymentRequest, userPrivate)).thenReturn(payment);
         paymentService.makePay(paymentRequest);
         assertEquals(20, userPrivate.getUps());
         verify(paymentRepository).save(payment);
@@ -87,7 +88,7 @@ public class PaymentServiceTest {
     public void getByIdTest() {
         when(validator.validate(paymentRequest)).thenReturn(new HashSet<>());
         when(userService.getById(1L)).thenReturn(userPrivate);
-        when(paymentMapper.getPaymentFromPaymentRequest(paymentRequest,userPrivate)).thenReturn(payment);
+        when(paymentMapper.getPaymentFromPaymentRequest(paymentRequest, userPrivate)).thenReturn(payment);
         String token = paymentService.getToken(paymentMap);
         paymentService.verifyAndMakePay(token);
         verify(paymentRepository).save(payment);

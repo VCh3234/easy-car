@@ -11,13 +11,13 @@ import org.springframework.stereotype.Component;
 @Component("verify_email")
 public class EmailUserVerificationService implements VerificationService {
 
+    private final JavaMailSender mailSender;
+
     @Value("${url.of.server}")
     private String URL;
 
     @Value("${server.port}")
     private String PORT;
-
-    private final JavaMailSender mailSender;
 
     @Autowired
     public EmailUserVerificationService(JavaMailSender mailSender) {

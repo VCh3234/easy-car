@@ -35,18 +35,16 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ExtendWith(MockitoExtension.class)
 public class PaymentControllerTest {
 
+    private final List<Payment> paymentsResponse = new ArrayList<>();
+
+    private final HashMap<String, String> paymentRequest = new HashMap<>();
+
     private MockMvc mockMvc;
 
     @Mock
     private PaymentService paymentService;
 
     private Long userId;
-
-    private final List<Payment> paymentsResponse = new ArrayList<>();
-
-    private ObjectWriter jsonMapper;
-
-    private final HashMap<String, String> paymentRequest = new HashMap<>();
 
     private final HandlerMethodArgumentResolver userPrincipalResolver = new HandlerMethodArgumentResolver() {
         @Override
@@ -60,6 +58,8 @@ public class PaymentControllerTest {
             return new UserPrincipal(userId, null, null, null);
         }
     };
+
+    private ObjectWriter jsonMapper;
 
     @BeforeEach
     public void init() {
@@ -75,12 +75,12 @@ public class PaymentControllerTest {
 
     @Test
     public void getTokenTest() throws Exception {
-            when(paymentService.getToken(paymentRequest)).thenReturn("testToken");
-            mockMvc.perform(post("/pays/get-token-for-demonstration").contentType(MediaType.APPLICATION_JSON).content("{\"key\":\"value\"}"))
-                    .andExpect(status().isOk())
-                    .andExpect(content().string("testToken"))
-                    .andReturn();
-            verify(paymentService, times(1)).getToken(paymentRequest);
+        when(paymentService.getToken(paymentRequest)).thenReturn("testToken");
+        mockMvc.perform(post("/pays/get-token-for-demonstration").contentType(MediaType.APPLICATION_JSON).content("{\"key\":\"value\"}"))
+                .andExpect(status().isOk())
+                .andExpect(content().string("testToken"))
+                .andReturn();
+        verify(paymentService, times(1)).getToken(paymentRequest);
     }
 
     @Test

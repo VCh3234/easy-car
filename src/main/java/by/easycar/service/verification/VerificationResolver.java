@@ -21,26 +21,16 @@ public class VerificationResolver {
 
     private final Map<String, VerificationService> MAP_OF_VERIFY_SERVICES;
 
-    private Map<String, VerifyModel> MESSAGES = new ConcurrentHashMap<>();
-
     private final Base64.Encoder ENCODER = Base64.getEncoder();
 
     private final UserService userService;
+
+    private Map<String, VerifyModel> MESSAGES = new ConcurrentHashMap<>();
 
     @Autowired
     public VerificationResolver(Map<String, VerificationService> MAP_OF_VERIFY_SERVICES, UserService userService) {
         this.MAP_OF_VERIFY_SERVICES = MAP_OF_VERIFY_SERVICES;
         this.userService = userService;
-    }
-
-    @AllArgsConstructor
-    private static class VerifyModel {
-
-        private VerificationService verificationService;
-
-        private Long id;
-
-        private LocalDateTime localDateTime;
     }
 
     public void verify(String code) {
@@ -94,5 +84,15 @@ public class VerificationResolver {
     private String getRandomCode() {
         String rawCode = Math.random() + "" + Math.random();
         return ENCODER.encodeToString(rawCode.getBytes());
+    }
+
+    @AllArgsConstructor
+    private static class VerifyModel {
+
+        private VerificationService verificationService;
+
+        private Long id;
+
+        private LocalDateTime localDateTime;
     }
 }

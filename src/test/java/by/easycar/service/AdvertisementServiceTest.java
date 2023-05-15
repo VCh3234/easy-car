@@ -31,6 +31,8 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 public class AdvertisementServiceTest {
 
+    private final List<Advertisement> advertisementList = new ArrayList<>();
+
     @Mock
     private UserService userService;
 
@@ -58,8 +60,6 @@ public class AdvertisementServiceTest {
     private Vehicle vehicle;
 
     private Long adId;
-
-    private final List<Advertisement> advertisementList = new ArrayList<>();
 
     @BeforeEach
     public void init() {

@@ -22,7 +22,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.List;
 
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -82,12 +82,7 @@ class UserControllerTest {
         userRegisterRequest.setUserRequest(userRequest);
         jsonMapper = new ObjectMapper().writer().withDefaultPrettyPrinter();
         userId = 1L;
-        userPrincipal = new UserPrincipal(userId, "test", "test@email.ru", new ArrayList<>(Arrays.asList(new GrantedAuthority() {
-            @Override
-            public String getAuthority() {
-                return "USER";
-            }
-        })));
+        userPrincipal = new UserPrincipal(userId, "test", "test@email.ru", new ArrayList<>(List.of((GrantedAuthority) () -> "USER")));
     }
 
     @Test

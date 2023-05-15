@@ -35,8 +35,6 @@ public class ImageControllerTest {
 
     private Long userId;
 
-    private MockMultipartFile file;
-
     private final HandlerMethodArgumentResolver userPrincipalResolver = new HandlerMethodArgumentResolver() {
         @Override
         public boolean supportsParameter(MethodParameter parameter) {
@@ -49,6 +47,8 @@ public class ImageControllerTest {
             return new UserPrincipal(userId, null, null, null);
         }
     };
+
+    private MockMultipartFile file;
 
     @BeforeEach
     public void init() {

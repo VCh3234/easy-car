@@ -40,29 +40,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ExtendWith(MockitoExtension.class)
 public class AdminControllerTest {
 
-    private MockMvc mockMvc;
-
-    @Mock
-    private AdminService adminService;
-
-    private Long adId;
-
-    private Long adminId;
-
-    private Long userId;
-
     private final List<Advertisement> advertisements = new ArrayList<>();
 
     private final List<Payment> paymentsResponse = new ArrayList<>();
 
-
     private final List<ModerationResponse> moderationResponses = new ArrayList<>();
-
-    private ObjectWriter jsonMapper;
-
-    private Advertisement advertisement;
-
-    private UserInnerResponse userInnerResponse;
 
     private final HandlerMethodArgumentResolver adminResolver = new HandlerMethodArgumentResolver() {
         @Override
@@ -77,12 +59,26 @@ public class AdminControllerTest {
         }
     };
 
+    private MockMvc mockMvc;
+
+    @Mock
+    private AdminService adminService;
+
+    private Long adId;
+
+    private Long userId;
+
+    private ObjectWriter jsonMapper;
+
+    private Advertisement advertisement;
+
+    private UserInnerResponse userInnerResponse;
+
     @BeforeEach
     public void init() {
         ModerationResponse moderation = new ModerationResponse();
         moderation.setId(1L);
         moderationResponses.add(moderation);
-        adminId = 1L;
         adId = 1L;
         userId = 1L;
         paymentsResponse.add(new Payment());

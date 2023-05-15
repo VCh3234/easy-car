@@ -49,7 +49,7 @@ public class UserService {
     @Transactional
     public void deleteUserById(Long id) {
         UserPrivate userPrivate = this.getById(id);
-        userPrivate.getAdvertisements().forEach(advertisement-> ImageService.deleteDir(advertisement.getId()));
+        userPrivate.getAdvertisements().forEach(advertisement -> ImageService.deleteDir(advertisement.getId()));
         userRepository.deleteById(id);
     }
 

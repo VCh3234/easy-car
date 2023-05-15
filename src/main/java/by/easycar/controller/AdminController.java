@@ -99,7 +99,7 @@ public class AdminController {
         return new ResponseEntity<>("Advertisement was rejected.", HttpStatus.OK);
     }
 
-    @Operation(summary = "Register new admin")
+    @Operation(summary = "Register new admin", security = {@SecurityRequirement(name = "Admin JWT")})
     @PostMapping("/add")
     private ResponseEntity<String> addNewAdmin(@RequestBody Admin admin) {
         adminService.saveNewAdmin(admin);

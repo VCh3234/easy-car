@@ -30,14 +30,14 @@ public class UserJwtAuthenticationService implements JwtService {
     @Value("${jwt.expire.time.minutes}")
     private long TIME_OF_EXPIRATION;
 
-    @PostConstruct
-    private void init() {
-        key = Base64.getEncoder().encodeToString(key.getBytes());
-    }
-
     @Autowired
     public UserJwtAuthenticationService(@Qualifier("userDetailsServiceImpl") UserDetailsServiceImpl userDetailsServiceImpl) {
         this.userDetailsServiceImpl = userDetailsServiceImpl;
+    }
+
+    @PostConstruct
+    private void init() {
+        key = Base64.getEncoder().encodeToString(key.getBytes());
     }
 
     @Override

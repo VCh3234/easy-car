@@ -29,8 +29,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@ExtendWith({MockitoExtension.class, })
+@ExtendWith({MockitoExtension.class})
 public class ImageServiceTest {
+
+    private static final Path TEMP_TEST_PATH = Path.of("src/test/imagesTest");
 
     @Mock
     private AdvertisementService advertisementService;
@@ -47,13 +49,12 @@ public class ImageServiceTest {
 
     private UUID testUuid;
 
-    private static final Path TEMP_TEST_PATH = Path.of("src/test/imagesTest");
-
     @BeforeAll
-    public static void initAll() throws NoSuchFieldException, IllegalAccessException, IOException {
+    public static void initAll() throws NoSuchFieldException, IllegalAccessException {
         Field field = ImageService.class.getDeclaredField("ROOT_PATH");
         field.setAccessible(true);
         field.set(field, TEMP_TEST_PATH);
+        field.setAccessible(false);
     }
 
     @AfterAll
@@ -61,6 +62,7 @@ public class ImageServiceTest {
         Field field = ImageService.class.getDeclaredField("ROOT_PATH");
         field.setAccessible(true);
         field.set(field, Path.of("images"));
+        field.setAccessible(false);
         Files.delete(TEMP_TEST_PATH);
     }
 
@@ -80,7 +82,7 @@ public class ImageServiceTest {
     }
 
     @AfterEach
-    public void after() throws IOException {
+    public void after() {
         ImageService.deleteDir(1L);
     }
 

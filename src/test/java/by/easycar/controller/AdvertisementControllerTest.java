@@ -42,6 +42,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ExtendWith(MockitoExtension.class)
 public class AdvertisementControllerTest {
 
+    private final List<Advertisement> advertisements = new ArrayList<>();
+
+    private final List<ModerationResponse> moderationResponses = new ArrayList<>();
+
+    private final List<SearchParams> searchParams = new ArrayList<>();
+
     private MockMvc mockMvc;
 
     @Mock
@@ -57,16 +63,6 @@ public class AdvertisementControllerTest {
 
     private Long userId;
 
-    private final List<Advertisement> advertisements = new ArrayList<>();
-
-    private final List<ModerationResponse> moderationResponses = new ArrayList<>();
-
-    private final List<SearchParams> searchParams = new ArrayList<>();
-
-    private ObjectWriter jsonMapper;
-
-    private AdvertisementRequest advertisementRequest;
-
     private final HandlerMethodArgumentResolver userPrincipalResolver = new HandlerMethodArgumentResolver() {
         @Override
         public boolean supportsParameter(MethodParameter parameter) {
@@ -79,6 +75,10 @@ public class AdvertisementControllerTest {
             return new UserPrincipal(userId, null, null, null);
         }
     };
+
+    private ObjectWriter jsonMapper;
+
+    private AdvertisementRequest advertisementRequest;
 
     @BeforeEach
     public void init() {

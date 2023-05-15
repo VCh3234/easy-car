@@ -20,7 +20,7 @@ public class ImageService {
 
     private static Path ROOT_PATH = Paths.get("images");
 
-    private AdvertisementService advertisementService;
+    private final AdvertisementService advertisementService;
 
     @Autowired
     public ImageService(AdvertisementService advertisementService) {
@@ -32,6 +32,21 @@ public class ImageService {
                 throw new RuntimeException(e);
             }
         }
+    }
+
+    public static void deleteDir(Long adId) {
+        Path path = ROOT_PATH.resolve(String.valueOf(adId));
+        deleteFiles(path.toFile());
+    }
+
+    private static void deleteFiles(File dirOrFile) {
+        File[] allContents = dirOrFile.listFiles();
+        if (allContents != null) {
+            for (File file : allContents) {
+                deleteFiles(file);
+            }
+        }
+        dirOrFile.delete();
     }
 
     private void saveImage(MultipartFile file, Long adId, UUID uuid) throws IOException {
@@ -102,21 +117,6 @@ public class ImageService {
     public byte[] getImage(Long adId, String uuid) throws IOException {
         Path path = ROOT_PATH.resolve(String.valueOf(adId)).resolve(uuid + ".jpg");
         return Files.readAllBytes(path);
-    }
-
-    public static void deleteDir(Long adId) {
-        Path path = ROOT_PATH.resolve(String.valueOf(adId));
-        deleteFiles(path.toFile());
-    }
-
-    private static void deleteFiles(File dirOrFile) {
-        File[] allContents = dirOrFile.listFiles();
-        if (allContents != null) {
-            for (File file : allContents) {
-                deleteFiles(file);
-            }
-        }
-        dirOrFile.delete();
     }
 
     public void deleteImageForAdmin(Long adId, String imageUuid) throws IOException {

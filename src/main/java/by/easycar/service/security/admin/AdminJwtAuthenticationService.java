@@ -29,14 +29,14 @@ public class AdminJwtAuthenticationService implements JwtService {
     @Value("${jwt.expire.time.minutes}")
     private long TIME_OF_EXPIRATION;
 
-    @PostConstruct
-    private void init() {
-        key = Base64.getEncoder().encodeToString(key.getBytes());
-    }
-
     @Autowired
     public AdminJwtAuthenticationService(AdminDetailsService adminDetailsService) {
         this.adminDetailsService = adminDetailsService;
+    }
+
+    @PostConstruct
+    private void init() {
+        key = Base64.getEncoder().encodeToString(key.getBytes());
     }
 
     @Override

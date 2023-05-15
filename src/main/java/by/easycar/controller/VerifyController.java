@@ -37,7 +37,7 @@ public class VerifyController {
     }
 
     @Operation(description = "Supported verify types: verify_sms, verify_email",
-            summary= "Get code", security = {@SecurityRequirement(name = "User JWT")})
+            summary = "Get code", security = {@SecurityRequirement(name = "User JWT")})
     @PostMapping("/{verifyType}")
     private ResponseEntity<String> sendCode(@PathVariable String verifyType,
                                             @AuthenticationPrincipal @Parameter(hidden = true) UserPrincipal user) throws MessagingException {

@@ -100,7 +100,7 @@ public class UserServiceTest {
         when(userRepository.findById(userId)).thenReturn(Optional.of(userPrivate));
         try (MockedStatic<ImageService> imageServiceMockedStatic = Mockito.mockStatic(ImageService.class)) {
             userService.deleteUserById(userId);
-            imageServiceMockedStatic.verify((()->ImageService.deleteDir(userPrivate.getAdvertisements().get(0).getId())),
+            imageServiceMockedStatic.verify((() -> ImageService.deleteDir(userPrivate.getAdvertisements().get(0).getId())),
                     times(1));
         }
         verify(userRepository).deleteById(userId);
@@ -138,7 +138,7 @@ public class UserServiceTest {
     @Test
     public void getUserForAdFromUserPrivateTest() {
         when(userMapper.getUserForAdFromUserPrivate(userPrivate)).thenReturn(userForAd);
-        assertEquals(userForAd,userService.getUserForAdFromUserPrivate(userPrivate));
+        assertEquals(userForAd, userService.getUserForAdFromUserPrivate(userPrivate));
         verify(userMapper).getUserForAdFromUserPrivate(userPrivate);
     }
 
@@ -147,7 +147,7 @@ public class UserServiceTest {
         when(userRepository.findById(userId)).thenReturn(Optional.of(userPrivate));
         when(passwordEncoder.encode("test")).thenReturn("testPass");
         userService.updatePassword("test", userPrivate.getId());
-        assertEquals("testPass",userPrivate.getPassword());
+        assertEquals("testPass", userPrivate.getPassword());
         verify(userRepository).save(userPrivate);
     }
 
