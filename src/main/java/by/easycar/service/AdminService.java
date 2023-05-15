@@ -116,4 +116,8 @@ public class AdminService {
     public void deleteImage(Long adId, String imageUuid) throws IOException {
         imageService.deleteImageForAdmin(adId, imageUuid);
     }
+
+    public List<UserInnerResponse> getAllInnerUsers() {
+        return userService.getAllUsers();
+    }
 }

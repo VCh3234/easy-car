@@ -33,7 +33,7 @@ import java.time.LocalDateTime;
 @Entity
 @Immutable
 @Table(name = "moderations")
-@Access(AccessType.FIELD) //Default - added for demonstration
+@Access(AccessType.FIELD)
 public class Moderation {
 
     @Id

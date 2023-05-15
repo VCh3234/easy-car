@@ -133,4 +133,11 @@ public class AdminController {
         adminService.deleteImage(adId, imageUUID);
         return new ResponseEntity<>("Image was deleted.", HttpStatus.NO_CONTENT);
     }
+
+    @Operation(summary = "Get all inner users", security = {@SecurityRequirement(name = "Admin JWT")})
+    @GetMapping("/user")
+    private ResponseEntity<List<UserInnerResponse>> getAllInnerUsers() {
+        return new ResponseEntity<>(adminService.getAllInnerUsers(), HttpStatus.OK);
+    }
+
 }

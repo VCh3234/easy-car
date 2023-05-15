@@ -33,11 +33,9 @@ public class SpringConfig {
     @Bean
     public OpenAPI swaggerAuthenticationConfiguration() {
         OpenAPI openAPI = new OpenAPI();
-
         Components components = new Components();
         components.addSecuritySchemes("User JWT", getJwtForUserScheme());
         components.addSecuritySchemes("Admin JWT", getJwtForAdminScheme());
-
         openAPI.addSecurityItem(new SecurityRequirement().addList("Authentication")).components(components);
         openAPI.info(new Info()
                 .title("Easy car")

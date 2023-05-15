@@ -15,6 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class UserService {
 
@@ -114,5 +116,9 @@ public class UserService {
 
     public UserForAd getUserForAdById(Long userId) {
         return userForAdRepository.findById(userId).orElseThrow(() -> new UserFindException("Can`t find user with id: " + userId));
+    }
+
+    public List<UserInnerResponse> getAllUsers() {
+        return userRepository.findAll().stream().map((userPrivate) -> userMapper.getUserInnerFromUserPrivate(userPrivate)).toList();
     }
 }
