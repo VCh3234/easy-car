@@ -17,6 +17,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.core.MethodParameter;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
 import org.springframework.lang.NonNull;
 import org.springframework.test.web.servlet.MockMvc;
@@ -80,6 +83,8 @@ public class AdvertisementControllerTest {
 
     private AdvertisementRequest advertisementRequest;
 
+    private Page<Advertisement> page;
+
     @BeforeEach
     public void init() {
         Advertisement advertisement = new Advertisement();
@@ -109,21 +114,11 @@ public class AdvertisementControllerTest {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
         jsonMapper = objectMapper.writerWithDefaultPrettyPrinter();
+        page = new PageImpl<>(advertisements);
         mockMvc = MockMvcBuilders
                 .standaloneSetup(new AdvertisementController(advertisementService, searchAdvertisementService, adminService))
                 .setCustomArgumentResolvers(userPrincipalResolver)
                 .build();
-    }
-
-    @Test
-    public void getPublicAdvertisementTest() throws Exception {
-        when(advertisementService.getAllModeratedAdvertisementOrdered()).thenReturn(advertisements);
-        mockMvc.perform(get("/ads"))
-                .andExpect(status().isOk())
-                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(content().json(jsonMapper.writeValueAsString(advertisements)))
-                .andReturn();
-        verify(advertisementService, times(1)).getAllModeratedAdvertisementOrdered();
     }
 
     @Test
@@ -141,15 +136,15 @@ public class AdvertisementControllerTest {
 
     @Test
     public void getAdvertisementsWithFilterTest() throws Exception {
-        when(searchAdvertisementService.getAllByParams(this.searchParams)).thenReturn(advertisements);
+        when(searchAdvertisementService.getAllByParams(this.searchParams, PageRequest.of(0, 2))).thenReturn(page);
         mockMvc.perform(post("/ads/search")
                         .content(jsonMapper.writeValueAsString(this.searchParams))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(content().json(jsonMapper.writeValueAsString(advertisements)))
+                .andExpect(content().json(jsonMapper.writeValueAsString(page)))
                 .andReturn();
-        verify(searchAdvertisementService, times(1)).getAllByParams(this.searchParams);
+        verify(searchAdvertisementService, times(1)).getAllByParams(this.searchParams, PageRequest.of(0, 2));
     }
 
     @Test

@@ -4,6 +4,8 @@ import by.easycar.model.advertisement.Advertisement;
 import by.easycar.model.dto.SearchParams;
 import by.easycar.repository.AdvertisementRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -20,14 +22,19 @@ public class SearchAdvertisementService {
         this.advertisementRepository = advertisementRepository;
     }
 
-    public List<Advertisement> getAllByParams(List<SearchParams> searchParams) {
-        Specification<Advertisement> advertisementSpecification =
-                Specification.where(new AdvertisementSpecification(searchParams.get(0)));
-        for (int i = 1; i < searchParams.size(); i++) {
-            advertisementSpecification = Specification.where(advertisementSpecification)
-                    .and(new AdvertisementSpecification(searchParams.get(i)));
-        }
+    public Page<Advertisement> getAllByParams(List<SearchParams> searchParams, PageRequest pageRequest) {
         Sort sort = Sort.by("upTime").descending();
-        return advertisementRepository.findAll(advertisementSpecification, sort);
+        pageRequest.withSort(sort);
+        if(searchParams != null && searchParams.size() > 0) {
+            Specification<Advertisement> advertisementSpecification =
+                    Specification.where(new AdvertisementSpecification(searchParams.get(0)));
+            for (int i = 1; i < searchParams.size(); i++) {
+                advertisementSpecification = Specification.where(advertisementSpecification)
+                        .and(new AdvertisementSpecification(searchParams.get(i)));
+            }
+            return advertisementRepository.findAll(advertisementSpecification, pageRequest);
+        } else {
+            return advertisementRepository.findAll(pageRequest);
+        }
     }
 }

@@ -16,6 +16,8 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -50,18 +52,6 @@ public class AdvertisementController {
         this.adminService = adminService;
     }
 
-    @Operation(summary = "Get all public advertisements")
-    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    private ResponseEntity<Object> getPublicAdvertisement(@RequestParam(required = false) Long id) {
-        if (id == null) {
-            List<Advertisement> allAdvertisements = advertisementService.getAllModeratedAdvertisementOrdered();
-            return new ResponseEntity<>(allAdvertisements, HttpStatus.OK);
-        } else {
-            Advertisement advertisement = advertisementService.getPublicById(id);
-            return new ResponseEntity<>(advertisement, HttpStatus.OK);
-        }
-    }
-
     @Operation(summary = "Get moderation of user", security = {@SecurityRequirement(name = "User JWT")})
     @GetMapping(path = "/moderation", produces = MediaType.APPLICATION_JSON_VALUE)
     private ResponseEntity<List<ModerationResponse>> getModerationOfUser(@AuthenticationPrincipal @Parameter(hidden = true) UserPrincipal userPrincipal) {
@@ -87,8 +77,12 @@ public class AdvertisementController {
                     "]")
             })))
     @PostMapping(path = "/search", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<Advertisement>> getAdvertisementsWithFilter(@RequestBody List<SearchParams> searchParams) {
-        List<Advertisement> advertisements = searchAdvertisementService.getAllByParams(searchParams);
+    public ResponseEntity<Page<Advertisement>> getAdvertisementsWithFilter(
+            @RequestParam(required = false, defaultValue = "0") Integer page,
+            @RequestParam(required = false, defaultValue = "2") Integer size,
+            @RequestBody(required = false) @Parameter List<SearchParams> searchParams) {
+        PageRequest pageRequest = PageRequest.of(page, size);
+        Page<Advertisement> advertisements = searchAdvertisementService.getAllByParams(searchParams, pageRequest);
         return new ResponseEntity<>(advertisements, HttpStatus.OK);
     }
 
