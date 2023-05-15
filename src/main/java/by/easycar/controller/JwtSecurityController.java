@@ -59,8 +59,8 @@ public class JwtSecurityController {
     @Operation(summary = "Get JWT token for admin",
             requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(content =
             @Content(examples = {@ExampleObject(name = "Admin admin", value = "{\n" +
-                    "    \"name\":\"admin\",\n" +
-                    "    \"password\":\"qweqweqwe\"\n" +
+                    "    \"name\":\"SUPER_ADMIN\",\n" +
+                    "    \"password\":\"ROOT\"\n" +
                     "}")
             })))
     @PostMapping("/admin/login")

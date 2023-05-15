@@ -1,5 +1,6 @@
 package by.easycar.service;
 
+import by.easycar.exceptions.advertisement.AdvertisementModerationException;
 import by.easycar.model.advertisement.Advertisement;
 import by.easycar.model.advertisement.ImageData;
 import jakarta.transaction.Transactional;
@@ -116,7 +117,11 @@ public class ImageService {
 
     public byte[] getImage(Long adId, String uuid) throws IOException {
         Path path = ROOT_PATH.resolve(String.valueOf(adId)).resolve(uuid + ".jpg");
-        return Files.readAllBytes(path);
+        if(advertisementService.isModerated(adId)) {
+            return Files.readAllBytes(path);
+        } else {
+            throw new AdvertisementModerationException("Advertisement doesn't moderated.");
+        }
     }
 
     public void deleteImageForAdmin(Long adId, String imageUuid) throws IOException {

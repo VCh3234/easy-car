@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class AdminDetailsService implements UserDetailsService {
@@ -24,15 +23,6 @@ public class AdminDetailsService implements UserDetailsService {
 
     @Override
     public Admin loadUserByUsername(String name) throws UsernameNotFoundException {
-        if (name.equals("SUPER_ADMIN")) {
-            Optional<Admin> optional = adminRepository.findByName("SUPER_ADMIN");
-            if (optional.isEmpty()) {
-                Admin admin = new Admin();
-                admin.setName("SUPER_ADMIN");
-                admin.setPassword("$2a$12$68FNynNX7Q4Fo2rSa0ACTeabgdxJy6..gycXpOZoDXT0okckBWtYC");
-                adminRepository.save(admin);
-            }
-        }
         Admin admin = adminRepository.findByName(name).orElseThrow(() -> new UsernameNotFoundException("Can't find user with name: " + name));
         List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
         grantedAuthorities.add(Admin.ROLE::name);

@@ -147,4 +147,10 @@ public class AdvertisementService {
         ImageService.deleteDir(adId);
         advertisementRepository.deleteById(adId);
     }
+
+    public boolean isModerated(Long adId) {
+        return advertisementRepository.findById(adId)
+                .orElseThrow(() -> new FindAdvertisementException("Can`t find advertisement with id: " + adId))
+                .isModerated();
+    }
 }

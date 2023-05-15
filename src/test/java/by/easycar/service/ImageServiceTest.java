@@ -139,6 +139,7 @@ public class ImageServiceTest {
     @Test
     public void getImageTest() throws IOException {
         Files.copy(mockMultipartFile.getInputStream(), TEMP_TEST_PATH.resolve(Path.of(adId + "/" + testUuid.toString() + ".jpg")));
+        when(advertisementService.isModerated(adId)).thenReturn(true);
         byte[] result;
         try (MockedStatic<Files> imageServiceMockedStatic = Mockito.mockStatic(Files.class)) {
             imageServiceMockedStatic.when(() -> Files.readAllBytes(TEMP_TEST_PATH.resolve(Path.of(adId + "/" + testUuid.toString() + ".jpg")))).thenReturn(new byte[]{1, 2, 3});

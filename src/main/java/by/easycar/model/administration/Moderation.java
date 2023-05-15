@@ -32,13 +32,13 @@ import java.time.LocalDateTime;
 @EqualsAndHashCode(exclude = {"advertisement", "admin"})
 @Entity
 @Immutable
-@Table(name = "moderations")
+@Table(name = "moderation")
 @Access(AccessType.FIELD)
 public class Moderation {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "mo_sequence")
-    @SequenceGenerator(catalog = "sequences", name = "mo_sequence", sequenceName = "moderations_sequence_id")
+    @SequenceGenerator(catalog = "sequences", name = "mo_sequence", sequenceName = "moderation_sequence_id")
     @Column(name = "mo_id")
     private Long id;
 

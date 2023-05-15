@@ -66,13 +66,13 @@ public class AdvertisementController {
                     "    \"entity\": \"advertisement\",\n" +
                     "    \"key\": \"price\",\n" +
                     "    \"operation\": \"<\",\n" +
-                    "    \"value\": \"7000\"\n" +
+                    "    \"value\": \"10000\"\n" +
                     "  }," +
                     "{\n" +
                     "    \"entity\": \"vehicle\",\n" +
                     "    \"key\": \"brand\",\n" +
                     "    \"operation\": \":\",\n" +
-                    "    \"value\": \"BMW\"\n" +
+                    "    \"value\": \"Mazda\"\n" +
                     "  }\n" +
                     "]")
             })))
