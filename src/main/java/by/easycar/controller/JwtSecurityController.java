@@ -42,7 +42,7 @@ public class JwtSecurityController {
     @Operation(summary = "Get JWT token for user",
             requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(content =
             @Content(examples = {@ExampleObject(name = "User Vlad", value = "{\n" +
-                    "    \"name\":\"uladcherap99@gmail.com\",\n" +
+                    "    \"name\":\"UladCherap@yandex.by\",\n" +
                     "    \"password\":\"1Qqqqqqq\"\n" +
                     "}")
             })))

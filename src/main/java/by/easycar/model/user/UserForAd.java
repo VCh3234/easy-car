@@ -18,7 +18,7 @@ public class UserForAd {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "u_sequence")
-    @SequenceGenerator(catalog = "sequences", name = "u_sequence", sequenceName = "u_sequence_id")
+    @SequenceGenerator(catalog = "sequences", name = "u_sequence", sequenceName = "users_u_id_seq", allocationSize = 1)
     @Column(name = "u_id")
     private Long id;
 

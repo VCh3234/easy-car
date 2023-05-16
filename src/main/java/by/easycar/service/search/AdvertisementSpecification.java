@@ -17,6 +17,8 @@ public class AdvertisementSpecification implements Specification<Advertisement> 
 
     private final SearchParams searchParams;
 
+    private final boolean moderationFlag;
+
     private final Set<String> whiteListOfAttributes = Set.of(
             "price",
             "region",
@@ -31,12 +33,16 @@ public class AdvertisementSpecification implements Specification<Advertisement> 
             "bodyType"
     );
 
-    public AdvertisementSpecification(SearchParams searchParams) {
+    public AdvertisementSpecification(SearchParams searchParams, boolean moderationFlag) {
         this.searchParams = searchParams;
+        this.moderationFlag = moderationFlag;
     }
 
     @Override
     public Predicate toPredicate(Root<Advertisement> root, CriteriaQuery<?> query, CriteriaBuilder builder) {
+        if(moderationFlag) {
+            return builder.equal(root.get("moderated"), true);
+        }
         if (whiteListOfAttributes.contains(searchParams.getKey())) {
             if (searchParams.getEntity().equals("advertisement")) {
                 return getPredicateForAdvertisement(root, builder);

@@ -84,6 +84,7 @@ public class AdminService {
     }
 
     public List<Payment> getAllPaymentsOfUser(Long userId) {
+        userService.getUserInner(userId);
         return paymentService.getPaymentsOfUser(userId);
     }
 

@@ -24,17 +24,17 @@ public class SearchAdvertisementService {
 
     public Page<Advertisement> getAllByParams(List<SearchParams> searchParams, PageRequest pageRequest) {
         Sort sort = Sort.by("upTime").descending();
-        pageRequest.withSort(sort);
-        if(searchParams != null && searchParams.size() > 0) {
+        pageRequest = pageRequest.withSort(sort);
+        if (searchParams != null && searchParams.size() > 0) {
             Specification<Advertisement> advertisementSpecification =
-                    Specification.where(new AdvertisementSpecification(searchParams.get(0)));
-            for (int i = 1; i < searchParams.size(); i++) {
+                    Specification.where(new AdvertisementSpecification(null, true));
+            for (SearchParams searchParam : searchParams) {
                 advertisementSpecification = Specification.where(advertisementSpecification)
-                        .and(new AdvertisementSpecification(searchParams.get(i)));
+                        .and(new AdvertisementSpecification(searchParam, false));
             }
             return advertisementRepository.findAll(advertisementSpecification, pageRequest);
         } else {
-            return advertisementRepository.findAll(pageRequest);
+            return advertisementRepository.findAllByModeratedTrue(pageRequest);
         }
     }
 }

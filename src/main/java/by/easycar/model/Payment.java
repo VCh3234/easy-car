@@ -26,7 +26,7 @@ public class Payment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "p_sequence")
-    @SequenceGenerator(catalog = "sequences", name = "p_sequence", sequenceName = "p_sequence_id")
+    @SequenceGenerator(catalog = "sequences", name = "p_sequence", sequenceName = "payments_p_id_seq", allocationSize = 1)
     @Column(name = "p_id")
     private Long id;
 

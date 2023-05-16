@@ -35,7 +35,7 @@ public class UserController {
         this.userService = userService;
     }
 
-    @Operation(summary = "Register new user", security = {@SecurityRequirement(name = "User JWT")})
+    @Operation(summary = "Register new user")
     @PostMapping
     private ResponseEntity<String> registerUser(@RequestBody @Valid UserRegisterRequest userRegisterRequest) {
         userService.saveNewUser(userRegisterRequest);

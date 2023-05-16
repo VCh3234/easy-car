@@ -1,6 +1,8 @@
 package by.easycar.repository;
 
 import by.easycar.model.advertisement.Advertisement;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
@@ -19,5 +21,7 @@ public interface AdvertisementRepository extends JpaRepository<Advertisement, Lo
 
     @Modifying
     @Query(value = "UPDATE Advertisement a SET a.moderated = true WHERE a.id =:adId")
-    int acceptModeration(Long adId);
+    void acceptModeration(Long adId);
+
+    Page<Advertisement> findAllByModeratedTrue(Pageable pageable);
 }
