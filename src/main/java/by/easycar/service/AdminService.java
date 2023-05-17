@@ -88,9 +88,11 @@ public class AdminService {
         return paymentService.getPaymentsOfUser(userId);
     }
 
+    @Transactional
     public void rejectAdvertisement(Long adId, Admin admin, String message) {
         Moderation moderation = new Moderation();
         Advertisement advertisement = advertisementService.getInnerAdvertisementByIdForAdmin(adId);
+        advertisement.setModerated(false);
         moderation.setAdvertisement(advertisement);
         moderation.setAdmin(admin);
         moderation.setMessage(message);

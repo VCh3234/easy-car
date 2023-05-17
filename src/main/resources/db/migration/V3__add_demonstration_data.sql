@@ -21,7 +21,7 @@ INSERT INTO public.moderation (mo_creation_date, mo_message, adm_id, ad_id)
 VALUES ('2023-05-15 16:56:20.705270', 'Accept advertisement moderation', 1, 2);
 
 INSERT INTO public.payments (p_bank_name, p_operation_name, p_date_time, p_transaction_number, u_id)
-VALUES ('SBERBANK', '10_ups', '2023-05-15 16:50:06.175642', '5e6af974-f327-11ed-a05b-0242ac120003', 1);
+VALUES ('SBERBANK', '30_ups', '2023-05-15 16:50:06.175642', '5e6af974-f327-11ed-a05b-0242ac120003', 1);
 INSERT INTO public.payments (p_bank_name, p_operation_name, p_date_time, p_transaction_number, u_id)
-VALUES ('ALFABANK', '30_ups', '2023-05-15 16:51:00.372623', '5e6af974-f327-11ed-a05b-0242ac120003', 3);
+VALUES ('ALFABANK', '10_ups', '2023-05-15 16:51:00.372623', '5e6af974-f327-11ed-a05b-0242ac120asd', 3);
 
