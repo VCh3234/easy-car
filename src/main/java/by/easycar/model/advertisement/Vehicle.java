@@ -18,7 +18,7 @@ public class Vehicle {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "v_sequence")
-    @SequenceGenerator(catalog = "sequences", name = "v_sequence", sequenceName = "vehicles_v_id_seq", allocationSize = 1)
+    @SequenceGenerator(name = "v_sequence", sequenceName = "vehicles_v_id_seq", allocationSize = 1)
     @Column(name = "v_id")
     private Integer id;
 

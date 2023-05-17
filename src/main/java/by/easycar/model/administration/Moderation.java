@@ -38,7 +38,7 @@ public class Moderation {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "mo_sequence")
-    @SequenceGenerator(catalog = "sequences", name = "mo_sequence", sequenceName = "moderation_mo_id_seq", allocationSize = 1)
+    @SequenceGenerator(name = "mo_sequence", sequenceName = "moderation_mo_id_seq", allocationSize = 1)
     @Column(name = "mo_id")
     private Long id;
 

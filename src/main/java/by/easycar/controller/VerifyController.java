@@ -14,7 +14,9 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -29,11 +31,18 @@ public class VerifyController {
         this.verificationResolver = verificationResolver;
     }
 
-    @Operation(summary = "Send code")
+    @Operation(summary = "Send code", security = {@SecurityRequirement(name = "User JWT")})
     @GetMapping("/{code}")
     private ResponseEntity<String> verifyUser(@PathVariable String code) {
         verificationResolver.verify(code);
         return new ResponseEntity<>("User was verified.", HttpStatus.OK);
+    }
+
+    @Operation(summary = "Set token for twilio", security = {@SecurityRequirement(name = "Admin JWT")})
+    @PutMapping
+    private ResponseEntity<String> changeToken(@RequestParam String token) {
+        verificationResolver.setTwSid(token);
+        return new ResponseEntity<>("Token was changed.", HttpStatus.OK);
     }
 
     @Operation(description = "Supported verify types: verify_sms, verify_email",

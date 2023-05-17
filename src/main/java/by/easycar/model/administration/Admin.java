@@ -30,7 +30,7 @@ public class Admin implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "adm_sequence")
-    @SequenceGenerator(catalog = "sequences", name = "adm_sequence", sequenceName = "admins_adm_id_seq", allocationSize = 1)
+    @SequenceGenerator(name = "adm_sequence", sequenceName = "admins_adm_id_seq", allocationSize = 1)
     @Column(name = "adm_id")
     private Long id;
 

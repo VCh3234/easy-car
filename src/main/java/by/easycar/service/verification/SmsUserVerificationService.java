@@ -13,8 +13,7 @@ public class SmsUserVerificationService implements VerificationService {
     @Value("${twilio.account.sid}")
     private String ACCOUNT_SID;
 
-    @Value("${twilio.auth.token}")
-    private String AUTH_TOKEN;
+    private static String AUTH_TOKEN;
 
     @Value("${twilio.phone.number}")
     private String TWILIO_PHONE_NUMBER;
@@ -24,5 +23,9 @@ public class SmsUserVerificationService implements VerificationService {
         Twilio.init(ACCOUNT_SID, AUTH_TOKEN);
         Message.creator(new PhoneNumber("+375" + userPrivate.getPhoneNumber()),
                 new PhoneNumber(TWILIO_PHONE_NUMBER), "Your code for verify: " + code).create();
+    }
+
+    public static void setAuthToken(String authToken) {
+        AUTH_TOKEN = authToken;
     }
 }

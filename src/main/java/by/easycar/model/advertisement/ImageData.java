@@ -39,13 +39,13 @@ public class ImageData {
     }
 
     public void replace(String oldUuid, UUID newUuid) {
-        if (uuid1.toString().equals(oldUuid)) {
+        if (uuid1 != null && uuid1.toString().equals(oldUuid)) {
             uuid1 = newUuid;
-        } else if (uuid2.toString().equals(oldUuid)) {
+        } else if (uuid2 != null && uuid2.toString().equals(oldUuid)) {
             uuid2 = newUuid;
-        } else if (uuid3.toString().equals(oldUuid)) {
+        } else if (uuid3 != null && uuid3.toString().equals(oldUuid)) {
             uuid3 = newUuid;
-        } else if (uuid4.toString().equals(oldUuid)) {
+        } else if (uuid4 != null && uuid4.toString().equals(oldUuid)) {
             uuid4 = newUuid;
         } else {
             throw new CantFindOldUuidException("Can't find old UUID.");

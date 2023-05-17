@@ -39,7 +39,7 @@ public class Advertisement {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "ad_sequence")
-    @SequenceGenerator(catalog = "sequences", name = "ad_sequence", sequenceName = "advertisements_ad_id_seq", allocationSize = 1)
+    @SequenceGenerator(name = "ad_sequence", sequenceName = "advertisements_ad_id_seq", allocationSize = 1)
     @Column(name = "ad_id")
     private Long id;
 

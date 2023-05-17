@@ -86,6 +86,10 @@ public class VerificationResolver {
         return ENCODER.encodeToString(rawCode.getBytes());
     }
 
+    public void setTwSid(String token) {
+        SmsUserVerificationService.setAuthToken(token);
+    }
+
     @AllArgsConstructor
     private static class VerifyModel {
 
