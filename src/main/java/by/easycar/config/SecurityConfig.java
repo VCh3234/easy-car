@@ -118,7 +118,7 @@ public class SecurityConfig {
     private void setMatchersForVerifyController(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests()
                 .requestMatchers(HttpMethod.PUT,"/verify/**").hasAuthority(Admin.ROLE.name())
-                .requestMatchers("/verify/**").hasAuthority(UserPrivate.ROLE.name())
+                .requestMatchers("/verify/**").permitAll()
                 .requestMatchers(HttpMethod.POST, "/verify/**").hasAuthority(UserPrivate.ROLE.name());
     }
 
