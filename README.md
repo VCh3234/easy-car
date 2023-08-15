@@ -12,6 +12,10 @@
 This application allows you to find a car for buying or place your own advertisement for selling.
 
 
+
+
+
+
 <h3 align="left">Languages and Tools:</h3>
 <p align="left"> 
 <a href="https://www.docker.com/" target="_blank" rel="noreferrer"> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/docker/docker-original-wordmark.svg" alt="docker" width="40" height="40"/></a> 
