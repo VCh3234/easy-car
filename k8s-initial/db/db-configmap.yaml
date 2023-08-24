@@ -8,8 +8,9 @@ metadata:
     app: postgresdb
 data:
   # User DB
-  POSTGRES_DB: "user_service"
+  POSTGRES_DB: "user_service_test"
   # Db user
   POSTGRES_USER: "user_of_user_service_db"
   # Db password
   POSTGRES_PASSWORD: "$2a$10$1rhrSG/QRr/Vk5h0ALQGRe.uLYkEE0FCtlOsd7/TaM.2M82txtdXW"
+  DB_POD_NAME: "postgresdb"

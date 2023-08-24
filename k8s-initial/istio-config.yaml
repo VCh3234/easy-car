@@ -1,5 +1,7 @@
 apiVersion: install.istio.io/v1alpha1
 kind: IstioOperator
+metadata:
+  name: "istio-operator-log"
 spec:
   meshConfig:
     accessLogFile: /dev/stdout
@@ -34,6 +36,6 @@ spec:
             prefix: /
       route:
         - destination:
-            host: productpage #Service name (ClusterIP)
+            host: user-service-cluster-ip #Service name (ClusterIP)
             port:
-              number: 9080 #Port to which clusterIP is listening
+              number: 8081 #Port to which clusterIP is listening
