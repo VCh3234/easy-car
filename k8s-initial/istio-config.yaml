@@ -33,7 +33,9 @@ spec:
   http:
     - match:
         - uri:
-            prefix: /
+            prefix: /user-service/
+      rewrite:
+        uri: /
       route:
         - destination:
             host: user-service-cluster-ip #Service name (ClusterIP)

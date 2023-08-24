@@ -34,7 +34,7 @@ spec:
           imagePullPolicy: Always
           env:
             - name: "MAIN_PORT" #Port that app will listening
-              value: "8081"
+              value: "8080"
           envFrom:
             - configMapRef:
                 name: db-secret-credentials #Name of configmap (DB)
